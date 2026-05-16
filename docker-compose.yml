@@ -1,4 +1,21 @@
 services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-dialogueeval}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-dialogueeval}
+      POSTGRES_DB: ${POSTGRES_DB:-phoenix}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./docker/postgres/init.sql:/docker-entrypoint-initdb.d/10-init-dialogue-eval.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-dialogueeval} -d ${POSTGRES_DB:-phoenix}"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
   phoenix:
     image: arizephoenix/phoenix:latest
     ports:
@@ -6,8 +23,12 @@ services:
       - "4317:4317"
     environment:
       PHOENIX_WORKING_DIR: /mnt/data
+      PHOENIX_SQL_DATABASE_URL: ${PHOENIX_SQL_DATABASE_URL:-postgresql://dialogueeval:dialogueeval@postgres:5432/phoenix}
     volumes:
       - phoenix_data:/mnt/data
+    depends_on:
+      postgres:
+        condition: service_healthy
 
   api:
     build: .
@@ -22,6 +43,8 @@ services:
       PHOENIX_PROJECT_NAME: ${PHOENIX_PROJECT_NAME:-dialogue-eval}
       PHOENIX_AUTO_INSTRUMENT: ${PHOENIX_AUTO_INSTRUMENT:-false}
       DIALOGUE_EVAL_TRACE_CONTENT: ${DIALOGUE_EVAL_TRACE_CONTENT:-true}
+      DIALOGUE_EVAL_TRACE_LLM_MESSAGES: ${DIALOGUE_EVAL_TRACE_LLM_MESSAGES:-summary}
+      DIALOGUE_EVAL_REGISTRY_PATH: ${DIALOGUE_EVAL_REGISTRY_PATH:-/app/outputs/dialogue_eval_registry.sqlite3}
       DIALOGUE_EVAL_PROMPTS_PROVIDER: ${DIALOGUE_EVAL_PROMPTS_PROVIDER:-phoenix}
       DIALOGUE_EVAL_PROMPT_CACHE_SECONDS: ${DIALOGUE_EVAL_PROMPT_CACHE_SECONDS:-30}
     volumes:
@@ -29,23 +52,21 @@ services:
       - ./configs:/app/configs
       - ./Resource:/app/Resource
     depends_on:
-      - phoenix
+      phoenix:
+        condition: service_started
 
   web:
-    build: .
-    command: streamlit run apps/web/streamlit_app.py --server.address 0.0.0.0 --server.port 8501 --server.headless true
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile
     ports:
-      - "8501:8501"
+      - "8501:3000"
     environment:
       API_BASE_URL: http://api:8000
-      PHOENIX_UI_URL: http://127.0.0.1:6006
-      STREAMLIT_BROWSER_GATHER_USAGE_STATS: "false"
-    volumes:
-      - ./outputs:/app/outputs
-      - ./configs:/app/configs
-      - ./Resource:/app/Resource
+      NEXT_PUBLIC_PHOENIX_UI_URL: http://127.0.0.1:6006
     depends_on:
       - api
 
 volumes:
   phoenix_data:
+  postgres_data:

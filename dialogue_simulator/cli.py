@@ -4,7 +4,11 @@ import argparse
 from datetime import datetime
 from pathlib import Path
 
-from dialogue_simulator.eval_standard_loader import extract_markdown_from_excel
+from dialogue_simulator.eval_standard_loader import (
+    extract_markdown_from_csv,
+    extract_markdown_from_excel,
+    is_csv_path,
+)
 from dialogue_simulator.evaluation_graph import build_evaluation_graph
 from dialogue_simulator.graph import (
     build_asset_generation_graph,
@@ -39,7 +43,7 @@ def build_parser() -> argparse.ArgumentParser:
     subparsers = parser.add_subparsers(dest="command", required=True)
     generate = subparsers.add_parser("generate-assets", help="从评测标准生成场景资产。")
     generate.add_argument("--eval-standard", help="评测标准 Markdown 路径。")
-    generate.add_argument("--eval-standard-excel", help="从 Excel 第二列开始批量抽取评测标准。")
+    generate.add_argument("--eval-standard-excel", help="从 Excel/CSV 第二列开始批量抽取评测标准。")
     generate.add_argument("--excel-column", type=int, default=2, help="Excel 中 Markdown 所在列，1-based，默认第2列。")
     generate.add_argument("--excel-start-row", type=int, default=2, help="Excel 起始行，1-based，默认第2行。")
     generate.add_argument("--excel-sheet", help="Excel sheet 名，不填则使用第一个 sheet。")
@@ -72,8 +76,8 @@ def build_parser() -> argparse.ArgumentParser:
     evaluate.add_argument("--run-dir", required=True, help="已有运行报告目录。")
     evaluate.add_argument("--business-config", help="运行时业务配置 YAML/JSON 路径。")
 
-    extract = subparsers.add_parser("extract-eval-standards", help="从 Excel 抽取评测标准 Markdown。")
-    extract.add_argument("--excel", required=True, help="Excel 文件路径。")
+    extract = subparsers.add_parser("extract-eval-standards", help="从 Excel/CSV 抽取评测标准 Markdown。")
+    extract.add_argument("--excel", required=True, help="Excel 或 CSV 文件路径。")
     extract.add_argument("--output-dir", default="outputs/extracted_eval_standards", help="Markdown 输出目录。")
     extract.add_argument("--excel-column", type=int, default=2, help="Excel 中 Markdown 所在列，1-based，默认第2列。")
     extract.add_argument("--excel-start-row", type=int, default=2, help="Excel 起始行，1-based，默认第2行。")
@@ -154,13 +158,21 @@ def resolve_eval_standard_paths(args: argparse.Namespace) -> list[Path]:
     if args.eval_standard:
         return [Path(args.eval_standard)]
 
-    extracted = extract_markdown_from_excel(
-        args.eval_standard_excel,
-        args.extracted_output_dir,
-        column=args.excel_column,
-        start_row=args.excel_start_row,
-        sheet_name=args.excel_sheet,
-    )
+    if is_csv_path(args.eval_standard_excel):
+        extracted = extract_markdown_from_csv(
+            args.eval_standard_excel,
+            args.extracted_output_dir,
+            column=args.excel_column,
+            start_row=args.excel_start_row,
+        )
+    else:
+        extracted = extract_markdown_from_excel(
+            args.eval_standard_excel,
+            args.extracted_output_dir,
+            column=args.excel_column,
+            start_row=args.excel_start_row,
+            sheet_name=args.excel_sheet,
+        )
     if not extracted:
         raise SystemExit("Excel 中没有抽取到有效 Markdown 内容。")
     print("已从 Excel 抽取评测标准：")
@@ -170,13 +182,21 @@ def resolve_eval_standard_paths(args: argparse.Namespace) -> list[Path]:
 
 
 def extract_eval_standards_command(args: argparse.Namespace) -> None:
-    extracted = extract_markdown_from_excel(
-        args.excel,
-        args.output_dir,
-        column=args.excel_column,
-        start_row=args.excel_start_row,
-        sheet_name=args.excel_sheet,
-    )
+    if is_csv_path(args.excel):
+        extracted = extract_markdown_from_csv(
+            args.excel,
+            args.output_dir,
+            column=args.excel_column,
+            start_row=args.excel_start_row,
+        )
+    else:
+        extracted = extract_markdown_from_excel(
+            args.excel,
+            args.output_dir,
+            column=args.excel_column,
+            start_row=args.excel_start_row,
+            sheet_name=args.excel_sheet,
+        )
     if not extracted:
         raise SystemExit("Excel 中没有抽取到有效 Markdown 内容。")
     print(f"已抽取 {len(extracted)} 份评测标准：")
@@ -338,6 +358,8 @@ def evaluate_results(
     assets,
     results: list[ConversationResult],
     business_config: BusinessConfig,
+    experiment_id: str = "",
+    asset_version_id: str = "",
 ):
     eval_standard_path = assets.scene_asset.source_eval_standard_path
     eval_standard_text = (
@@ -352,14 +374,22 @@ def evaluate_results(
         with trace_span(
             "case.evaluate",
             attributes={
+                "dialogue_eval.experiment_id": experiment_id,
                 "dialogue_eval.run_id": result.run_id,
+                "dialogue_eval.asset_version_id": asset_version_id,
                 "dialogue_eval.case_id": result.case_id,
                 "dialogue_eval.scene_id": result.scene_id,
                 "dialogue_eval.case_index": index,
             },
             input_data=result,
             session_id=result.run_id,
-            metadata={"case_id": result.case_id, "scene_id": result.scene_id},
+            metadata={
+                "experiment_id": experiment_id,
+                "asset_version_id": asset_version_id,
+                "run_id": result.run_id,
+                "case_id": result.case_id,
+                "scene_id": result.scene_id,
+            },
         ) as span:
             evaluated = graph.invoke(
                 {

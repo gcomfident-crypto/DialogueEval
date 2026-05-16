@@ -1,0 +1,12 @@
+<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title">
+  <title id="title">DialogueEval mark</title>
+  <defs>
+    <linearGradient id="bg" x1="8" y1="8" x2="56" y2="56" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#102A43"/>
+      <stop offset="1" stop-color="#1D4ED8"/>
+    </linearGradient>
+  </defs>
+  <rect x="4" y="4" width="56" height="56" rx="14" fill="url(#bg)"/>
+  <path d="M18 18H46C49.3 18 52 20.7 52 24V38C52 41.3 49.3 44 46 44H35.5L25.5 51V44H18C14.7 44 12 41.3 12 38V24C12 20.7 14.7 18 18 18Z" fill="white"/>
+  <path d="M23 31.5L29.2 37.5L42 25.5" stroke="#2563EB" stroke-width="4.2" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

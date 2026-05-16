@@ -496,6 +496,8 @@ class GeneratedAssets(StrictModel):
 
 
 class AssetGenerationState(TypedDict, total=False):
+    dataset_id: str
+    task_instruction_id: str
     eval_standard_path: str
     business_config_path: Optional[str]
     generation_policy_path: Optional[str]
@@ -516,6 +518,8 @@ class AssetGenerationState(TypedDict, total=False):
 
 class ConversationGraphState(TypedDict, total=False):
     run_id: str
+    experiment_id: str
+    asset_version_id: str
     scene_asset: SceneAsset
     coverage_plan: CoveragePlan
     user_profiles: UserProfileCollection
@@ -550,6 +554,11 @@ class LLMCallRecord(StrictModel):
     started_at: str
     ended_at: str
     latency_ms: int
+    message_count: Optional[int] = None
+    prompt_chars: Optional[int] = None
+    prompt_hash: str = ""
+    completion_chars: Optional[int] = None
+    completion_hash: str = ""
     prompt_tokens: Optional[int] = None
     completion_tokens: Optional[int] = None
     total_tokens: Optional[int] = None

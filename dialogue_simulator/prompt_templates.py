@@ -20,6 +20,12 @@ from dialogue_simulator.prompt_registry import (
     USER_TURN_PROMPT,
 )
 from dialogue_simulator.prompt_store import render_prompt_text
+from dialogue_simulator.runtime_context import (
+    build_agent_runtime_context,
+    build_evaluation_runtime_context,
+    build_judge_runtime_context,
+    build_user_runtime_context,
+)
 
 
 def system_json_only_prompt() -> str:
@@ -153,9 +159,18 @@ def agent_turn_prompt(
     history: list[dict[str, Any]],
     output_schema: str,
 ) -> str:
+    runtime_context = build_agent_runtime_context(
+        scene_asset=scene_asset,
+        coverage_plan=coverage_plan,
+        case_card=case_card,
+        business_config=business_config,
+        conversation_state=conversation_state,
+        history=history,
+    )
     return render_prompt_text(
         AGENT_TURN_PROMPT,
         {
+            "runtime_context": json_text(runtime_context),
             "scene_asset": json_text(scene_asset),
             "coverage_plan": json_text(coverage_plan),
             "case_card": json_text(case_card),
@@ -176,9 +191,18 @@ def case_evaluation_prompt(
     business_config: BaseModel,
     output_schema: str,
 ) -> str:
+    runtime_context = build_evaluation_runtime_context(
+        eval_standard_text=eval_standard_text,
+        scene_asset=scene_asset,
+        coverage_plan=coverage_plan,
+        scoring_rubric=scoring_rubric,
+        conversation_result=conversation_result,
+        business_config=business_config,
+    )
     return render_prompt_text(
         CASE_EVALUATION_PROMPT,
         {
+            "runtime_context": json_text(runtime_context),
             "eval_standard_text": eval_standard_text,
             "scene_asset": json_text(scene_asset),
             "coverage_plan": json_text(coverage_plan),
@@ -198,9 +222,17 @@ def user_turn_prompt(
     history: list[dict[str, Any]],
     output_schema: str,
 ) -> str:
+    runtime_context = build_user_runtime_context(
+        scene_asset=scene_asset,
+        user_profile=user_profile,
+        case_card=case_card,
+        conversation_state=conversation_state,
+        history=history,
+    )
     return render_prompt_text(
         USER_TURN_PROMPT,
         {
+            "runtime_context": json_text(runtime_context),
             "scene_asset": json_text(scene_asset),
             "user_profile": json_text(user_profile),
             "case_card": json_text(case_card),
@@ -219,9 +251,17 @@ def coverage_judge_prompt(
     current_triggered_targets: list[str],
     output_schema: str,
 ) -> str:
+    runtime_context = build_judge_runtime_context(
+        coverage_plan=coverage_plan,
+        scene_asset=scene_asset,
+        case_card=case_card,
+        history=history,
+        current_triggered_targets=current_triggered_targets,
+    )
     return render_prompt_text(
         COVERAGE_JUDGE_PROMPT,
         {
+            "runtime_context": json_text(runtime_context),
             "coverage_plan": json_text(coverage_plan),
             "scene_asset": json_text(scene_asset),
             "case_card": json_text(case_card),

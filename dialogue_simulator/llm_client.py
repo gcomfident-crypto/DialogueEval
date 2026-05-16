@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import hashlib
+import json
 import os
 import time
 from uuid import uuid4
@@ -91,6 +93,7 @@ class OpenAICompatibleClient:
         started_at = utc_now_iso()
         started = time.monotonic()
         call_id = uuid4().hex
+        prompt_summary = _message_summary(messages)
         with trace_span(
             f"llm.{task_name}",
             kind="llm",
@@ -100,8 +103,12 @@ class OpenAICompatibleClient:
                 "llm.role": self.role,
                 "llm.model_name": self.model_name,
                 "llm.temperature": self._temperature,
+                "llm.message_count": prompt_summary["message_count"],
+                "llm.prompt_chars": prompt_summary["prompt_chars"],
+                "llm.prompt_hash": prompt_summary["prompt_hash"],
+                "llm.trace_message_mode": _trace_message_mode(),
             },
-            input_data={"messages": messages},
+            input_data=_messages_trace_payload(messages, prompt_summary),
         ) as span:
             try:
                 response = self._client.chat.completions.create(
@@ -121,6 +128,8 @@ class OpenAICompatibleClient:
                     response=response,
                     success=True,
                     error="",
+                    prompt_summary=prompt_summary,
+                    completion=content,
                 )
                 self.call_records.append(record)
                 span.set_attributes(
@@ -130,9 +139,11 @@ class OpenAICompatibleClient:
                         "llm.total_tokens": record.total_tokens,
                         "llm.latency_ms": record.latency_ms,
                         "llm.success": True,
+                        "llm.completion_chars": record.completion_chars,
+                        "llm.completion_hash": record.completion_hash,
                     }
                 )
-                span.set_output(content)
+                span.set_output(_completion_trace_payload(content))
                 return content
             except Exception as exc:
                 self.call_records.append(
@@ -145,6 +156,9 @@ class OpenAICompatibleClient:
                         started_at=started_at,
                         ended_at=utc_now_iso(),
                         latency_ms=int((time.monotonic() - started) * 1000),
+                        message_count=prompt_summary["message_count"],
+                        prompt_chars=prompt_summary["prompt_chars"],
+                        prompt_hash=prompt_summary["prompt_hash"],
                         success=False,
                         error=str(exc),
                     )
@@ -162,6 +176,8 @@ class OpenAICompatibleClient:
         response: Any,
         success: bool,
         error: str,
+        prompt_summary: dict[str, Any],
+        completion: str,
     ) -> LLMCallRecord:
         usage = getattr(response, "usage", None)
         return LLMCallRecord(
@@ -173,6 +189,11 @@ class OpenAICompatibleClient:
             started_at=started_at,
             ended_at=utc_now_iso(),
             latency_ms=int((time.monotonic() - started) * 1000),
+            message_count=prompt_summary["message_count"],
+            prompt_chars=prompt_summary["prompt_chars"],
+            prompt_hash=prompt_summary["prompt_hash"],
+            completion_chars=len(completion),
+            completion_hash=_text_hash(completion),
             prompt_tokens=getattr(usage, "prompt_tokens", None) if usage else None,
             completion_tokens=getattr(usage, "completion_tokens", None) if usage else None,
             total_tokens=getattr(usage, "total_tokens", None) if usage else None,
@@ -191,6 +212,7 @@ class FakeLLMClient:
 
     def complete(self, messages: list[dict[str, str]], *, task_name: str) -> str:
         call_id = uuid4().hex
+        prompt_summary = _message_summary(messages)
         with trace_span(
             f"llm.{task_name}",
             kind="llm",
@@ -201,10 +223,15 @@ class FakeLLMClient:
                 "llm.model_name": self.model_name,
                 "llm.temperature": 0.0,
                 "llm.fake": True,
+                "llm.message_count": prompt_summary["message_count"],
+                "llm.prompt_chars": prompt_summary["prompt_chars"],
+                "llm.prompt_hash": prompt_summary["prompt_hash"],
+                "llm.trace_message_mode": _trace_message_mode(),
             },
-            input_data={"messages": messages},
+            input_data=_messages_trace_payload(messages, prompt_summary),
         ) as span:
             payload = self._payload_for_task(task_name)
+            output = payload.model_dump_json() if hasattr(payload, "model_dump_json") else payload
             self.call_records.append(
                 LLMCallRecord(
                     call_id=call_id,
@@ -215,12 +242,23 @@ class FakeLLMClient:
                     started_at=utc_now_iso(),
                     ended_at=utc_now_iso(),
                     latency_ms=0,
+                    message_count=prompt_summary["message_count"],
+                    prompt_chars=prompt_summary["prompt_chars"],
+                    prompt_hash=prompt_summary["prompt_hash"],
+                    completion_chars=len(str(output)),
+                    completion_hash=_text_hash(str(output)),
                     success=True,
                 )
             )
-            output = payload.model_dump_json() if hasattr(payload, "model_dump_json") else payload
-            span.set_attributes({"llm.success": True, "llm.latency_ms": 0})
-            span.set_output(output)
+            span.set_attributes(
+                {
+                    "llm.success": True,
+                    "llm.latency_ms": 0,
+                    "llm.completion_chars": len(str(output)),
+                    "llm.completion_hash": _text_hash(str(output)),
+                }
+            )
+            span.set_output(_completion_trace_payload(str(output)))
             return output
 
     def _payload_for_task(self, task_name: str) -> Any:
@@ -497,6 +535,68 @@ class FakeLLMClient:
                 final_comment="fake evaluation for graph validation",
             )
         raise ValueError(f"Unsupported fake LLM task: {task_name}")
+
+
+def _messages_trace_payload(
+    messages: list[dict[str, str]],
+    summary: dict[str, Any],
+) -> dict[str, Any]:
+    mode = _trace_message_mode()
+    if mode == "full":
+        return {
+            **summary,
+            "messages": messages,
+        }
+    if mode == "off":
+        return summary
+    return {
+        **summary,
+        "messages": [
+            {
+                "role": message.get("role", ""),
+                "content_chars": len(str(message.get("content", ""))),
+                "content_preview": _preview(str(message.get("content", "")), 240),
+            }
+            for message in messages
+        ],
+    }
+
+
+def _completion_trace_payload(content: str) -> dict[str, Any] | str:
+    mode = _trace_message_mode()
+    if mode == "full":
+        return content
+    payload = {
+        "completion_chars": len(content),
+        "completion_hash": _text_hash(content),
+    }
+    if mode == "summary":
+        payload["completion_preview"] = _preview(content, 300)
+    return payload
+
+
+def _message_summary(messages: list[dict[str, str]]) -> dict[str, Any]:
+    serialized = json.dumps(messages, ensure_ascii=False, sort_keys=True, default=str)
+    return {
+        "message_count": len(messages),
+        "prompt_chars": sum(len(str(message.get("content", ""))) for message in messages),
+        "prompt_hash": _text_hash(serialized),
+    }
+
+
+def _trace_message_mode() -> str:
+    mode = os.getenv("DIALOGUE_EVAL_TRACE_LLM_MESSAGES", "summary").strip().lower()
+    return mode if mode in {"summary", "full", "off"} else "summary"
+
+
+def _preview(text: str, max_chars: int) -> str:
+    if len(text) <= max_chars:
+        return text
+    return text[:max_chars] + f"...<truncated {len(text) - max_chars} chars>"
+
+
+def _text_hash(text: str) -> str:
+    return hashlib.sha256(text.encode("utf-8")).hexdigest()[:16]
 
 
 def role_config_or_default(config: ModelConfig, role: str) -> ModelRoleConfig:

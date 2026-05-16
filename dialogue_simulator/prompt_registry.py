@@ -231,43 +231,20 @@ AGENT_TURN_PROMPT = PromptSpec(
     name="dialogue-eval-agent-turn",
     role="user",
     description="客服模型根据任务资产和对话历史生成下一句客服回复。",
-    variables=(
-        "scene_asset",
-        "coverage_plan",
-        "case_card",
-        "business_config",
-        "conversation_state",
-        "history",
-        "output_schema",
-    ),
+    variables=("runtime_context", "output_schema"),
     content="""你是外呼任务中的客服模型。请根据任务指令生成下一句客服回复。
 
 要求：
 - 只扮演客服，不扮演用户。
-- 根据 agent_instruction、业务配置、知识点、合规红线、coverage plan 和对话历史自然推进。
+- 根据运行上下文中的 agent_instruction、业务配置、知识点、合规红线、当前 case 目标和对话历史自然推进。
 - 回复要简短、自然、电话口吻，给用户说话机会。
 - 不承诺配置中没有的优惠、权限、排名、补偿等。
 - 不要输出固定模板；必须结合当前历史和用户状态。
 - 不要把 X/Y/Z/W/${...} 这类模板占位符原样说给用户；如果资产里有具体值，必须直接说具体值。
 - 输出 JSON，visible_reply 是真正要说给用户的话。
 
-场景资产：
-{{ scene_asset }}
-
-覆盖计划：
-{{ coverage_plan }}
-
-当前 case：
-{{ case_card }}
-
-业务配置：
-{{ business_config }}
-
-对话状态：
-{{ conversation_state }}
-
-对话历史：
-{{ history }}
+运行上下文：
+{{ runtime_context }}
 
 JSON schema：
 {{ output_schema }}
@@ -279,15 +256,7 @@ CASE_EVALUATION_PROMPT = PromptSpec(
     name="dialogue-eval-case-evaluation",
     role="user",
     description="评测员对单个 case 做可解释、可量化评分。",
-    variables=(
-        "eval_standard_text",
-        "scene_asset",
-        "coverage_plan",
-        "scoring_rubric",
-        "business_config",
-        "conversation_result",
-        "output_schema",
-    ),
+    variables=("runtime_context", "output_schema"),
     content="""你是严谨的外呼对话评测员。请基于评分量表和完整对话，对单个 case 做可解释、可量化评分。
 
 要求：
@@ -301,23 +270,8 @@ CASE_EVALUATION_PROMPT = PromptSpec(
 - 不要用关键词命中即判定通过，要按语义和证据要求判断。
 - 输出必须符合 JSON schema，不要输出总分；总分由程序汇总计算。
 
-评测标准原文：
-{{ eval_standard_text }}
-
-场景资产：
-{{ scene_asset }}
-
-覆盖计划：
-{{ coverage_plan }}
-
-评分量表：
-{{ scoring_rubric }}
-
-业务配置：
-{{ business_config }}
-
-单 case 对话结果：
-{{ conversation_result }}
+运行上下文：
+{{ runtime_context }}
 
 JSON schema：
 {{ output_schema }}
@@ -329,35 +283,23 @@ USER_TURN_PROMPT = PromptSpec(
     name="dialogue-eval-user-turn",
     role="user",
     description="用户模拟器根据画像、case card、状态和历史生成下一句用户回复。",
-    variables=("scene_asset", "user_profile", "case_card", "conversation_state", "history", "output_schema"),
+    variables=("runtime_context", "output_schema"),
     content="""你是外呼场景中的真实用户模拟器。
 
 要求：
 - 只扮演用户，不扮演客服，不评价客服。
-- 根据隐藏画像、case card、当前状态、客服上一句和完整历史生成下一句自然用户回复。
+- 根据运行上下文中的隐藏画像、隐藏用户状态、当前状态、客服上一句和历史生成下一句自然用户回复。
 - 每次只说一句用户会说的话。
 - 不主动暴露全部隐藏信息。
 - 不帮助客服完成任务。
-- 不提到 coverage、测试点、评测、case card、隐藏配置等内部词。
+- 不提到 coverage、测试点、评测、case card、隐藏配置、运行上下文等内部词。
 - 如果客服原样说出 X/Y/Z/W/${...} 这类模板占位符，应表现出真实用户的不理解或追问。
 - 如果客服解释清楚，可以更配合；如果客服答非所问、太长、施压或违规承诺，应按 behavior_policy 反应。
 - 不要输出固定模板句；表达必须符合画像和上下文。
 - 输出 JSON，visible_reply 是真正要说给客服的话。
 
-场景资产：
-{{ scene_asset }}
-
-隐藏用户画像：
-{{ user_profile }}
-
-隐藏 case card：
-{{ case_card }}
-
-当前用户状态：
-{{ conversation_state }}
-
-对话历史：
-{{ history }}
+运行上下文：
+{{ runtime_context }}
 
 JSON schema：
 {{ output_schema }}
@@ -369,14 +311,7 @@ COVERAGE_JUDGE_PROMPT = PromptSpec(
     name="dialogue-eval-coverage-judge",
     role="user",
     description="覆盖率判定器根据 coverage plan 和对话历史判断目标触发情况。",
-    variables=(
-        "coverage_plan",
-        "scene_asset",
-        "case_card",
-        "current_triggered_targets",
-        "history",
-        "output_schema",
-    ),
+    variables=("runtime_context", "output_schema"),
     content="""你是覆盖率判定器。请根据 coverage plan 的自然语言定义和证据要求，判断当前对话已经触发哪些目标。
 
 要求：
@@ -387,20 +322,8 @@ COVERAGE_JUDGE_PROMPT = PromptSpec(
 - 只输出当前 case 的 coverage_targets 中相关的结果。
 - 输出 JSON。
 
-场景资产：
-{{ scene_asset }}
-
-覆盖计划：
-{{ coverage_plan }}
-
-当前 case：
-{{ case_card }}
-
-当前已触发目标：
-{{ current_triggered_targets }}
-
-对话历史：
-{{ history }}
+运行上下文：
+{{ runtime_context }}
 
 JSON schema：
 {{ output_schema }}

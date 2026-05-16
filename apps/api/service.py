@@ -13,8 +13,11 @@ from dialogue_simulator.cli import (
     make_run_id,
 )
 from dialogue_simulator.eval_standard_loader import (
+    extract_markdown_from_csv,
     extract_markdown_from_excel,
+    is_csv_path,
     is_excel_path,
+    is_tabular_path,
 )
 from dialogue_simulator.graph import (
     build_asset_generation_graph,
@@ -23,12 +26,33 @@ from dialogue_simulator.graph import (
 )
 from dialogue_simulator.llm_client import FakeLLMClient, OpenAICompatibleClient
 from dialogue_simulator.prompt_store import prompt_status, sync_default_prompts
+from dialogue_simulator.registry import (
+    asset_version_for_dir,
+    complete_experiment,
+    create_experiment,
+    find_task_instruction_by_hash,
+    experiment_exists,
+    list_datasets as registry_list_datasets,
+    list_experiments as registry_list_experiments,
+    record_asset_version,
+    record_case_run,
+    record_dataset,
+    record_llm_calls,
+    record_task_instruction,
+    registry_status,
+)
 from dialogue_simulator.report_exporter import (
     export_evaluation_reports,
     export_llm_call_records,
     export_run_reports,
 )
-from dialogue_simulator.schemas import BusinessConfig, ConversationResult, ModelConfig
+from dialogue_simulator.schemas import (
+    BusinessConfig,
+    CaseEvaluationResult,
+    ConversationResult,
+    LLMCallRecord,
+    ModelConfig,
+)
 from dialogue_simulator.storage import read_structured_file
 from dialogue_simulator.tracing import trace_span, tracing_status
 
@@ -118,7 +142,98 @@ def health() -> dict[str, Any]:
         "project_root": str(PROJECT_ROOT),
         "assets_root": str(_resolve_path(DEFAULT_ASSETS_ROOT)),
         "runs_root": str(_resolve_path(DEFAULT_RUNS_ROOT)),
+        "registry": registry_status(),
         "tracing": tracing_status(),
+    }
+
+
+def get_registry_status() -> dict[str, Any]:
+    return registry_status()
+
+
+def list_registry_datasets() -> list[dict[str, Any]]:
+    return registry_list_datasets()
+
+
+def list_registry_experiments() -> list[dict[str, Any]]:
+    return registry_list_experiments()
+
+
+def index_existing_outputs() -> dict[str, Any]:
+    asset_root = _resolve_path(DEFAULT_ASSETS_ROOT)
+    run_root = _resolve_path(DEFAULT_RUNS_ROOT)
+    asset_versions: dict[str, str] = {}
+    indexed_assets = 0
+    indexed_runs = 0
+    indexed_cases = 0
+    indexed_llm_calls = 0
+
+    if asset_root.exists():
+        for asset_dir in sorted(path for path in asset_root.iterdir() if path.is_dir()):
+            try:
+                assets = load_generated_assets(asset_dir)
+            except Exception:
+                continue
+            asset_version_id = _ensure_asset_version(asset_dir, assets)
+            asset_versions[assets.scene_asset.scene_id] = asset_version_id
+            indexed_assets += 1
+
+    if run_root.exists():
+        for run_dir in sorted(path for path in run_root.iterdir() if path.is_dir()):
+            conversations = load_conversation_results_safe(run_dir / "conversation_log.jsonl")
+            if not conversations:
+                continue
+            scene_id = conversations[0].scene_id
+            asset_dir = asset_root / scene_id
+            asset_version_id = asset_versions.get(scene_id, "")
+            if not asset_version_id and asset_dir.is_dir():
+                try:
+                    asset_version_id = _ensure_asset_version(asset_dir, load_generated_assets(asset_dir))
+                except Exception:
+                    asset_version_id = ""
+            experiment_id = f"exp_{run_dir.name}"
+            existing_experiment = experiment_exists(experiment_id)
+            if not existing_experiment:
+                create_experiment(
+                    experiment_id=experiment_id,
+                    run_id=run_dir.name,
+                    asset_version_id=asset_version_id,
+                    scene_id=scene_id,
+                    run_dir=run_dir,
+                    metadata={"indexed_from_outputs": True},
+                )
+            evaluations = load_case_evaluations_safe(run_dir / "case_evaluation.jsonl")
+            evaluation_map = {item.case_id: item for item in evaluations}
+            for conversation in conversations:
+                record_case_run(
+                    experiment_id=experiment_id,
+                    asset_version_id=asset_version_id,
+                    conversation=conversation,
+                    evaluation=evaluation_map.get(conversation.case_id),
+                    run_dir=run_dir,
+                )
+                indexed_cases += 1
+            records = load_llm_call_records_safe(run_dir / "llm_calls.jsonl")
+            if records:
+                record_llm_calls(records=records, experiment_id=experiment_id, run_id=run_dir.name)
+                indexed_llm_calls += len(records)
+            if not existing_experiment:
+                complete_experiment(
+                    experiment_id=experiment_id,
+                    metadata={
+                        "indexed_from_outputs": True,
+                        "cases": len(conversations),
+                        "llm_calls": len(records),
+                    },
+                )
+            indexed_runs += 1
+
+    return {
+        "indexed_assets": indexed_assets,
+        "indexed_runs": indexed_runs,
+        "indexed_cases": indexed_cases,
+        "indexed_llm_calls": indexed_llm_calls,
+        "registry": registry_status(),
     }
 
 
@@ -157,13 +272,22 @@ def sync_prompts(request: SyncPromptsRequest) -> dict[str, Any]:
 
 
 def extract_eval_standards(request: ExtractEvalStandardsRequest) -> dict[str, Any]:
-    items = extract_markdown_from_excel(
-        _resolve_path(request.excel_path),
-        _resolve_path(request.output_dir),
-        column=request.excel_column,
-        start_row=request.excel_start_row,
-        sheet_name=request.excel_sheet,
-    )
+    source_path = _resolve_path(request.excel_path)
+    if is_csv_path(source_path):
+        items = extract_markdown_from_csv(
+            source_path,
+            _resolve_path(request.output_dir),
+            column=request.excel_column,
+            start_row=request.excel_start_row,
+        )
+    else:
+        items = extract_markdown_from_excel(
+            source_path,
+            _resolve_path(request.output_dir),
+            column=request.excel_column,
+            start_row=request.excel_start_row,
+            sheet_name=request.excel_sheet,
+        )
     return {
         "count": len(items),
         "items": [
@@ -184,16 +308,25 @@ def generate_assets(request: GenerateAssetsRequest) -> dict[str, Any]:
     eval_standard_paths, extracted_items = _resolve_eval_standard_paths(request)
     asset_summaries: list[dict[str, Any]] = []
     output_root = _resolve_path(request.output_root)
+    dataset_id = _record_dataset_for_generation(request)
+    extracted_by_path = {str(_resolve_path(item["output_path"])): item for item in extracted_items}
 
     with trace_span(
         "api.generate_assets",
         attributes={
             "dialogue_eval.operation": "generate_assets",
             "dialogue_eval.eval_standard_count": len(eval_standard_paths),
+            "dialogue_eval.dataset_id": dataset_id,
         },
         input_data=request,
+        metadata={"dataset_id": dataset_id},
     ) as span:
         for eval_standard_path in eval_standard_paths:
+            task_instruction_id = _record_task_instruction_for_path(
+                dataset_id=dataset_id,
+                eval_standard_path=eval_standard_path,
+                extracted_item=extracted_by_path.get(str(eval_standard_path)),
+            )
             llm = _build_llm(
                 fake_llm=request.fake_llm,
                 role="asset_generator",
@@ -205,13 +338,30 @@ def generate_assets(request: GenerateAssetsRequest) -> dict[str, Any]:
                     "eval_standard_path": str(eval_standard_path),
                     "business_config_path": _optional_path_str(request.business_config_path),
                     "generation_policy_path": _optional_path_str(request.generation_policy_path),
+                    "dataset_id": dataset_id,
+                    "task_instruction_id": task_instruction_id,
                 }
             )
             asset_dir = Path(result["asset_dir"])
             export_llm_call_records(get_call_records([llm]), asset_dir)
-            asset_summaries.append(summarize_asset_dir(asset_dir))
+            assets = load_generated_assets(asset_dir)
+            asset_version_id = record_asset_version(
+                asset_dir=asset_dir,
+                assets=assets,
+                task_instruction_id=task_instruction_id,
+            )
+            summary = summarize_asset_dir(asset_dir)
+            summary.update(
+                {
+                    "dataset_id": dataset_id,
+                    "task_instruction_id": task_instruction_id,
+                    "asset_version_id": asset_version_id,
+                }
+            )
+            asset_summaries.append(summary)
 
         output = {
+            "dataset_id": dataset_id,
             "count": len(asset_summaries),
             "assets": asset_summaries,
             "extracted_eval_standards": extracted_items,
@@ -224,6 +374,7 @@ def run_evaluation(request: RunEvaluationRequest) -> dict[str, Any]:
     asset_dir = _resolve_asset_dir(scene_id=request.scene_id, assets_path=request.assets_path)
     assets = load_generated_assets(asset_dir)
     business_config = _load_business_config(request.business_config_path)
+    asset_version_id = _ensure_asset_version(asset_dir, assets)
 
     agent_llm = _build_llm(
         fake_llm=request.fake_llm,
@@ -252,6 +403,7 @@ def run_evaluation(request: RunEvaluationRequest) -> dict[str, Any]:
 
     output_root = _resolve_path(request.output_root)
     run_id = make_run_id(assets.scene_asset.scene_id, output_root)
+    experiment_id = f"exp_{run_id}"
     output_dir = output_root / run_id
     case_cards = (
         assets.case_cards.cases[: request.limit]
@@ -263,36 +415,67 @@ def run_evaluation(request: RunEvaluationRequest) -> dict[str, Any]:
         user_llm=user_llm,
         judge_llm=judge_llm,
     )
+    create_experiment(
+        experiment_id=experiment_id,
+        run_id=run_id,
+        asset_version_id=asset_version_id,
+        scene_id=assets.scene_asset.scene_id,
+        run_dir=output_dir,
+        model_config_path=request.model_config_path,
+        business_config_path=request.business_config_path or "",
+        limit_count=request.limit,
+        skip_evaluation=request.skip_evaluation,
+        fake_llm=request.fake_llm,
+        metadata={"asset_dir": str(asset_dir)},
+    )
 
     results: list[ConversationResult] = []
+    records: list[Any] = []
     with trace_span(
         "api.run_evaluation",
         attributes={
             "dialogue_eval.operation": "run_evaluation",
+            "dialogue_eval.experiment_id": experiment_id,
             "dialogue_eval.run_id": run_id,
             "dialogue_eval.scene_id": assets.scene_asset.scene_id,
+            "dialogue_eval.asset_version_id": asset_version_id,
             "dialogue_eval.case_count": len(case_cards),
         },
         input_data=request,
         session_id=run_id,
-        metadata={"scene_id": assets.scene_asset.scene_id},
+        metadata={
+            "experiment_id": experiment_id,
+            "asset_version_id": asset_version_id,
+            "run_id": run_id,
+            "scene_id": assets.scene_asset.scene_id,
+        },
     ) as run_span:
         for index, case_card in enumerate(case_cards, start=1):
             with trace_span(
                 "case.run",
                 attributes={
+                    "dialogue_eval.experiment_id": experiment_id,
                     "dialogue_eval.run_id": run_id,
+                    "dialogue_eval.asset_version_id": asset_version_id,
                     "dialogue_eval.case_id": case_card.case_id,
                     "dialogue_eval.scene_id": case_card.scene_id,
                     "dialogue_eval.case_index": index,
                 },
                 input_data=case_card,
                 session_id=run_id,
-                metadata={"case_id": case_card.case_id, "scene_id": case_card.scene_id},
+                metadata={
+                    "experiment_id": experiment_id,
+                    "asset_version_id": asset_version_id,
+                    "run_id": run_id,
+                    "case_id": case_card.case_id,
+                    "scene_id": case_card.scene_id,
+                },
             ) as case_span:
                 result = graph.invoke(
                     {
                         "run_id": run_id,
+                        "experiment_id": experiment_id,
+                        "asset_version_id": asset_version_id,
                         "scene_asset": assets.scene_asset,
                         "coverage_plan": assets.coverage_plan,
                         "user_profiles": assets.user_profiles,
@@ -314,27 +497,48 @@ def run_evaluation(request: RunEvaluationRequest) -> dict[str, Any]:
 
         export_run_reports(results, output_dir)
         evaluation_count = 0
+        evaluations = []
         if evaluator_llm is not None:
             evaluations = evaluate_results(
                 evaluator_llm=evaluator_llm,
                 assets=assets,
                 results=results,
                 business_config=business_config,
+                experiment_id=experiment_id,
+                asset_version_id=asset_version_id,
             )
             evaluation_count = len(evaluations)
             export_evaluation_reports(evaluations, output_dir, conversations=results)
 
-        export_llm_call_records(
-            get_call_records([agent_llm, user_llm, judge_llm, evaluator_llm]),
-            output_dir,
-        )
+        records = get_call_records([agent_llm, user_llm, judge_llm, evaluator_llm])
+        export_llm_call_records(records, output_dir)
+        evaluation_map = {item.case_id: item for item in evaluations}
+        for conversation in results:
+            record_case_run(
+                experiment_id=experiment_id,
+                asset_version_id=asset_version_id,
+                conversation=conversation,
+                evaluation=evaluation_map.get(conversation.case_id),
+                run_dir=output_dir,
+            )
+        record_llm_calls(records=records, experiment_id=experiment_id, run_id=run_id)
         summary = summarize_run_dir(output_dir)
         summary.update(
             {
+                "experiment_id": experiment_id,
+                "asset_version_id": asset_version_id,
                 "asset_dir": str(asset_dir),
                 "cases_run": len(results),
                 "cases_evaluated": evaluation_count,
             }
+        )
+        complete_experiment(
+            experiment_id=experiment_id,
+            metadata={
+                "cases_run": len(results),
+                "cases_evaluated": evaluation_count,
+                "llm_call_count": len(records),
+            },
         )
         run_span.set_output(summary)
         return summary
@@ -347,33 +551,82 @@ def evaluate_existing_run(request: EvaluateRunRequest) -> dict[str, Any]:
     asset_dir = _resolve_asset_dir(scene_id=request.scene_id, assets_path=request.assets_path)
     run_dir = _resolve_path(request.run_dir)
     assets = load_generated_assets(asset_dir)
+    asset_version_id = _ensure_asset_version(asset_dir, assets)
     results = load_conversation_results(run_dir / "conversation_log.jsonl")
     business_config = _load_business_config(request.business_config_path)
+    experiment_id = f"eval_{run_dir.name}"
     evaluator_llm = _build_llm(
         fake_llm=request.fake_llm,
         role="evaluator",
         model_config_path=request.model_config_path,
     )
+    create_experiment(
+        experiment_id=experiment_id,
+        run_id=run_dir.name,
+        asset_version_id=asset_version_id,
+        scene_id=assets.scene_asset.scene_id,
+        run_dir=run_dir,
+        model_config_path=request.model_config_path,
+        business_config_path=request.business_config_path or "",
+        skip_evaluation=False,
+        fake_llm=request.fake_llm,
+        metadata={"mode": "evaluate_existing_run", "asset_dir": str(asset_dir)},
+    )
     with trace_span(
         "api.evaluate_existing_run",
         attributes={
             "dialogue_eval.operation": "evaluate_existing_run",
+            "dialogue_eval.experiment_id": experiment_id,
             "dialogue_eval.run_id": run_dir.name,
+            "dialogue_eval.asset_version_id": asset_version_id,
             "dialogue_eval.case_count": len(results),
         },
         input_data=request,
         session_id=run_dir.name,
+        metadata={
+            "experiment_id": experiment_id,
+            "asset_version_id": asset_version_id,
+            "run_id": run_dir.name,
+            "scene_id": assets.scene_asset.scene_id,
+        },
     ) as span:
         evaluations = evaluate_results(
             evaluator_llm=evaluator_llm,
             assets=assets,
             results=results,
             business_config=business_config,
+            experiment_id=experiment_id,
+            asset_version_id=asset_version_id,
         )
         export_evaluation_reports(evaluations, run_dir, conversations=results)
-        export_llm_call_records(get_call_records([evaluator_llm]), run_dir)
+        records = get_call_records([evaluator_llm])
+        export_llm_call_records(records, run_dir)
+        evaluation_map = {item.case_id: item for item in evaluations}
+        for conversation in results:
+            record_case_run(
+                experiment_id=experiment_id,
+                asset_version_id=asset_version_id,
+                conversation=conversation,
+                evaluation=evaluation_map.get(conversation.case_id),
+                run_dir=run_dir,
+            )
+        record_llm_calls(records=records, experiment_id=experiment_id, run_id=run_dir.name)
         summary = summarize_run_dir(run_dir)
-        summary.update({"asset_dir": str(asset_dir), "cases_evaluated": len(evaluations)})
+        summary.update(
+            {
+                "experiment_id": experiment_id,
+                "asset_version_id": asset_version_id,
+                "asset_dir": str(asset_dir),
+                "cases_evaluated": len(evaluations),
+            }
+        )
+        complete_experiment(
+            experiment_id=experiment_id,
+            metadata={
+                "cases_evaluated": len(evaluations),
+                "llm_call_count": len(records),
+            },
+        )
         span.set_output(summary)
         return summary
 
@@ -497,6 +750,43 @@ def read_case_report(run_id: str, case_id: str) -> str:
     return _read_existing_text(path)
 
 
+def load_conversation_results_safe(path: Path) -> list[ConversationResult]:
+    if not path.is_file():
+        return []
+    try:
+        return load_conversation_results(path)
+    except Exception:
+        return []
+
+
+def load_case_evaluations_safe(path: Path) -> list[CaseEvaluationResult]:
+    if not path.is_file():
+        return []
+    items: list[CaseEvaluationResult] = []
+    for line in path.read_text(encoding="utf-8").splitlines():
+        if not line.strip():
+            continue
+        try:
+            items.append(CaseEvaluationResult.model_validate_json(line))
+        except Exception:
+            continue
+    return items
+
+
+def load_llm_call_records_safe(path: Path) -> list[LLMCallRecord]:
+    if not path.is_file():
+        return []
+    records: list[LLMCallRecord] = []
+    for line in path.read_text(encoding="utf-8").splitlines():
+        if not line.strip():
+            continue
+        try:
+            records.append(LLMCallRecord.model_validate_json(line))
+        except Exception:
+            continue
+    return records
+
+
 def save_uploaded_file(filename: str, content: bytes) -> dict[str, str]:
     safe_name = _safe_filename(filename)
     upload_dir = _resolve_path(DEFAULT_UPLOAD_ROOT)
@@ -527,8 +817,8 @@ def _resolve_eval_standard_paths(
     if request.eval_standard_file_path:
         path = _resolve_path(request.eval_standard_file_path)
         _ensure_file(path)
-        if is_excel_path(path):
-            return _extract_eval_standards_from_excel(path, request)
+        if is_tabular_path(path):
+            return _extract_eval_standards_from_table(path, request)
         return [path], []
 
     if request.eval_standard_path:
@@ -536,26 +826,38 @@ def _resolve_eval_standard_paths(
         _ensure_file(path)
         return [path], []
 
-    return _extract_eval_standards_from_excel(
+    return _extract_eval_standards_from_table(
         _resolve_path(request.eval_standard_excel_path or ""),
         request,
     )
 
 
-def _extract_eval_standards_from_excel(
-    excel_path: Path,
+def _extract_eval_standards_from_table(
+    table_path: Path,
     request: GenerateAssetsRequest,
 ) -> tuple[list[Path], list[dict[str, Any]]]:
-    extracted = extract_markdown_from_excel(
-        excel_path,
-        _resolve_path(request.extracted_output_dir),
-        column=request.excel_column,
-        start_row=request.excel_start_row,
-        sheet_name=request.excel_sheet,
-    )
+    if is_csv_path(table_path):
+        extracted = extract_markdown_from_csv(
+            table_path,
+            _resolve_path(request.extracted_output_dir),
+            column=request.excel_column,
+            start_row=request.excel_start_row,
+        )
+        source_type = "csv"
+    else:
+        extracted = extract_markdown_from_excel(
+            table_path,
+            _resolve_path(request.extracted_output_dir),
+            column=request.excel_column,
+            start_row=request.excel_start_row,
+            sheet_name=request.excel_sheet,
+        )
+        source_type = "excel"
     items = [
         {
             "source_excel_path": item.source_excel_path,
+            "source_file_path": item.source_excel_path,
+            "source_type": source_type,
             "source_sheet": item.source_sheet,
             "source_row": item.source_row,
             "source_column": item.source_column,
@@ -565,6 +867,70 @@ def _extract_eval_standards_from_excel(
         for item in extracted
     ]
     return [Path(item.output_path) for item in extracted], items
+
+
+def _record_dataset_for_generation(request: GenerateAssetsRequest) -> str:
+    source_path = (
+        request.eval_standard_file_path
+        or request.eval_standard_path
+        or request.eval_standard_excel_path
+        or ""
+    )
+    resolved = _resolve_path(source_path)
+    if is_csv_path(resolved):
+        source_type = "csv"
+    elif is_excel_path(resolved):
+        source_type = "excel"
+    else:
+        source_type = "markdown"
+    return record_dataset(
+        source_path=resolved,
+        source_type=source_type,
+        metadata={
+            "excel_column": request.excel_column,
+            "excel_start_row": request.excel_start_row,
+            "excel_sheet": request.excel_sheet or "",
+        },
+    )
+
+
+def _record_task_instruction_for_path(
+    *,
+    dataset_id: str,
+    eval_standard_path: Path,
+    extracted_item: dict[str, Any] | None,
+) -> str:
+    extracted_item = extracted_item or {}
+    return record_task_instruction(
+        dataset_id=dataset_id,
+        markdown_path=eval_standard_path,
+        source_row=extracted_item.get("source_row"),
+        source_column=extracted_item.get("source_column"),
+        source_sheet=extracted_item.get("source_sheet") or "",
+        title=extracted_item.get("title") or "",
+        metadata=extracted_item,
+    )
+
+
+def _ensure_asset_version(asset_dir: Path, assets) -> str:
+    existing = asset_version_for_dir(asset_dir)
+    if existing:
+        return existing
+    input_hash = assets.scene_asset.generation_metadata.input_hash
+    task_instruction_id = find_task_instruction_by_hash(input_hash)
+    if not task_instruction_id and assets.scene_asset.source_eval_standard_path:
+        source = Path(assets.scene_asset.source_eval_standard_path)
+        if source.is_file():
+            dataset_id = record_dataset(source_path=source, source_type="markdown")
+            task_instruction_id = record_task_instruction(
+                dataset_id=dataset_id,
+                markdown_path=source,
+            )
+    return record_asset_version(
+        asset_dir=asset_dir,
+        assets=assets,
+        task_instruction_id=task_instruction_id,
+    )
 
 
 def _resolve_asset_dir(*, scene_id: str | None, assets_path: str | None) -> Path:

@@ -20,6 +20,8 @@ from dialogue_simulator.tracing import setup_tracing, shutdown_tracing
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     setup_tracing("dialogue-eval-api")
+    service.get_registry_status()
+    service.index_existing_outputs()
     try:
         yield
     finally:
@@ -67,6 +69,38 @@ def extract_eval_standards(request: ExtractEvalStandardsRequest):
 def get_prompt_status():
     try:
         return service.get_prompt_status()
+    except Exception as exc:
+        raise _http_error(exc) from exc
+
+
+@app.get("/registry/status")
+def get_registry_status():
+    try:
+        return service.get_registry_status()
+    except Exception as exc:
+        raise _http_error(exc) from exc
+
+
+@app.get("/registry/datasets")
+def list_registry_datasets():
+    try:
+        return {"datasets": service.list_registry_datasets()}
+    except Exception as exc:
+        raise _http_error(exc) from exc
+
+
+@app.get("/registry/experiments")
+def list_registry_experiments():
+    try:
+        return {"experiments": service.list_registry_experiments()}
+    except Exception as exc:
+        raise _http_error(exc) from exc
+
+
+@app.post("/registry/index-existing")
+def index_existing_outputs():
+    try:
+        return service.index_existing_outputs()
     except Exception as exc:
         raise _http_error(exc) from exc
 

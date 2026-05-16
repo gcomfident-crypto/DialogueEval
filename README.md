@@ -23,24 +23,33 @@ export DEEPSEEK_API_KEY="your_api_key"
 
 ## WebUI 与 Docker Compose
 
-本项目提供一个最小可展示版本：
+本项目提供一个中期可展示版本：
 
 - `apps/api`：FastAPI 后端，负责资产生成、运行评测、报告读取和文件上传。
-- `apps/web`：Streamlit 展示端，负责 Dashboard、生成资产、运行评测、查看总报告与 case 子报告、查看模型调用记录。
-- `docker-compose.yml`：一键启动 API 与 WebUI。
+- `apps/web`：Next.js 展示端，负责工作台、新建评测、报告中心、场景资产、实验库和系统设置。
+- `docker-compose.yml`：一键启动 Postgres、Phoenix、API 与 WebUI。
 
-本地直接启动：
-
-```bash
-uvicorn apps.api.main:app --host 127.0.0.1 --port 8000
-STREAMLIT_BROWSER_GATHER_USAGE_STATS=false streamlit run apps/web/streamlit_app.py --server.address 127.0.0.1 --server.port 8501 --server.headless true
-```
-
-Docker Compose 启动：
+推荐使用 Docker Compose 启动：
 
 ```bash
 docker compose up --build
 ```
+
+如果需要本地开发前端，可以单独启动 API 和 Next.js：
+
+```bash
+uvicorn apps.api.main:app --host 127.0.0.1 --port 8000
+cd apps/web
+npm install
+npm run dev -- --hostname 127.0.0.1 --port 8501
+```
+
+Compose 会启动：
+
+- `postgres`：Phoenix 的持久化数据库，默认创建 `phoenix` 和预留的 `dialogue_eval` 数据库。
+- `phoenix`：Trace、Prompts 和调试 UI，默认使用 `PHOENIX_SQL_DATABASE_URL` 连接 Postgres。
+- `api`：DialogueEval FastAPI 服务，默认维护 `outputs/dialogue_eval_registry.sqlite3` 作为业务实验注册表。
+- `web`：Next.js 展示端，通过 `/api/backend/*` 代理访问 FastAPI。
 
 访问：
 
@@ -48,15 +57,16 @@ docker compose up --build
 - WebUI：http://127.0.0.1:8501
 - Phoenix Trace UI：http://127.0.0.1:6006
 
-WebUI 只需要上传任务模板文件。系统会自动识别 Markdown 或 Excel；Excel 默认读取第 2 列、第 2 行之后的 Markdown。
+WebUI 只需要上传任务模板文件。系统会自动识别 Markdown、CSV 或 Excel；CSV/Excel 默认读取第 2 列、第 2 行之后的 Markdown。
 
 同一份任务模板会按输入内容 hash 复用已有资产目录；重复上传或重复生成时会更新原资产，不会再新增一个同任务场景。
 
 ## Phoenix Trace
 
-Docker Compose 会同时启动 `phoenix`、`api`、`web` 三个服务。API 默认开启 tracing，并把 trace 发送到 Phoenix：
+Docker Compose 会同时启动 `postgres`、`phoenix`、`api`、`web` 四个服务。API 默认开启 tracing，并把 trace 发送到 Phoenix：
 
 ```text
+PHOENIX_SQL_DATABASE_URL=postgresql://dialogueeval:dialogueeval@postgres:5432/phoenix
 PHOENIX_COLLECTOR_ENDPOINT=http://phoenix:6006/v1/traces
 PHOENIX_PROJECT_NAME=dialogue-eval
 DIALOGUE_EVAL_TRACING_ENABLED=true
@@ -70,7 +80,14 @@ DIALOGUE_EVAL_TRACING_ENABLED=true
 - `case.run`：单个 case 的运行根节点。
 - `conversation.*`：AI 客服轮次、AI 用户轮次、coverage judge、状态更新、case 收尾。
 - `case.evaluate` 和 `evaluation.*`：单 case 评分、维度评分聚合。
-- `llm.*`：所有模型调用，包含 task、role、model、latency、token 统计和输入输出内容。
+- `llm.*`：所有模型调用，包含 task、role、model、latency、token 统计、输入输出摘要、字符数和 hash。
+
+LLM trace 默认使用摘要模式，Phoenix 里展示每条 message 的角色、长度、短预览和 `prompt_hash`，避免把完整大段提示词铺在 trace 页面里。模型真实收到的 prompt 不受影响。
+
+```bash
+# summary: 默认摘要；full: 记录完整 messages；off: 只记录长度和 hash
+DIALOGUE_EVAL_TRACE_LLM_MESSAGES=summary docker compose up --build
+```
 
 如果不想采集提示词和模型输出内容，可以关闭内容采集：
 
@@ -85,6 +102,29 @@ export DIALOGUE_EVAL_TRACING_ENABLED=true
 export PHOENIX_COLLECTOR_ENDPOINT=http://127.0.0.1:6006/v1/traces
 export PHOENIX_PROJECT_NAME=dialogue-eval
 ```
+
+## DialogueEval 实验库
+
+Phoenix 用来观察 trace 和管理 prompt；DialogueEval 自己维护业务实验注册表，用于复现和汇总。
+
+默认数据库：
+
+```text
+outputs/dialogue_eval_registry.sqlite3
+```
+
+核心实体：
+
+```text
+datasets              # 上传的 CSV/Excel/Markdown 输入文件
+task_instructions     # 每一条 Markdown 任务指令，按内容 hash 去重
+asset_versions        # 由任务指令生成的 scene_asset/coverage_plan/user_profiles/case_cards/scoring_rubric 资产版本
+experiments           # 一次批量或单场景运行
+case_runs             # 每个 case 的对话和评分结果
+llm_calls             # 每次模型调用的摘要、token、hash、成功/失败信息
+```
+
+运行时会把 `experiment_id`、`asset_version_id`、`run_id`、`case_id`、`scene_id` 写入 Phoenix trace metadata。WebUI 的“实验库”页面可查看 registry 中沉淀的数据。
 
 ## Phoenix Prompts
 
@@ -128,7 +168,13 @@ dialogue-eval-case-evaluation
 export DIALOGUE_EVAL_PROMPTS_STRICT=true
 ```
 
-Phoenix prompt 模板使用 Mustache 变量，例如 `{{ scene_asset }}`、`{{ history }}`、`{{ output_schema }}`。在 Phoenix 上编辑提示词时，应保留当前 prompt 所需变量名，否则运行时对应内容会渲染为空。
+Phoenix prompt 模板使用 Mustache 变量。在 Phoenix 上编辑提示词时，应保留当前 prompt 所需变量名，否则运行时对应内容会渲染为空。
+
+运行时对话和评测类 prompt 已通过 `dialogue_simulator/runtime_context.py` 先编译为角色相关上下文：
+
+- `dialogue-eval-agent-turn`、`dialogue-eval-user-turn`、`dialogue-eval-coverage-judge`、`dialogue-eval-case-evaluation` 使用 `{{ runtime_context }}` 和 `{{ output_schema }}`。
+- 资产生成类 prompt 仍使用各自的资产生成变量，例如 `{{ eval_standard_text }}`、`{{ scene_asset }}`、`{{ coverage_plan }}`。
+- 用户模型的 `runtime_context` 不包含 coverage targets，客服模型只拿当前 case 需要推进的目标定义，judge 只拿当前 case 的目标定义和对话证据。
 
 ## 生成场景资产
 

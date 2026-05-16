@@ -359,13 +359,14 @@ def build_conversation_graph(
             attributes={
                 "dialogue_eval.graph": "conversation",
                 "dialogue_eval.node": "initialize_case",
+                **_conversation_trace_attributes(state),
                 "dialogue_eval.run_id": state["run_id"],
                 "dialogue_eval.case_id": case_card.case_id,
                 "dialogue_eval.scene_id": case_card.scene_id,
             },
             input_data=case_card,
             session_id=state["run_id"],
-            metadata={"case_id": case_card.case_id, "scene_id": case_card.scene_id},
+            metadata=_conversation_trace_metadata(state, case_card),
         ) as span:
             result = {
                 "conversation_state": ConversationState(
@@ -385,6 +386,7 @@ def build_conversation_graph(
             attributes={
                 "dialogue_eval.graph": "conversation",
                 "dialogue_eval.node": "agent_turn",
+                **_conversation_trace_attributes(state),
                 "dialogue_eval.run_id": state["run_id"],
                 "dialogue_eval.case_id": case_card.case_id,
                 "dialogue_eval.turn_index": len(state["history"]) + 1,
@@ -394,7 +396,7 @@ def build_conversation_graph(
                 "history": state["history"],
             },
             session_id=state["run_id"],
-            metadata={"case_id": case_card.case_id, "scene_id": case_card.scene_id},
+            metadata=_conversation_trace_metadata(state, case_card),
         ) as span:
             agent_output = generate_agent_turn(
                 agent_llm,
@@ -432,6 +434,7 @@ def build_conversation_graph(
             attributes={
                 "dialogue_eval.graph": "conversation",
                 "dialogue_eval.node": "user_turn",
+                **_conversation_trace_attributes(state),
                 "dialogue_eval.run_id": state["run_id"],
                 "dialogue_eval.case_id": case_card.case_id,
                 "dialogue_eval.profile_id": profile.profile_id,
@@ -443,7 +446,7 @@ def build_conversation_graph(
                 "user_profile": profile,
             },
             session_id=state["run_id"],
-            metadata={"case_id": case_card.case_id, "scene_id": case_card.scene_id},
+            metadata=_conversation_trace_metadata(state, case_card),
         ) as span:
             user_output = generate_user_turn(
                 user_llm,
@@ -481,6 +484,7 @@ def build_conversation_graph(
             attributes={
                 "dialogue_eval.graph": "conversation",
                 "dialogue_eval.node": "coverage_judge",
+                **_conversation_trace_attributes(state),
                 "dialogue_eval.run_id": state["run_id"],
                 "dialogue_eval.case_id": case_card.case_id,
                 "dialogue_eval.turn_count": len(state["history"]),
@@ -490,7 +494,7 @@ def build_conversation_graph(
                 "current_triggered_targets": state["conversation_state"].triggered_targets,
             },
             session_id=state["run_id"],
-            metadata={"case_id": case_card.case_id, "scene_id": case_card.scene_id},
+            metadata=_conversation_trace_metadata(state, case_card),
         ) as span:
             coverage_output = judge_coverage(
                 judge_llm,
@@ -520,6 +524,7 @@ def build_conversation_graph(
             attributes={
                 "dialogue_eval.graph": "conversation",
                 "dialogue_eval.node": "state_update",
+                **_conversation_trace_attributes(state),
                 "dialogue_eval.run_id": state["run_id"],
                 "dialogue_eval.case_id": case_card.case_id,
             },
@@ -529,7 +534,7 @@ def build_conversation_graph(
                 "coverage_output": state["coverage_output"],
             },
             session_id=state["run_id"],
-            metadata={"case_id": case_card.case_id, "scene_id": case_card.scene_id},
+            metadata=_conversation_trace_metadata(state, case_card),
         ) as span:
             updated = update_conversation_state(
                 state["conversation_state"],
@@ -547,12 +552,13 @@ def build_conversation_graph(
             attributes={
                 "dialogue_eval.graph": "conversation",
                 "dialogue_eval.node": "finalize_case",
+                **_conversation_trace_attributes(state),
                 "dialogue_eval.run_id": state["run_id"],
                 "dialogue_eval.case_id": case_card.case_id,
             },
             input_data={"history": state["history"], "conversation_state": state["conversation_state"]},
             session_id=state["run_id"],
-            metadata={"case_id": case_card.case_id, "scene_id": case_card.scene_id},
+            metadata=_conversation_trace_metadata(state, case_card),
         ) as span:
             conversation_state = state["conversation_state"]
             coverage_output = state.get("coverage_output") or CoverageJudgeOutput()
@@ -714,6 +720,30 @@ def _normalize_scene_ids(state: AssetGenerationState, scene_id: str) -> None:
     state["scoring_rubric"] = state["scoring_rubric"].model_copy(
         update={"scene_id": scene_id}
     )
+
+
+def _conversation_trace_attributes(state: ConversationGraphState) -> dict[str, str]:
+    return {
+        key: value
+        for key, value in {
+            "dialogue_eval.experiment_id": state.get("experiment_id", ""),
+            "dialogue_eval.asset_version_id": state.get("asset_version_id", ""),
+        }.items()
+        if value
+    }
+
+
+def _conversation_trace_metadata(
+    state: ConversationGraphState,
+    case_card,
+) -> dict[str, str]:
+    return {
+        "experiment_id": state.get("experiment_id", ""),
+        "asset_version_id": state.get("asset_version_id", ""),
+        "run_id": state.get("run_id", ""),
+        "case_id": case_card.case_id,
+        "scene_id": case_card.scene_id,
+    }
 
 
 def load_generated_assets(asset_dir: str | Path) -> GeneratedAssets:

@@ -373,13 +373,9 @@ end_reason
 
 - 调用客服 LLM。
 - 客服模型接收：
-  - `scene_asset`
-  - `coverage_plan`
-  - 当前 `case_card`
-  - `business_config`
-  - 当前 `conversation_state`
-  - 完整 `history`
+  - `runtime_context`
   - `AgentTurnOutput` JSON schema
+- `runtime_context` 由 `dialogue_simulator/runtime_context.py::build_agent_runtime_context` 编译，包含场景摘要、客服任务指令、知识点、合规规则、业务配置、当前 case 信息、当前 case 的 coverage 目标定义、对话状态和近期对话历史。
 - 模型必须只扮演客服，并输出结构化 JSON。
 - Graph 把 `visible_reply` 追加到 `history`，形成一条 `TurnRecord(role="agent")`。
 
@@ -410,12 +406,9 @@ LLM 输出 schema：`AgentTurnOutput`
 - 先根据 `case_card.profile_id` 从 `user_profiles` 中取出对应用户画像。
 - 调用用户 LLM。
 - 用户模型接收：
-  - `scene_asset`
-  - 隐藏 `user_profile`
-  - 隐藏 `case_card`
-  - 当前 `conversation_state`
-  - 完整 `history`
+  - `runtime_context`
   - `UserTurnOutput` JSON schema
+- `runtime_context` 由 `dialogue_simulator/runtime_context.py::build_user_runtime_context` 编译，包含场景摘要、隐藏用户画像、隐藏用户状态、行为策略、当前用户状态、客服上一句和近期对话历史；它不包含 coverage targets，避免用户模型看到评测目标。
 - 模型只扮演用户，不评价客服，不暴露内部评测信息。
 - 代码会检查用户可见回复是否包含内部词，例如 `coverage`、`测试点`、`评测`、`case card`、`隐藏配置`。
 - Graph 把 `visible_reply` 追加到 `history`，形成一条 `TurnRecord(role="user")`。
@@ -452,12 +445,9 @@ LLM 输出 schema：`UserTurnOutput`
 
 - 调用 judge LLM。
 - judge 模型接收：
-  - `coverage_plan`
-  - `scene_asset`
-  - 当前 `case_card`
-  - 完整 `history`
-  - 当前已触发的 `triggered_targets`
+  - `runtime_context`
   - `CoverageJudgeOutput` JSON schema
+- `runtime_context` 由 `dialogue_simulator/runtime_context.py::build_judge_runtime_context` 编译，包含场景摘要、当前 case 信息、当前 case 的 coverage 目标定义、已触发目标、剩余目标、合规规则和完整对话历史。
 - 根据 coverage label 的自然语言定义和证据要求做语义判定。
 - 要求输出证据，不允许只给标签。
 - 代码会过滤掉不属于当前 `case_card.coverage_targets` 的标签，避免模型越界判定。
