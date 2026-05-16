@@ -1,0 +1,27 @@
+services:
+  api:
+    build: .
+    command: uvicorn apps.api.main:app --host 0.0.0.0 --port 8000
+    ports:
+      - "8000:8000"
+    environment:
+      DEEPSEEK_API_KEY: ${DEEPSEEK_API_KEY:-}
+    volumes:
+      - ./outputs:/app/outputs
+      - ./configs:/app/configs
+      - ./Resource:/app/Resource
+
+  web:
+    build: .
+    command: streamlit run apps/web/streamlit_app.py --server.address 0.0.0.0 --server.port 8501 --server.headless true
+    ports:
+      - "8501:8501"
+    environment:
+      API_BASE_URL: http://api:8000
+      STREAMLIT_BROWSER_GATHER_USAGE_STATS: "false"
+    volumes:
+      - ./outputs:/app/outputs
+      - ./configs:/app/configs
+      - ./Resource:/app/Resource
+    depends_on:
+      - api

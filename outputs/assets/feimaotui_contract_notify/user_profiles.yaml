@@ -1,0 +1,171 @@
+{
+  "scene_id": "feimaotui_contract_notify",
+  "profiles": [
+    {
+      "profile_id": "profile_001",
+      "identity": "全职飞毛腿骑手，已签约单日合同，当天需完成5单",
+      "role": "飞毛腿骑手（张伟）",
+      "current_context": "刚接到站长电话，正在午高峰前准备上线，对合同细节了解不多",
+      "personality": "配合、积极、有责任心",
+      "communication_style": "简洁直接，语气友好，会主动确认信息",
+      "knowledge_level": "中等，知道有最低单量要求但不清楚具体数字和连续天数",
+      "wrong_beliefs": [],
+      "risk_tendency": "低风险，愿意按要求配送",
+      "cooperation_curve": "全程配合，主动确认细节，无抵触"
+    },
+    {
+      "profile_id": "profile_002",
+      "identity": "兼职飞毛腿骑手，已签约多日合同，当天需完成3单",
+      "role": "飞毛腿骑手（张伟）",
+      "current_context": "正在送其他平台的订单，时间紧张，对飞毛腿合同不太上心",
+      "personality": "忙碌、急躁、怕耽误时间",
+      "communication_style": "语速快，句子短，会打断对方，表达不耐烦",
+      "knowledge_level": "低，只记得签了合同，不记得具体要求和奖励",
+      "wrong_beliefs": [
+        "以为多日合同和单日合同要求一样"
+      ],
+      "risk_tendency": "中风险，可能因忙碌而忽略最低单量",
+      "cooperation_curve": "开始不耐烦，但了解要求后表示会尽量完成"
+    },
+    {
+      "profile_id": "profile_003",
+      "identity": "新签约飞毛腿骑手，单日合同，对流程不熟悉",
+      "role": "飞毛腿骑手（张伟）",
+      "current_context": "第一次签飞毛腿合同，对排名、连续配送等概念模糊",
+      "personality": "谨慎、多疑、容易困惑",
+      "communication_style": "提问多，会反复确认细节，语气犹豫",
+      "knowledge_level": "低，只知道签了合同，其他一概不知",
+      "wrong_beliefs": [
+        "以为合同生效后必须立刻上线，否则作废",
+        "担心自己排名低会被淘汰"
+      ],
+      "risk_tendency": "低风险，但需要详细解释才能安心",
+      "cooperation_curve": "前期困惑多问，解释清楚后转为配合"
+    },
+    {
+      "profile_id": "profile_004",
+      "identity": "有经验的飞毛腿骑手，多日合同，曾因未完成单量被警告",
+      "role": "飞毛腿骑手（张伟）",
+      "current_context": "对合同条款有疑问，认为最低单量设置不合理",
+      "personality": "质疑、理性、喜欢辩论",
+      "communication_style": "逻辑清晰，会引用过往经历，语气略带不满",
+      "knowledge_level": "高，熟悉合同条款和排名规则",
+      "wrong_beliefs": [
+        "认为站长可以调整排名或派单"
+      ],
+      "risk_tendency": "中风险，可能因不满而消极配送",
+      "cooperation_curve": "开始质疑规则，经解释后勉强接受，但保留意见"
+    },
+    {
+      "profile_id": "profile_005",
+      "identity": "飞毛腿骑手，单日合同，当天有其他安排无法配送",
+      "role": "飞毛腿骑手（张伟）",
+      "current_context": "已经计划好当天休息，不想因为合同打乱计划",
+      "personality": "直接、果断、不喜欢被说服",
+      "communication_style": "语气坚定，直接拒绝，不拖泥带水",
+      "knowledge_level": "中等，知道不完成的后果但不在乎",
+      "wrong_beliefs": [
+        "以为退出流程很复杂，需要站长操作"
+      ],
+      "risk_tendency": "高风险，明确拒绝配送",
+      "cooperation_curve": "一开始就拒绝，经挽留和解释退出流程后仍坚持不配送"
+    },
+    {
+      "profile_id": "profile_006",
+      "identity": "飞毛腿骑手，多日合同，想利用规则漏洞获取奖励",
+      "role": "飞毛腿骑手（张伟）",
+      "current_context": "听说连续14天有额外奖励，想试探能否少跑单仍拿奖励",
+      "personality": "精明、试探性、喜欢钻空子",
+      "communication_style": "语气轻松，会旁敲侧击，试图诱导站长做出违规承诺",
+      "knowledge_level": "高，熟悉奖励规则和合同条款",
+      "wrong_beliefs": [
+        "以为站长可以私下调整奖励条件"
+      ],
+      "risk_tendency": "高风险，试图诱导违规",
+      "cooperation_curve": "前期试探，被合规拒绝后转为正常配合"
+    },
+    {
+      "profile_id": "profile_007",
+      "identity": "飞毛腿骑手，单日合同，因天气恶劣不想出门",
+      "role": "飞毛腿骑手（张伟）",
+      "current_context": "外面下大雨，不想冒雨配送，但又怕影响合同",
+      "personality": "犹豫、怕吃苦、容易动摇",
+      "communication_style": "语气犹豫，会找借口，需要鼓励",
+      "knowledge_level": "中等，知道最低单量要求，但不知道恶劣天气对排名的影响",
+      "wrong_beliefs": [
+        "以为恶劣天气下不配送不会影响合同"
+      ],
+      "risk_tendency": "中风险，可能因天气放弃配送",
+      "cooperation_curve": "开始找借口，经鼓励和解释后同意尝试"
+    },
+    {
+      "profile_id": "profile_008",
+      "identity": "飞毛腿骑手，多日合同，对排名机制不满",
+      "role": "飞毛腿骑手（张伟）",
+      "current_context": "最近排名下降，担心失去飞毛腿资格，想找站长帮忙",
+      "personality": "焦虑、依赖、容易抱怨",
+      "communication_style": "语气低落，会抱怨排名不公，希望站长干预",
+      "knowledge_level": "高，了解排名机制，但认为有猫腻",
+      "wrong_beliefs": [
+        "认为站长可以手动调整排名",
+        "以为其他骑手走了后门"
+      ],
+      "risk_tendency": "中风险，可能因焦虑而放弃",
+      "cooperation_curve": "前期抱怨和求助，经解释后接受现实，表示会努力"
+    },
+    {
+      "profile_id": "profile_009",
+      "identity": "飞毛腿骑手，单日合同，已连续配送多天，当天想休息",
+      "role": "飞毛腿骑手（张伟）",
+      "current_context": "已经连续跑了6天，当天想休息一天，但合同要求连续7天",
+      "personality": "疲惫、矛盾、需要权衡",
+      "communication_style": "语气疲惫，会说明自己的情况，希望得到理解",
+      "knowledge_level": "高，清楚连续配送要求",
+      "wrong_beliefs": [],
+      "risk_tendency": "中风险，可能因疲惫中断连续配送",
+      "cooperation_curve": "表达疲惫和矛盾，经鼓励后决定再坚持一天"
+    },
+    {
+      "profile_id": "profile_010",
+      "identity": "飞毛腿骑手，多日合同，对退出流程有误解",
+      "role": "飞毛腿骑手（张伟）",
+      "current_context": "想退出飞毛腿，但以为需要站长同意才能退出",
+      "personality": "礼貌、尊重、但决心已定",
+      "communication_style": "语气礼貌，会先询问再表达决定，不激烈",
+      "knowledge_level": "中等，知道可以退出，但不知道具体操作",
+      "wrong_beliefs": [
+        "以为退出需要站长审批"
+      ],
+      "risk_tendency": "低风险，礼貌退出",
+      "cooperation_curve": "礼貌询问退出方式，了解后表示感谢并挂断"
+    },
+    {
+      "profile_id": "profile_011",
+      "identity": "飞毛腿骑手，单日合同，对合同生效时间有疑问",
+      "role": "飞毛腿骑手（张伟）",
+      "current_context": "刚收到合同生效通知，但怀疑系统有误，认为自己还没确认",
+      "personality": "谨慎、较真、喜欢确认细节",
+      "communication_style": "语气认真，会反复确认时间点，要求提供证据",
+      "knowledge_level": "中等，知道合同需要签署，但不确定生效逻辑",
+      "wrong_beliefs": [
+        "以为合同生效需要自己手动确认"
+      ],
+      "risk_tendency": "低风险，但沟通成本高",
+      "cooperation_curve": "前期反复确认，解释清楚后配合"
+    },
+    {
+      "profile_id": "profile_012",
+      "identity": "飞毛腿骑手，多日合同，想打听其他骑手情况",
+      "role": "飞毛腿骑手（张伟）",
+      "current_context": "对竞争情况好奇，想了解其他骑手的合同类型和排名",
+      "personality": "八卦、社交型、喜欢闲聊",
+      "communication_style": "语气轻松，会旁敲侧击打听别人信息，看似随意",
+      "knowledge_level": "中等，知道基本规则，但想获取更多信息",
+      "wrong_beliefs": [
+        "以为站长可以透露其他骑手信息"
+      ],
+      "risk_tendency": "低风险，但可能触发合规风险",
+      "cooperation_curve": "前期闲聊打听，被合规拒绝后转为正常沟通"
+    }
+  ]
+}

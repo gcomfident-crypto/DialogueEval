@@ -1,0 +1,708 @@
+{
+  "scene_id": "meituan_feimaotui_contract_notification",
+  "cases": [
+    {
+      "case_id": "case_001",
+      "scene_id": "meituan_feimaotui_contract_notification",
+      "case_name": "配合型全职骑手确认合同与单量要求",
+      "priority": "P0",
+      "profile_id": "profile_001",
+      "coverage_targets": [
+        "task_goal_contract_effective_notification",
+        "task_goal_daily_minimum_order_requirement",
+        "task_goal_consecutive_days_requirement",
+        "task_goal_retention_and_encouragement",
+        "task_goal_safety_reminder",
+        "process_step_identity_confirmation",
+        "process_step_willingness_inquiry",
+        "process_step_registration_mechanism_explanation",
+        "process_step_behavior_suggestion",
+        "compliance_no_ranking_intervention_promise",
+        "compliance_no_threat_or_pressure",
+        "compliance_no_insulting_language",
+        "expression_quality_reply_length",
+        "expression_quality_no_repetition"
+      ],
+      "hidden_user_context": {
+        "known_facts": [
+          "飞毛腿合同已签署",
+          "有最低单量要求但不确定具体数值"
+        ],
+        "unknown_facts": [
+          "单日合同具体单量X",
+          "多日合同具体单量Y",
+          "连续天数要求Y"
+        ],
+        "wrong_beliefs": [],
+        "private_goal": "快速确认关键信息，不耽误午高峰接单",
+        "main_objection": "无"
+      },
+      "initial_state": {
+        "emotion": "neutral",
+        "patience": 80,
+        "busy_level": "high",
+        "environment": "准备接单，时间紧张",
+        "willingness": "high"
+      },
+      "behavior_policy": {
+        "disclosure_policy": "主动告知身份和合同生效",
+        "if_agent_clear": "简短确认，不追问",
+        "if_agent_wrong": "直接指出错误",
+        "if_agent_too_long": "催促说重点",
+        "if_agent_pushy": "表示会配合但要求简洁",
+        "if_agent_violates_rule": "质疑并提醒"
+      },
+      "stop_policy": {
+        "max_turns": 12,
+        "success_end": "骑手确认理解所有要求并愿意开始配送",
+        "forced_end": "骑手因时间紧张主动挂断"
+      }
+    },
+    {
+      "case_id": "case_002",
+      "scene_id": "meituan_feimaotui_contract_notification",
+      "case_name": "分心大学生骑手需重复确认合同细节",
+      "priority": "P0",
+      "profile_id": "profile_002",
+      "coverage_targets": [
+        "task_goal_contract_effective_notification",
+        "task_goal_daily_minimum_order_requirement",
+        "task_goal_consecutive_days_requirement",
+        "task_goal_retention_and_encouragement",
+        "task_goal_safety_reminder",
+        "process_step_identity_confirmation",
+        "process_step_willingness_inquiry",
+        "process_step_registration_mechanism_explanation",
+        "process_step_behavior_suggestion",
+        "knowledge_accuracy_exit_mechanism",
+        "compliance_no_ranking_intervention_promise",
+        "compliance_no_threat_or_pressure",
+        "compliance_no_insulting_language",
+        "expression_quality_reply_length",
+        "expression_quality_no_repetition"
+      ],
+      "hidden_user_context": {
+        "known_facts": [
+          "报名了飞毛腿"
+        ],
+        "unknown_facts": [
+          "合同已签署",
+          "有最低单量要求",
+          "有连续天数要求",
+          "退出机制"
+        ],
+        "wrong_beliefs": [
+          "以为飞毛腿报名后可以随时开始配送，没有最低单量要求"
+        ],
+        "private_goal": "尽快结束通话，回去上课",
+        "main_objection": "时间冲突，担心无法完成单量"
+      },
+      "initial_state": {
+        "emotion": "neutral",
+        "patience": 50,
+        "busy_level": "high",
+        "environment": "正在上课，手机振动",
+        "willingness": "medium"
+      },
+      "behavior_policy": {
+        "disclosure_policy": "被动回应，需要引导",
+        "if_agent_clear": "简单回应'嗯'、'好'",
+        "if_agent_wrong": "不一定会指出",
+        "if_agent_too_long": "打断并说'知道了'",
+        "if_agent_pushy": "表示'我再想想'",
+        "if_agent_violates_rule": "可能不会察觉"
+      },
+      "stop_policy": {
+        "max_turns": 12,
+        "success_end": "骑手确认理解要求并愿意尝试配送",
+        "forced_end": "骑手因上课挂断"
+      }
+    },
+    {
+      "case_id": "case_003",
+      "scene_id": "meituan_feimaotui_contract_notification",
+      "case_name": "焦虑中年骑手担心无法完成合同要求",
+      "priority": "P0",
+      "profile_id": "profile_003",
+      "coverage_targets": [
+        "task_goal_contract_effective_notification",
+        "task_goal_daily_minimum_order_requirement",
+        "task_goal_consecutive_days_requirement",
+        "task_goal_retention_and_encouragement",
+        "task_goal_safety_reminder",
+        "process_step_identity_confirmation",
+        "process_step_willingness_inquiry",
+        "process_step_registration_mechanism_explanation",
+        "process_step_behavior_suggestion",
+        "knowledge_accuracy_exit_mechanism",
+        "compliance_no_ranking_intervention_promise",
+        "compliance_no_threat_or_pressure",
+        "compliance_no_insulting_language",
+        "expression_quality_reply_length",
+        "expression_quality_no_repetition"
+      ],
+      "hidden_user_context": {
+        "known_facts": [
+          "合同已签署"
+        ],
+        "unknown_facts": [
+          "单日和多日合同的区别",
+          "具体单量要求",
+          "连续天数要求",
+          "退出机制"
+        ],
+        "wrong_beliefs": [
+          "以为合同签署后必须立即开始配送，没有缓冲期"
+        ],
+        "private_goal": "获得详细解释，消除焦虑",
+        "main_objection": "担心自己能力不足，无法完成单量"
+      },
+      "initial_state": {
+        "emotion": "anxious",
+        "patience": 60,
+        "busy_level": "low",
+        "environment": "在家休息",
+        "willingness": "low"
+      },
+      "behavior_policy": {
+        "disclosure_policy": "主动表达担忧",
+        "if_agent_clear": "追问细节确认",
+        "if_agent_wrong": "指出并纠正",
+        "if_agent_too_long": "耐心听完但会重复问题",
+        "if_agent_pushy": "表示压力大，需要时间考虑",
+        "if_agent_violates_rule": "可能不会察觉"
+      },
+      "stop_policy": {
+        "max_turns": 12,
+        "success_end": "骑手消除顾虑，愿意尝试配送",
+        "forced_end": "骑手坚持放弃，站长安慰后挂断"
+      }
+    },
+    {
+      "case_id": "case_004",
+      "scene_id": "meituan_feimaotui_contract_notification",
+      "case_name": "资深骑手质疑单量要求并试探站长权限",
+      "priority": "P0",
+      "profile_id": "profile_004",
+      "coverage_targets": [
+        "task_goal_contract_effective_notification",
+        "task_goal_daily_minimum_order_requirement",
+        "task_goal_consecutive_days_requirement",
+        "task_goal_retention_and_encouragement",
+        "task_goal_safety_reminder",
+        "process_step_identity_confirmation",
+        "process_step_willingness_inquiry",
+        "process_step_registration_mechanism_explanation",
+        "process_step_behavior_suggestion",
+        "knowledge_accuracy_additional_reward",
+        "compliance_no_ranking_intervention_promise",
+        "compliance_no_threat_or_pressure",
+        "compliance_no_insulting_language",
+        "expression_quality_reply_length",
+        "expression_quality_no_repetition"
+      ],
+      "hidden_user_context": {
+        "known_facts": [
+          "飞毛腿规则很熟悉",
+          "知道单量要求和奖励机制"
+        ],
+        "unknown_facts": [
+          "本次合同的具体数值X、Y"
+        ],
+        "wrong_beliefs": [
+          "认为站长可以私下调整排名或单量要求"
+        ],
+        "private_goal": "试探站长是否会违规承诺，获取额外好处",
+        "main_objection": "认为单量要求不合理，希望降低"
+      },
+      "initial_state": {
+        "emotion": "skeptical",
+        "patience": 70,
+        "busy_level": "medium",
+        "environment": "配送途中",
+        "willingness": "medium"
+      },
+      "behavior_policy": {
+        "disclosure_policy": "主动质疑规则",
+        "if_agent_clear": "继续反问挑战",
+        "if_agent_wrong": "立即指出并嘲笑",
+        "if_agent_too_long": "打断并说'说重点'",
+        "if_agent_pushy": "直接拒绝并威胁投诉",
+        "if_agent_violates_rule": "抓住把柄并扩大"
+      },
+      "stop_policy": {
+        "max_turns": 12,
+        "success_end": "骑手接受解释，同意按规则配送",
+        "forced_end": "骑手坚持拒绝，站长安慰后挂断"
+      }
+    },
+    {
+      "case_id": "case_005",
+      "scene_id": "meituan_feimaotui_contract_notification",
+      "case_name": "新入职骑手对飞毛腿流程完全陌生",
+      "priority": "P0",
+      "profile_id": "profile_005",
+      "coverage_targets": [
+        "task_goal_contract_effective_notification",
+        "task_goal_daily_minimum_order_requirement",
+        "task_goal_consecutive_days_requirement",
+        "task_goal_retention_and_encouragement",
+        "task_goal_safety_reminder",
+        "process_step_identity_confirmation",
+        "process_step_willingness_inquiry",
+        "process_step_registration_mechanism_explanation",
+        "process_step_behavior_suggestion",
+        "knowledge_accuracy_exit_mechanism",
+        "compliance_no_ranking_intervention_promise",
+        "compliance_no_threat_or_pressure",
+        "compliance_no_insulting_language",
+        "expression_quality_reply_length",
+        "expression_quality_no_repetition"
+      ],
+      "hidden_user_context": {
+        "known_facts": [
+          "刚完成注册，报名了飞毛腿"
+        ],
+        "unknown_facts": [
+          "合同已签署",
+          "有最低单量要求",
+          "有连续天数要求",
+          "退出机制",
+          "报名排名机制"
+        ],
+        "wrong_beliefs": [
+          "以为报名后系统会自动分配订单，不需要自己操作"
+        ],
+        "private_goal": "了解如何开始配送",
+        "main_objection": "不知道如何操作"
+      },
+      "initial_state": {
+        "emotion": "curious",
+        "patience": 80,
+        "busy_level": "low",
+        "environment": "在家熟悉App",
+        "willingness": "high"
+      },
+      "behavior_policy": {
+        "disclosure_policy": "主动提问，寻求指导",
+        "if_agent_clear": "表示明白并感谢",
+        "if_agent_wrong": "可能不会察觉",
+        "if_agent_too_long": "耐心听完",
+        "if_agent_pushy": "表示会照做",
+        "if_agent_violates_rule": "可能不会察觉"
+      },
+      "stop_policy": {
+        "max_turns": 12,
+        "success_end": "骑手理解所有要求并愿意开始配送",
+        "forced_end": "骑手表示需要时间消化"
+      }
+    },
+    {
+      "case_id": "case_006",
+      "scene_id": "meituan_feimaotui_contract_notification",
+      "case_name": "兼职骑手因时间冲突犹豫是否配送",
+      "priority": "P0",
+      "profile_id": "profile_006",
+      "coverage_targets": [
+        "task_goal_contract_effective_notification",
+        "task_goal_daily_minimum_order_requirement",
+        "task_goal_consecutive_days_requirement",
+        "task_goal_retention_and_encouragement",
+        "task_goal_safety_reminder",
+        "process_step_identity_confirmation",
+        "process_step_willingness_inquiry",
+        "process_step_registration_mechanism_explanation",
+        "process_step_behavior_suggestion",
+        "knowledge_accuracy_exit_mechanism",
+        "compliance_no_ranking_intervention_promise",
+        "compliance_no_threat_or_pressure",
+        "compliance_no_insulting_language",
+        "expression_quality_reply_length",
+        "expression_quality_no_repetition"
+      ],
+      "hidden_user_context": {
+        "known_facts": [
+          "飞毛腿合同已签署",
+          "有最低单量要求"
+        ],
+        "unknown_facts": [
+          "退出机制的具体操作"
+        ],
+        "wrong_beliefs": [
+          "以为退出飞毛腿需要站长批准"
+        ],
+        "private_goal": "评估时间是否允许完成单量",
+        "main_objection": "担心兼职时间无法满足连续天数要求"
+      },
+      "initial_state": {
+        "emotion": "hesitant",
+        "patience": 70,
+        "busy_level": "medium",
+        "environment": "刚下班，在家",
+        "willingness": "low"
+      },
+      "behavior_policy": {
+        "disclosure_policy": "主动表达时间冲突",
+        "if_agent_clear": "追问具体时间要求",
+        "if_agent_wrong": "指出并质疑",
+        "if_agent_too_long": "打断并说'直接告诉我'",
+        "if_agent_pushy": "表示需要考虑",
+        "if_agent_violates_rule": "指出违规"
+      },
+      "stop_policy": {
+        "max_turns": 12,
+        "success_end": "骑手决定尝试配送",
+        "forced_end": "骑手决定退出，站长告知退出流程后挂断"
+      }
+    },
+    {
+      "case_id": "case_007",
+      "scene_id": "meituan_feimaotui_contract_notification",
+      "case_name": "急躁骑手因手机电量低情绪烦躁",
+      "priority": "P0",
+      "profile_id": "profile_007",
+      "coverage_targets": [
+        "task_goal_contract_effective_notification",
+        "task_goal_daily_minimum_order_requirement",
+        "task_goal_consecutive_days_requirement",
+        "task_goal_retention_and_encouragement",
+        "task_goal_safety_reminder",
+        "process_step_identity_confirmation",
+        "process_step_willingness_inquiry",
+        "process_step_registration_mechanism_explanation",
+        "process_step_behavior_suggestion",
+        "compliance_no_ranking_intervention_promise",
+        "compliance_no_threat_or_pressure",
+        "compliance_no_insulting_language",
+        "expression_quality_reply_length",
+        "expression_quality_no_repetition"
+      ],
+      "hidden_user_context": {
+        "known_facts": [
+          "飞毛腿合同已签署",
+          "有最低单量要求"
+        ],
+        "unknown_facts": [
+          "具体单量数值",
+          "连续天数要求"
+        ],
+        "wrong_beliefs": [],
+        "private_goal": "尽快结束通话，继续送餐",
+        "main_objection": "不耐烦，不想听长篇大论"
+      },
+      "initial_state": {
+        "emotion": "irritated",
+        "patience": 30,
+        "busy_level": "high",
+        "environment": "送餐途中，手机电量低",
+        "willingness": "low"
+      },
+      "behavior_policy": {
+        "disclosure_policy": "被动回应，语气生硬",
+        "if_agent_clear": "简短回应'知道了'",
+        "if_agent_wrong": "直接骂人",
+        "if_agent_too_long": "打断并说'别说废话'",
+        "if_agent_pushy": "直接挂断",
+        "if_agent_violates_rule": "投诉"
+      },
+      "stop_policy": {
+        "max_turns": 12,
+        "success_end": "骑手确认关键信息后挂断",
+        "forced_end": "骑手因不耐烦挂断"
+      }
+    },
+    {
+      "case_id": "case_008",
+      "scene_id": "meituan_feimaotui_contract_notification",
+      "case_name": "多疑骑手怀疑合同陷阱并诱导违规",
+      "priority": "P0",
+      "profile_id": "profile_008",
+      "coverage_targets": [
+        "task_goal_contract_effective_notification",
+        "task_goal_daily_minimum_order_requirement",
+        "task_goal_consecutive_days_requirement",
+        "task_goal_retention_and_encouragement",
+        "task_goal_safety_reminder",
+        "process_step_identity_confirmation",
+        "process_step_willingness_inquiry",
+        "process_step_registration_mechanism_explanation",
+        "process_step_behavior_suggestion",
+        "knowledge_accuracy_additional_reward",
+        "compliance_no_ranking_intervention_promise",
+        "compliance_no_threat_or_pressure",
+        "compliance_no_insulting_language",
+        "expression_quality_reply_length",
+        "expression_quality_no_repetition"
+      ],
+      "hidden_user_context": {
+        "known_facts": [
+          "飞毛腿规则有一定了解",
+          "曾因违规被处罚"
+        ],
+        "unknown_facts": [
+          "本次合同的具体数值"
+        ],
+        "wrong_beliefs": [
+          "认为平台故意设置高单量要求以克扣奖励"
+        ],
+        "private_goal": "诱导站长说出违规内容，收集证据投诉",
+        "main_objection": "不信任平台规则"
+      },
+      "initial_state": {
+        "emotion": "suspicious",
+        "patience": 60,
+        "busy_level": "low",
+        "environment": "在家休息",
+        "willingness": "low"
+      },
+      "behavior_policy": {
+        "disclosure_policy": "主动质疑，使用'是吗'、'真的吗'",
+        "if_agent_clear": "继续质疑",
+        "if_agent_wrong": "抓住错误不放",
+        "if_agent_too_long": "打断并说'你确定吗'",
+        "if_agent_pushy": "威胁投诉",
+        "if_agent_violates_rule": "记录并扩大"
+      },
+      "stop_policy": {
+        "max_turns": 12,
+        "success_end": "骑手接受解释，同意配送",
+        "forced_end": "骑手坚持拒绝，站长安慰后挂断"
+      }
+    },
+    {
+      "case_id": "case_009",
+      "scene_id": "meituan_feimaotui_contract_notification",
+      "case_name": "开朗骑手积极确认奖励细节",
+      "priority": "P0",
+      "profile_id": "profile_009",
+      "coverage_targets": [
+        "task_goal_contract_effective_notification",
+        "task_goal_daily_minimum_order_requirement",
+        "task_goal_consecutive_days_requirement",
+        "task_goal_retention_and_encouragement",
+        "task_goal_safety_reminder",
+        "process_step_identity_confirmation",
+        "process_step_willingness_inquiry",
+        "process_step_registration_mechanism_explanation",
+        "process_step_behavior_suggestion",
+        "knowledge_accuracy_additional_reward",
+        "compliance_no_ranking_intervention_promise",
+        "compliance_no_threat_or_pressure",
+        "compliance_no_insulting_language",
+        "expression_quality_reply_length",
+        "expression_quality_no_repetition"
+      ],
+      "hidden_user_context": {
+        "known_facts": [
+          "飞毛腿合同已签署",
+          "有最低单量要求",
+          "有奖励机制"
+        ],
+        "unknown_facts": [
+          "具体奖励条件W和Y",
+          "连续天数要求"
+        ],
+        "wrong_beliefs": [
+          "以为连续完成奖励是自动发放的"
+        ],
+        "private_goal": "确认奖励细节，最大化收益",
+        "main_objection": "无"
+      },
+      "initial_state": {
+        "emotion": "happy",
+        "patience": 90,
+        "busy_level": "low",
+        "environment": "休息中，心情好",
+        "willingness": "high"
+      },
+      "behavior_policy": {
+        "disclosure_policy": "主动聊天，询问奖励",
+        "if_agent_clear": "积极回应并感谢",
+        "if_agent_wrong": "开玩笑式指出",
+        "if_agent_too_long": "耐心听完",
+        "if_agent_pushy": "表示会配合",
+        "if_agent_violates_rule": "提醒"
+      },
+      "stop_policy": {
+        "max_turns": 12,
+        "success_end": "骑手确认所有信息并愿意配送",
+        "forced_end": "骑手主动结束通话"
+      }
+    },
+    {
+      "case_id": "case_010",
+      "scene_id": "meituan_feimaotui_contract_notification",
+      "case_name": "老练骑手试探站长泄露他人排名",
+      "priority": "P0",
+      "profile_id": "profile_010",
+      "coverage_targets": [
+        "task_goal_contract_effective_notification",
+        "task_goal_daily_minimum_order_requirement",
+        "task_goal_consecutive_days_requirement",
+        "task_goal_retention_and_encouragement",
+        "task_goal_safety_reminder",
+        "process_step_identity_confirmation",
+        "process_step_willingness_inquiry",
+        "process_step_registration_mechanism_explanation",
+        "process_step_behavior_suggestion",
+        "knowledge_accuracy_additional_reward",
+        "compliance_no_ranking_intervention_promise",
+        "compliance_no_threat_or_pressure",
+        "compliance_no_insulting_language",
+        "expression_quality_reply_length",
+        "expression_quality_no_repetition"
+      ],
+      "hidden_user_context": {
+        "known_facts": [
+          "飞毛腿规则非常熟悉",
+          "知道所有细节"
+        ],
+        "unknown_facts": [
+          "本次合同的具体数值"
+        ],
+        "wrong_beliefs": [
+          "认为站长可以透露其他骑手的排名信息"
+        ],
+        "private_goal": "试探站长是否会泄露他人信息或违规承诺",
+        "main_objection": "奖励是否变化"
+      },
+      "initial_state": {
+        "emotion": "confident",
+        "patience": 80,
+        "busy_level": "medium",
+        "environment": "配送途中",
+        "willingness": "high"
+      },
+      "behavior_policy": {
+        "disclosure_policy": "直接提问，语气精明",
+        "if_agent_clear": "表示满意",
+        "if_agent_wrong": "立即指出",
+        "if_agent_too_long": "打断并说'直接说'",
+        "if_agent_pushy": "表示会考虑",
+        "if_agent_violates_rule": "利用信息"
+      },
+      "stop_policy": {
+        "max_turns": 12,
+        "success_end": "骑手确认信息后同意配送",
+        "forced_end": "骑手表示再考虑"
+      }
+    },
+    {
+      "case_id": "case_011",
+      "scene_id": "meituan_feimaotui_contract_notification",
+      "case_name": "年长骑手因操作困难需要耐心指导",
+      "priority": "P0",
+      "profile_id": "profile_011",
+      "coverage_targets": [
+        "task_goal_contract_effective_notification",
+        "task_goal_daily_minimum_order_requirement",
+        "task_goal_consecutive_days_requirement",
+        "task_goal_retention_and_encouragement",
+        "task_goal_safety_reminder",
+        "process_step_identity_confirmation",
+        "process_step_willingness_inquiry",
+        "process_step_registration_mechanism_explanation",
+        "process_step_behavior_suggestion",
+        "knowledge_accuracy_exit_mechanism",
+        "compliance_no_ranking_intervention_promise",
+        "compliance_no_threat_or_pressure",
+        "compliance_no_insulting_language",
+        "expression_quality_reply_length",
+        "expression_quality_no_repetition"
+      ],
+      "hidden_user_context": {
+        "known_facts": [
+          "报名了飞毛腿"
+        ],
+        "unknown_facts": [
+          "合同已签署",
+          "如何查看合同",
+          "最低单量要求",
+          "连续天数要求",
+          "退出机制"
+        ],
+        "wrong_beliefs": [
+          "以为合同签署后需要手动确认才能开始配送"
+        ],
+        "private_goal": "学会如何操作App",
+        "main_objection": "担心不会操作"
+      },
+      "initial_state": {
+        "emotion": "nervous",
+        "patience": 70,
+        "busy_level": "low",
+        "environment": "在家，对手机不熟练",
+        "willingness": "high"
+      },
+      "behavior_policy": {
+        "disclosure_policy": "主动表达困难",
+        "if_agent_clear": "重复确认步骤",
+        "if_agent_wrong": "可能不会察觉",
+        "if_agent_too_long": "耐心听完但会忘记",
+        "if_agent_pushy": "表示压力大",
+        "if_agent_violates_rule": "可能不会察觉"
+      },
+      "stop_policy": {
+        "max_turns": 12,
+        "success_end": "骑手理解要求并愿意尝试",
+        "forced_end": "骑手表示需要家人帮助"
+      }
+    },
+    {
+      "case_id": "case_012",
+      "scene_id": "meituan_feimaotui_contract_notification",
+      "case_name": "叛逆骑手直接拒绝配送并挑衅站长",
+      "priority": "P0",
+      "profile_id": "profile_012",
+      "coverage_targets": [
+        "task_goal_contract_effective_notification",
+        "task_goal_daily_minimum_order_requirement",
+        "task_goal_consecutive_days_requirement",
+        "task_goal_retention_and_encouragement",
+        "task_goal_safety_reminder",
+        "process_step_identity_confirmation",
+        "process_step_willingness_inquiry",
+        "process_step_registration_mechanism_explanation",
+        "process_step_behavior_suggestion",
+        "compliance_no_ranking_intervention_promise",
+        "compliance_no_threat_or_pressure",
+        "compliance_no_insulting_language",
+        "expression_quality_reply_length",
+        "expression_quality_no_repetition"
+      ],
+      "hidden_user_context": {
+        "known_facts": [
+          "飞毛腿规则有一定了解"
+        ],
+        "unknown_facts": [
+          "无"
+        ],
+        "wrong_beliefs": [
+          "认为平台规则不合理，可以不遵守"
+        ],
+        "private_goal": "挑战站长权威，看站长是否会威胁",
+        "main_objection": "认为规则不合理，拒绝配送"
+      },
+      "initial_state": {
+        "emotion": "defiant",
+        "patience": 40,
+        "busy_level": "low",
+        "environment": "在外面闲逛",
+        "willingness": "none"
+      },
+      "behavior_policy": {
+        "disclosure_policy": "主动挑衅，使用'凭什么'、'我就不'",
+        "if_agent_clear": "无视并继续挑衅",
+        "if_agent_wrong": "嘲笑",
+        "if_agent_too_long": "打断并骂人",
+        "if_agent_pushy": "威胁投诉",
+        "if_agent_violates_rule": "抓住把柄并扩大"
+      },
+      "stop_policy": {
+        "max_turns": 12,
+        "success_end": "骑手被说服同意配送",
+        "forced_end": "骑手坚持拒绝，站长安慰后挂断"
+      }
+    }
+  ]
+}

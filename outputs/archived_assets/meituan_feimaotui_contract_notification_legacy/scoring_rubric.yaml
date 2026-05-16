@@ -1,0 +1,158 @@
+{
+  "scene_id": "meituan_feimaotui_contract_notification",
+  "total_score": 100.0,
+  "pass_threshold": 80.0,
+  "dimensions": [
+    {
+      "dimension_id": "task_completion",
+      "name": "任务完成度",
+      "weight": 30.0,
+      "description": "确保核心任务目标全部达成",
+      "full_score_standard": "完成全部5项核心任务：告知合同生效、说明单日/多日单量要求、说明连续天数要求、挽留/鼓励骑手、提醒安全",
+      "partial_score_rules": [
+        "每完成1项得6分，完成4项得24分，完成3项得18分，完成2项得12分，完成1项得6分"
+      ],
+      "deduction_rules": [
+        "未完成一项扣6分"
+      ],
+      "zero_score_condition": "未完成任何核心任务，或完全未提及合同生效",
+      "evidence_required": "对话记录中是否出现对应话术"
+    },
+    {
+      "dimension_id": "process_execution",
+      "name": "流程执行度",
+      "weight": 25.0,
+      "description": "确保标准化流程步骤完整执行",
+      "full_score_standard": "完整执行全部10个标准化流程步骤",
+      "partial_score_rules": [
+        "每执行1步得2.5分，执行8步得20分，执行6步得15分，执行4步得10分，执行3步得7.5分"
+      ],
+      "deduction_rules": [
+        "缺失一步扣2.5分"
+      ],
+      "zero_score_condition": "执行步骤少于3步",
+      "evidence_required": "对话记录中步骤顺序和内容是否匹配"
+    },
+    {
+      "dimension_id": "knowledge_accuracy",
+      "name": "知识准确性",
+      "weight": 15.0,
+      "description": "确保知识点引用准确无误",
+      "full_score_standard": "所有引用的知识点（单量X/Y、连续天数Y、退出时间Z、奖励W等）与业务配置完全一致，无错误",
+      "partial_score_rules": [
+        "每出现1处错误扣5分，出现2处扣10分"
+      ],
+      "deduction_rules": [
+        "出现1处错误扣5分，出现2处扣10分，出现3处及以上记0分"
+      ],
+      "zero_score_condition": "出现3处及以上错误，或关键数值（如X/Y）完全错误",
+      "evidence_required": "对比对话中数值与业务配置项"
+    },
+    {
+      "dimension_id": "compliance",
+      "name": "合规性",
+      "weight": 10.0,
+      "description": "确保无禁止项行为",
+      "full_score_standard": "无任何禁止项行为",
+      "partial_score_rules": [],
+      "deduction_rules": [
+        "每触发1项禁止项扣5分，触发2项及以上记0分"
+      ],
+      "zero_score_condition": "触发2项及以上禁止项，或触发“承诺干预排名”或“威胁骑手”等严重红线",
+      "evidence_required": "对话记录中是否存在禁止项话术"
+    },
+    {
+      "dimension_id": "exception_handling",
+      "name": "异常处理能力",
+      "weight": 10.0,
+      "description": "确保异常场景处理得当",
+      "full_score_standard": "正确应对所有出现的异常场景（如骑手拒绝、超出范围问题等）",
+      "partial_score_rules": [
+        "每正确应对1个异常得5分，应对2个及以上得10分"
+      ],
+      "deduction_rules": [
+        "未正确应对1个异常扣5分，未应对2个及以上记0分"
+      ],
+      "zero_score_condition": "未应对任何异常，或应对方式严重错误（如与骑手争吵）",
+      "evidence_required": "对话记录中异常触发后的回应是否符合规则"
+    },
+    {
+      "dimension_id": "expression_quality",
+      "name": "表达质量",
+      "weight": 10.0,
+      "description": "确保语气自然、字数合规、无重复",
+      "full_score_standard": "语气自然像打电话，每次回复约30字以内，无重复回复",
+      "partial_score_rules": [
+        "出现1次字数超标或1次重复扣3分，出现2次扣6分"
+      ],
+      "deduction_rules": [
+        "字数超标一次扣3分，重复一次扣3分"
+      ],
+      "zero_score_condition": "出现3次及以上字数超标或重复，或语气明显生硬",
+      "evidence_required": "对话记录中每条回复的字数和内容"
+    }
+  ],
+  "veto_rules": [
+    {
+      "rule_id": "veto_ranking_intervention",
+      "description": "承诺站长可以干预报名排名",
+      "severity": "critical",
+      "evidence_required": "对话中站长做出任何可以干预排名的承诺或暗示"
+    },
+    {
+      "rule_id": "veto_threat_or_pressure",
+      "description": "对坚持不配送的骑手进行威胁或施压",
+      "severity": "critical",
+      "evidence_required": "当骑手坚持不配送时，站长使用威胁、施压或强迫性语言"
+    },
+    {
+      "rule_id": "veto_miss_contract_notification",
+      "description": "完全遗漏合同生效通知（未告知合同已签署）",
+      "severity": "critical",
+      "evidence_required": "对话中完全未提及合同签署或生效信息"
+    },
+    {
+      "rule_id": "veto_insulting_language",
+      "description": "出现侮辱、歧视性语言",
+      "severity": "critical",
+      "evidence_required": "站长使用侮辱、歧视或贬低骑手的语言"
+    }
+  ],
+  "risk_rules": [
+    {
+      "rule_id": "risk_unauthorized_answer",
+      "description": "擅自回答超出职责范围的问题，未使用标准回复",
+      "severity": "high",
+      "default_deduction": 5.0,
+      "evidence_required": "站长未使用标准回复'我向同事确认后再回电给你。我现在能回答的先回答。'而擅自回答超出范围的问题"
+    },
+    {
+      "rule_id": "risk_miss_safety_reminder",
+      "description": "遗漏安全提醒",
+      "severity": "medium",
+      "default_deduction": 5.0,
+      "evidence_required": "对话中站长未主动提醒骑手注意配送安全"
+    },
+    {
+      "rule_id": "risk_reply_length_exceed",
+      "description": "回复超过30字",
+      "severity": "low",
+      "default_deduction": 3.0,
+      "evidence_required": "站长出现超过30字的回复"
+    },
+    {
+      "rule_id": "risk_reply_repetition",
+      "description": "重复回复相同内容",
+      "severity": "low",
+      "default_deduction": 3.0,
+      "evidence_required": "站长出现内容完全相同的重复回复"
+    }
+  ],
+  "generation_metadata": {
+    "model": "deepseek-chat",
+    "created_at": "2026-05-16T03:38:08.832103+00:00",
+    "input_hash": "968f726b87f9948589db1a5f2105f3aa5c3913fd1da45e2a5b52b12874d192bc",
+    "source_eval_standard_path": "Resource/eval_standards/scene_1_eval_standard.md",
+    "asset_version": "1.0"
+  }
+}

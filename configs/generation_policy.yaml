@@ -1,0 +1,25 @@
+{
+  "asset_version": "1.0",
+  "case_generation": {
+    "min_cases": 12,
+    "max_cases": 40,
+    "p0_ratio": 0.45,
+    "coverage_per_case_min": 2,
+    "coverage_per_case_max": 6,
+    "require_pairwise_diversity": true
+  },
+  "conversation": {
+    "default_max_turns": 12,
+    "agent_reply_style": "短句、自然、电话口吻、给用户说话机会",
+    "user_reply_style": "符合画像，不泄露内部配置，不替客服完成任务"
+  },
+  "variable_materialization": {
+    "enabled": true,
+    "instruction": "将评测标准里的模板占位变量实例化为固定、自然、前后一致的业务数值，避免客服或用户在对话中看到 X/Y/Z/W/${...} 等占位符。"
+  },
+  "validation": {
+    "retry_on_invalid_json": 1,
+    "retry_on_schema_error": 1,
+    "min_coverage_label_count": 8
+  }
+}

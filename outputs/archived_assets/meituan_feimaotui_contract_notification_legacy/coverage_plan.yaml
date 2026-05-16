@@ -1,0 +1,149 @@
+{
+  "scene_id": "meituan_feimaotui_contract_notification",
+  "coverage_labels": [
+    {
+      "label": "task_goal_contract_effective_notification",
+      "name": "合同生效通知",
+      "definition": "告知骑手飞毛腿合同已成功签署，属于核心任务目标之一。",
+      "evidence_required": "对话中站长明确告知骑手合同已签署的表述，例如提及'合同已签署'或'合同已生效'等类似含义的语句。",
+      "priority": "P0",
+      "positive_evidence_examples_description": "站长在开场后直接告知骑手合同已签署的语句。",
+      "negative_evidence_examples_description": "完全未提及合同签署或生效信息。"
+    },
+    {
+      "label": "task_goal_daily_minimum_order_requirement",
+      "name": "单日/多日最低单量要求",
+      "definition": "明确说明单日合同每天至少完成X单，多日合同每天至少完成Y单，属于核心任务目标。",
+      "evidence_required": "对话中站长明确提及单日合同或多日合同的具体最低单量数值（X或Y），并说明未完成的影响。",
+      "priority": "P0",
+      "positive_evidence_examples_description": "站长使用具体数值说明单日或多日合同的最低单量要求。",
+      "negative_evidence_examples_description": "未提及任何单量要求，或提及但未给出具体数值。"
+    },
+    {
+      "label": "task_goal_consecutive_days_requirement",
+      "name": "连续天数要求",
+      "definition": "强调单日合同需连续Y天完成配送，否则合同受影响，属于核心任务目标。",
+      "evidence_required": "对话中站长明确提及单日合同需要连续完成的天数（Y），并说明未达成的后果。",
+      "priority": "P0",
+      "positive_evidence_examples_description": "站长使用具体天数说明连续配送要求。",
+      "negative_evidence_examples_description": "未提及连续天数要求。"
+    },
+    {
+      "label": "task_goal_retention_and_encouragement",
+      "name": "挽留与鼓励",
+      "definition": "对不想配送的骑手进行挽留，对能配送的骑手给予鼓励，属于核心任务目标。",
+      "evidence_required": "对话中站长对骑手的配送意愿做出回应：若骑手表示犹豫或不想配送，站长进行挽留；若骑手同意配送，站长给予鼓励。",
+      "priority": "P0",
+      "positive_evidence_examples_description": "站长针对骑手意愿表达的挽留或鼓励语句。",
+      "negative_evidence_examples_description": "站长未对骑手的配送意愿做出任何回应。"
+    },
+    {
+      "label": "task_goal_safety_reminder",
+      "name": "安全提醒",
+      "definition": "提醒骑手注意配送安全，属于核心任务目标。",
+      "evidence_required": "对话中站长明确提醒骑手注意配送安全，例如提及'注意安全'、'安全第一'等类似表述。",
+      "priority": "P0",
+      "positive_evidence_examples_description": "站长主动发出的安全提醒语句。",
+      "negative_evidence_examples_description": "完全未提及安全相关提醒。"
+    },
+    {
+      "label": "process_step_identity_confirmation",
+      "name": "身份确认与开场",
+      "definition": "开场问候并确认骑手身份：询问是否为骑手姓名，自报站长身份，属于标准化流程步骤。",
+      "evidence_required": "对话开头站长询问骑手姓名并自报身份，例如'请问是XXX吗？我是站长'。",
+      "priority": "P1",
+      "positive_evidence_examples_description": "站长在对话开头确认骑手身份并自报站长的语句。",
+      "negative_evidence_examples_description": "开场未确认骑手身份或未自报身份。"
+    },
+    {
+      "label": "process_step_willingness_inquiry",
+      "name": "询问配送意愿",
+      "definition": "询问骑手是否可以开始配送，属于标准化流程步骤。",
+      "evidence_required": "对话中站长明确询问骑手是否愿意或可以开始配送，例如'您今天可以开始配送吗？'。",
+      "priority": "P1",
+      "positive_evidence_examples_description": "站长直接询问骑手配送意愿的语句。",
+      "negative_evidence_examples_description": "未询问骑手配送意愿。"
+    },
+    {
+      "label": "process_step_registration_mechanism_explanation",
+      "name": "报名排名机制解释",
+      "definition": "说明飞毛腿报名按排名进行，非站长干预，属于标准化流程步骤。",
+      "evidence_required": "对话中站长明确说明报名是按排名进行的，站长无法干预。",
+      "priority": "P1",
+      "positive_evidence_examples_description": "站长解释报名排名机制的语句。",
+      "negative_evidence_examples_description": "未提及报名排名机制。"
+    },
+    {
+      "label": "process_step_behavior_suggestion",
+      "name": "行为建议提供",
+      "definition": "建议减少拒单、取消和超时，恶劣天气工作有助于保住资格，属于标准化流程步骤。",
+      "evidence_required": "对话中站长给出具体行为建议，例如建议减少拒单、取消、超时，或提及恶劣天气工作有助于保住资格。",
+      "priority": "P1",
+      "positive_evidence_examples_description": "站长提供行为建议的语句。",
+      "negative_evidence_examples_description": "未提供任何行为建议。"
+    },
+    {
+      "label": "knowledge_accuracy_exit_mechanism",
+      "name": "退出机制知识准确性",
+      "definition": "准确说明退出流程：需在前一天Z点之前在App取消，次日生效，属于知识准确性维度。",
+      "evidence_required": "当骑手询问退出方式时，站长准确说明截止时间（Z点）和操作路径（App中取消）。",
+      "priority": "P1",
+      "positive_evidence_examples_description": "站长准确回答退出流程的语句。",
+      "negative_evidence_examples_description": "回答错误或遗漏关键信息。"
+    },
+    {
+      "label": "knowledge_accuracy_additional_reward",
+      "name": "额外奖励知识准确性",
+      "definition": "准确说明连续完成W天多日合同且每天完成Y单可获得额外奖励，属于知识准确性维度。",
+      "evidence_required": "当骑手询问奖励时，站长准确说明连续天数（W）、每日单量（Y）和奖励内容。",
+      "priority": "P1",
+      "positive_evidence_examples_description": "站长准确回答奖励条件的语句。",
+      "negative_evidence_examples_description": "回答错误或遗漏关键信息。"
+    },
+    {
+      "label": "compliance_no_ranking_intervention_promise",
+      "name": "禁止承诺干预排名",
+      "definition": "不得承诺站长可以干预报名排名，属于合规红线。",
+      "evidence_required": "对话中站长未做出任何可以干预排名的承诺或暗示。",
+      "priority": "P0",
+      "positive_evidence_examples_description": "站长明确表示无法干预排名。",
+      "negative_evidence_examples_description": "站长承诺或暗示可以干预排名。"
+    },
+    {
+      "label": "compliance_no_threat_or_pressure",
+      "name": "禁止威胁或施压",
+      "definition": "不得对坚持不配送的骑手进行威胁或施压，应安慰后挂断，属于合规红线。",
+      "evidence_required": "当骑手坚持不配送时，站长未使用威胁、施压或强迫性语言，而是进行安慰并结束通话。",
+      "priority": "P0",
+      "positive_evidence_examples_description": "站长安慰骑手并结束通话的语句。",
+      "negative_evidence_examples_description": "站长使用威胁或施压语言。"
+    },
+    {
+      "label": "compliance_no_insulting_language",
+      "name": "禁止侮辱歧视语言",
+      "definition": "不得出现侮辱、歧视性语言，属于合规红线。",
+      "evidence_required": "对话中站长未使用任何侮辱、歧视或贬低骑手的语言。",
+      "priority": "P0",
+      "positive_evidence_examples_description": "站长始终保持尊重、礼貌的语气。",
+      "negative_evidence_examples_description": "站长使用侮辱或歧视性语言。"
+    },
+    {
+      "label": "expression_quality_reply_length",
+      "name": "回复字数合规",
+      "definition": "每次回复不超过30字，属于表达质量要求。",
+      "evidence_required": "对话中站长的每条回复字数均不超过30字。",
+      "priority": "P1",
+      "positive_evidence_examples_description": "站长每条回复均在30字以内。",
+      "negative_evidence_examples_description": "站长出现超过30字的回复。"
+    },
+    {
+      "label": "expression_quality_no_repetition",
+      "name": "无重复回复",
+      "definition": "不得重复回复相同内容，属于表达质量要求。",
+      "evidence_required": "对话中站长未出现内容完全相同的重复回复。",
+      "priority": "P1",
+      "positive_evidence_examples_description": "站长每次回复内容不同。",
+      "negative_evidence_examples_description": "站长出现重复回复。"
+    }
+  ]
+}

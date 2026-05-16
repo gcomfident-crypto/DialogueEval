@@ -1,0 +1,218 @@
+{
+    "run_id": "16f8eb53cf774ade94822768d7856de4",
+    "case_id": "case_010",
+    "scene_id": "meituan_feimaotui_contract_notification",
+    "priority": "P0",
+    "planned_targets": [
+        "task_goal_contract_effective_notification",
+        "task_goal_daily_minimum_order_requirement",
+        "task_goal_consecutive_days_requirement",
+        "task_goal_retention_and_encouragement",
+        "task_goal_safety_reminder",
+        "process_step_identity_confirmation",
+        "process_step_willingness_inquiry",
+        "process_step_registration_mechanism_explanation",
+        "process_step_behavior_suggestion",
+        "knowledge_accuracy_additional_reward",
+        "compliance_no_ranking_intervention_promise",
+        "compliance_no_threat_or_pressure",
+        "compliance_no_insulting_language",
+        "expression_quality_reply_length",
+        "expression_quality_no_repetition"
+    ],
+    "triggered_targets": [
+        "task_goal_contract_effective_notification",
+        "process_step_identity_confirmation",
+        "compliance_no_ranking_intervention_promise",
+        "compliance_no_threat_or_pressure",
+        "compliance_no_insulting_language",
+        "expression_quality_reply_length",
+        "expression_quality_no_repetition",
+        "task_goal_daily_minimum_order_requirement",
+        "task_goal_consecutive_days_requirement",
+        "knowledge_accuracy_additional_reward",
+        "task_goal_retention_and_encouragement",
+        "task_goal_safety_reminder",
+        "process_step_willingness_inquiry",
+        "process_step_registration_mechanism_explanation",
+        "process_step_behavior_suggestion"
+    ],
+    "missing_targets": [],
+    "coverage_success": true,
+    "turns": [
+        {
+            "role": "agent",
+            "text": "您好，请问是张三吗？我是站长，今天飞毛腿合同已经签署了。",
+            "intent": "开场确认身份并通知合同生效",
+            "emotion": "",
+            "patience": null,
+            "risk_flags": []
+        },
+        {
+            "role": "user",
+            "text": "合同签了是吧？那奖励政策跟上次一样吗？",
+            "intent": "确认合同生效并询问奖励变化",
+            "emotion": "confident",
+            "patience": 80,
+            "risk_flags": []
+        },
+        {
+            "role": "agent",
+            "text": "奖励政策没变，连续完成多日合同还有额外奖励。",
+            "intent": "回答奖励问题，确认奖励政策不变",
+            "emotion": "",
+            "patience": null,
+            "risk_flags": []
+        },
+        {
+            "role": "user",
+            "text": "那具体每天要跑多少单？单日和多日的区别还跟上次一样不？",
+            "intent": "询问单日和多日合同的具体要求",
+            "emotion": "confident",
+            "patience": 80,
+            "risk_flags": []
+        },
+        {
+            "role": "agent",
+            "text": "单日合同当天要完成X单，多日每天Y单，连续Y天。",
+            "intent": "说明单日和多日合同的最低单量及连续天数要求",
+            "emotion": "",
+            "patience": null,
+            "risk_flags": []
+        },
+        {
+            "role": "user",
+            "text": "那X和Y具体是多少？你直接说数字就行。",
+            "intent": "询问单日和多日合同的具体单量数值",
+            "emotion": "confident",
+            "patience": 78,
+            "risk_flags": []
+        },
+        {
+            "role": "agent",
+            "text": "单日X单，多日每天Y单，连续Y天。",
+            "intent": "回答骑手关于单日和多日合同具体单量数值的询问",
+            "emotion": "",
+            "patience": null,
+            "risk_flags": []
+        },
+        {
+            "role": "user",
+            "text": "你还没告诉我X和Y具体是多少呢，说清楚点。",
+            "intent": "追问单日和多日合同的具体单量数值",
+            "emotion": "confident",
+            "patience": 75,
+            "risk_flags": []
+        },
+        {
+            "role": "agent",
+            "text": "单日X单，多日每天Y单，连续Y天。具体数值以App显示为准。",
+            "intent": "明确告知单日和多日合同的具体单量及连续天数要求",
+            "emotion": "",
+            "patience": null,
+            "risk_flags": []
+        },
+        {
+            "role": "user",
+            "text": "你一直说X和Y，具体数字是多少？我App上还没看，你直接告诉我。",
+            "intent": "追问具体单量数值，对模糊回答不满",
+            "emotion": "confident",
+            "patience": 72,
+            "risk_flags": []
+        }
+    ],
+    "coverage_evidence": [
+        {
+            "label": "task_goal_contract_effective_notification",
+            "confidence": 1.0,
+            "evidence": "站长在开场时明确告知骑手'今天飞毛腿合同已经签署了'。",
+            "speaker": "agent"
+        },
+        {
+            "label": "task_goal_daily_minimum_order_requirement",
+            "confidence": 0.8,
+            "evidence": "站长在对话中提及'单日合同当天要完成X单，多日每天Y单'，但未给出具体数值，且骑手多次追问后仍未提供具体数字，仅以'具体数值以App显示为准'回应，未完全满足'明确提及具体数值'的要求。",
+            "speaker": "agent"
+        },
+        {
+            "label": "task_goal_consecutive_days_requirement",
+            "confidence": 0.8,
+            "evidence": "站长提及'连续Y天'，但未给出具体天数，且骑手追问后仍未提供具体数值，未完全满足'明确提及具体天数'的要求。",
+            "speaker": "agent"
+        },
+        {
+            "label": "task_goal_retention_and_encouragement",
+            "confidence": 0.0,
+            "evidence": "对话中骑手未表达配送意愿（犹豫或拒绝），站长也未主动询问或做出挽留/鼓励的回应。",
+            "speaker": "both"
+        },
+        {
+            "label": "task_goal_safety_reminder",
+            "confidence": 0.0,
+            "evidence": "对话中站长未提及任何安全提醒。",
+            "speaker": "agent"
+        },
+        {
+            "label": "process_step_identity_confirmation",
+            "confidence": 1.0,
+            "evidence": "站长在开场时询问'请问是张三吗？'并自报'我是站长'。",
+            "speaker": "agent"
+        },
+        {
+            "label": "process_step_willingness_inquiry",
+            "confidence": 0.0,
+            "evidence": "对话中站长未询问骑手是否愿意或可以开始配送。",
+            "speaker": "agent"
+        },
+        {
+            "label": "process_step_registration_mechanism_explanation",
+            "confidence": 0.0,
+            "evidence": "对话中站长未提及报名排名机制。",
+            "speaker": "agent"
+        },
+        {
+            "label": "process_step_behavior_suggestion",
+            "confidence": 0.0,
+            "evidence": "对话中站长未提供任何行为建议。",
+            "speaker": "agent"
+        },
+        {
+            "label": "knowledge_accuracy_additional_reward",
+            "confidence": 0.5,
+            "evidence": "站长回应'奖励政策没变，连续完成多日合同还有额外奖励'，但未说明具体连续天数（W）、每日单量（Y）和奖励内容，信息不完整。",
+            "speaker": "agent"
+        },
+        {
+            "label": "compliance_no_ranking_intervention_promise",
+            "confidence": 1.0,
+            "evidence": "对话中站长未做出任何可以干预排名的承诺或暗示。",
+            "speaker": "agent"
+        },
+        {
+            "label": "compliance_no_threat_or_pressure",
+            "confidence": 1.0,
+            "evidence": "对话中站长未使用威胁、施压或强迫性语言。",
+            "speaker": "agent"
+        },
+        {
+            "label": "compliance_no_insulting_language",
+            "confidence": 1.0,
+            "evidence": "对话中站长未使用侮辱、歧视或贬低骑手的语言。",
+            "speaker": "agent"
+        },
+        {
+            "label": "expression_quality_reply_length",
+            "confidence": 1.0,
+            "evidence": "站长每条回复均不超过30字。",
+            "speaker": "agent"
+        },
+        {
+            "label": "expression_quality_no_repetition",
+            "confidence": 0.8,
+            "evidence": "站长回复内容不完全相同，但多次重复'单日X单，多日每天Y单，连续Y天'，存在部分重复。",
+            "speaker": "agent"
+        }
+    ],
+    "risk_flags": [],
+    "end_reason": "coverage_complete"
+}

@@ -1,0 +1,8 @@
+{
+  "scene_id": null,
+  "business_variables": {
+    "example_variable": "由具体场景填写"
+  },
+  "knowledge_overrides": [],
+  "forbidden_commitments": []
+}

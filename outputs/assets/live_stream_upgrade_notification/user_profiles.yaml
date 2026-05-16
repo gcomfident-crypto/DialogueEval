@@ -1,0 +1,171 @@
+{
+  "scene_id": "live_stream_upgrade_notification",
+  "profiles": [
+    {
+      "profile_id": "prof_001",
+      "identity": "某中型培训机构的校长，40岁，男性",
+      "role": "培训机构/校区负责人",
+      "current_context": "正在办公室处理教务，接听电话时态度友好，时间充裕",
+      "personality": "配合、务实、决策果断",
+      "communication_style": "直接、简洁，喜欢快速确认关键信息",
+      "knowledge_level": "对直播功能有一定了解，但不知晓后台已启用低延迟线路",
+      "wrong_beliefs": [],
+      "risk_tendency": "低风险，信任平台建议",
+      "cooperation_curve": "全程配合，主动提问确认细节"
+    },
+    {
+      "profile_id": "prof_002",
+      "identity": "小型艺术培训机构的负责人，35岁，女性",
+      "role": "培训机构/校区负责人",
+      "current_context": "正在准备上课材料，接电话时略显匆忙",
+      "personality": "忙碌、直接、不耐烦",
+      "communication_style": "语速快，常打断，希望快速结束通话",
+      "knowledge_level": "对直播选项升级完全不知情",
+      "wrong_beliefs": [
+        "以为升级会导致额外费用或操作复杂"
+      ],
+      "risk_tendency": "中等，担心增加工作量",
+      "cooperation_curve": "初期抗拒，但被告知只需1分钟后愿意配合"
+    },
+    {
+      "profile_id": "prof_003",
+      "identity": "连锁教育机构的运营主管，45岁，男性",
+      "role": "培训机构/校区负责人",
+      "current_context": "正在开车，使用车载蓝牙接听电话",
+      "personality": "谨慎、注重安全",
+      "communication_style": "简短、礼貌，明确表示当前不便",
+      "knowledge_level": "对升级内容一无所知",
+      "wrong_beliefs": [],
+      "risk_tendency": "低风险，但安全优先",
+      "cooperation_curve": "立即告知在开车，要求稍后再打"
+    },
+    {
+      "profile_id": "prof_004",
+      "identity": "新成立培训机构的负责人，30岁，女性",
+      "role": "培训机构/校区负责人",
+      "current_context": "正在电脑前操作后台，对技术细节不熟悉",
+      "personality": "困惑、谨慎、依赖客服指导",
+      "communication_style": "提问多，语速慢，需要重复确认",
+      "knowledge_level": "对直播选项完全不了解，甚至不清楚当前使用的版本",
+      "wrong_beliefs": [
+        "以为低延迟直播需要额外付费才能使用",
+        "担心操作失误影响现有课程"
+      ],
+      "risk_tendency": "中等，害怕出错",
+      "cooperation_curve": "配合但需要耐心引导，每一步都确认"
+    },
+    {
+      "profile_id": "prof_005",
+      "identity": "大型培训机构的教务主任，50岁，男性",
+      "role": "培训机构/校区负责人",
+      "current_context": "正在开会间隙接听电话，时间紧张",
+      "personality": "质疑、经验丰富、喜欢挑战",
+      "communication_style": "直接提问，语气略带怀疑，要求提供证据",
+      "knowledge_level": "对直播技术有一定了解，怀疑升级的必要性",
+      "wrong_beliefs": [
+        "认为标准直播已经够用，低延迟直播是变相收费"
+      ],
+      "risk_tendency": "高，倾向于拒绝新功能",
+      "cooperation_curve": "初期质疑，在得到合理解释后逐渐接受"
+    },
+    {
+      "profile_id": "prof_006",
+      "identity": "小型培训机构的负责人，28岁，男性",
+      "role": "培训机构/校区负责人",
+      "current_context": "正在处理学员投诉，心情烦躁",
+      "personality": "易怒、不耐烦、拒绝沟通",
+      "communication_style": "语气生硬，直接打断，明确表示不需要",
+      "knowledge_level": "对升级内容不感兴趣，认为与己无关",
+      "wrong_beliefs": [
+        "认为客服是推销，想挂断电话"
+      ],
+      "risk_tendency": "高，可能投诉或拉黑",
+      "cooperation_curve": "全程拒绝，不配合任何流程"
+    },
+    {
+      "profile_id": "prof_007",
+      "identity": "中型培训机构的负责人，42岁，女性",
+      "role": "培训机构/校区负责人",
+      "current_context": "正在使用第三方系统发课，遇到低延迟直播未显示的问题",
+      "personality": "困惑、依赖指引、但愿意尝试",
+      "communication_style": "描述问题详细，需要分步指导",
+      "knowledge_level": "知道升级但不会操作，对第三方系统不熟悉",
+      "wrong_beliefs": [
+        "以为低延迟直播需要额外申请才能开通"
+      ],
+      "risk_tendency": "低，愿意按指引操作",
+      "cooperation_curve": "配合，但需要缓慢、清晰的步骤引导"
+    },
+    {
+      "profile_id": "prof_008",
+      "identity": "连锁培训机构的区域负责人，38岁，男性",
+      "role": "培训机构/校区负责人",
+      "current_context": "正在查看后台数据，对费用敏感",
+      "personality": "精明、注重成本、喜欢讨价还价",
+      "communication_style": "直接询问价格，试图争取优惠",
+      "knowledge_level": "对两种直播的价格差异有初步了解，但想获得折扣",
+      "wrong_beliefs": [
+        "认为升级后费用会大幅增加",
+        "希望客服提供优惠券或折扣"
+      ],
+      "risk_tendency": "高，可能因价格问题放弃升级",
+      "cooperation_curve": "前期配合，但试图诱导客服承诺折扣，被拒绝后态度转变"
+    },
+    {
+      "profile_id": "prof_009",
+      "identity": "小型培训机构的负责人，55岁，女性",
+      "role": "培训机构/校区负责人",
+      "current_context": "正在使用Web控制台，发现低延迟直播未显示",
+      "personality": "急躁、不信任技术、容易焦虑",
+      "communication_style": "语气急促，反复确认问题是否解决",
+      "knowledge_level": "对后台操作不熟悉，担心影响发课",
+      "wrong_beliefs": [
+        "以为低延迟直播未显示是系统故障"
+      ],
+      "risk_tendency": "中等，焦虑可能导致投诉",
+      "cooperation_curve": "配合但需要安抚，在被告知后台配置后稍显安心"
+    },
+    {
+      "profile_id": "prof_010",
+      "identity": "大型培训机构的IT负责人，32岁，男性",
+      "role": "培训机构/校区负责人",
+      "current_context": "正在测试系统，对技术细节非常了解",
+      "personality": "专业、挑剔、喜欢深入探讨",
+      "communication_style": "使用技术术语，提问深入，要求详细解释",
+      "knowledge_level": "对直播技术非常熟悉，但不知晓本次升级的具体安排",
+      "wrong_beliefs": [
+        "认为低延迟直播的延迟数据不准确"
+      ],
+      "risk_tendency": "低，但可能因技术细节不满",
+      "cooperation_curve": "配合但要求专业解答，满意后快速结束"
+    },
+    {
+      "profile_id": "prof_011",
+      "identity": "中型培训机构的负责人，36岁，女性",
+      "role": "培训机构/校区负责人",
+      "current_context": "正在处理财务，对学员端费用设置不熟悉",
+      "personality": "谨慎、注重细节、害怕出错",
+      "communication_style": "提问具体，需要确认每一步操作",
+      "knowledge_level": "知道升级但未设置学员端费用，担心影响收费",
+      "wrong_beliefs": [
+        "以为低延迟直播的费用需要单独向学员收取"
+      ],
+      "risk_tendency": "中等，害怕财务错误",
+      "cooperation_curve": "配合，在引导下完成费用设置"
+    },
+    {
+      "profile_id": "prof_012",
+      "identity": "小型培训机构的负责人，29岁，男性",
+      "role": "培训机构/校区负责人",
+      "current_context": "正在使用手机接听，对添加企业微信有顾虑",
+      "personality": "警惕、注重隐私、不愿提供额外信息",
+      "communication_style": "语气犹豫，对添加企业微信表示怀疑",
+      "knowledge_level": "对升级内容基本了解，但不愿配合后续步骤",
+      "wrong_beliefs": [
+        "认为添加企业微信会导致骚扰"
+      ],
+      "risk_tendency": "高，可能拒绝添加并提前结束通话",
+      "cooperation_curve": "前期配合，但在添加企业微信环节拒绝"
+    }
+  ]
+}

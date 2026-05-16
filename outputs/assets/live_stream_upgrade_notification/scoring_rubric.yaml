@@ -1,0 +1,193 @@
+{
+  "scene_id": "live_stream_upgrade_notification",
+  "total_score": 100.0,
+  "pass_threshold": 80.0,
+  "dimensions": [
+    {
+      "dimension_id": "task_completion",
+      "name": "任务完成度",
+      "weight": 30.0,
+      "description": "评估客服是否完整执行外呼任务的核心步骤，包括身份确认、知情确认、升级内容传达、发布方式询问、企业微信添加等。",
+      "full_score_standard": "完整执行身份确认、知情确认、升级内容传达、发布方式询问、企业微信添加，且用户无未解答疑问。",
+      "partial_score_rules": [
+        "缺少身份确认扣5分",
+        "缺少知情确认扣5分",
+        "缺少升级内容传达扣5分",
+        "缺少发布方式询问扣5分",
+        "缺少企业微信添加引导扣5分"
+      ],
+      "deduction_rules": [
+        "未执行身份确认扣5分",
+        "未执行知情确认扣5分",
+        "未执行升级内容传达扣5分",
+        "未执行发布方式询问扣5分",
+        "未执行企业微信添加引导扣5分"
+      ],
+      "zero_score_condition": "未执行任何核心步骤或完全偏离任务目标。",
+      "evidence_required": "对话记录中需体现上述步骤的执行情况。"
+    },
+    {
+      "dimension_id": "process_execution",
+      "name": "流程执行",
+      "weight": 25.0,
+      "description": "评估客服是否按照评测标准中的对话流程执行，包括根据用户身份、知情情况、发布方式等分支进行正确响应。",
+      "full_score_standard": "严格按照评测标准流程执行，所有分支处理正确。",
+      "partial_score_rules": [
+        "未根据用户身份（负责人/非负责人）执行对应流程扣5分",
+        "未根据知情情况（知情/不知情）执行对应说明扣5分",
+        "未根据发布方式（Web控制台/第三方系统）执行对应配置指引扣5分",
+        "未根据费用设置情况（已设置/未设置）执行对应操作扣5分",
+        "未根据号码可用性执行企业微信添加流程扣5分"
+      ],
+      "deduction_rules": [
+        "身份确认后未按分支处理扣5分",
+        "知情确认后未按分支处理扣5分",
+        "发布方式询问后未按分支处理扣5分",
+        "费用检查后未按分支处理扣5分",
+        "企业微信添加未按分支处理扣5分"
+      ],
+      "zero_score_condition": "完全未按流程执行或跳过关键分支。",
+      "evidence_required": "对话记录中需体现分支处理逻辑。"
+    },
+    {
+      "dimension_id": "knowledge_accuracy",
+      "name": "知识准确性",
+      "weight": 20.0,
+      "description": "评估客服提供的业务信息是否准确，包括直播区别、价格差异、配置指引等。",
+      "full_score_standard": "所有业务信息准确无误，与知识库一致。",
+      "partial_score_rules": [
+        "直播区别说明错误或不完整扣5分",
+        "价格差异说明错误扣5分",
+        "配置指引错误或遗漏关键步骤扣5分",
+        "费用设置指引错误扣5分"
+      ],
+      "deduction_rules": [
+        "直播区别说明错误扣5分",
+        "价格差异说明错误扣5分",
+        "配置指引错误扣5分",
+        "费用设置指引错误扣5分"
+      ],
+      "zero_score_condition": "关键业务信息严重错误导致用户误解。",
+      "evidence_required": "对话记录中需体现知识点的使用情况。"
+    },
+    {
+      "dimension_id": "communication_style",
+      "name": "沟通风格",
+      "weight": 15.0,
+      "description": "评估客服是否遵循极简、口语化、频繁给用户发言机会等沟通要求。",
+      "full_score_standard": "每次回复15-20字以内，口语化，频繁给用户发言机会，无语气词。",
+      "partial_score_rules": [
+        "单次回复超过20字扣2分（每超一次）",
+        "使用正式或冗长解释扣3分",
+        "未给用户发言机会（连续输出多条信息）扣3分",
+        "使用'好的'、'哈哈'等语气词扣2分"
+      ],
+      "deduction_rules": [
+        "单次回复超过20字扣2分",
+        "使用正式或冗长解释扣3分",
+        "未给用户发言机会扣3分",
+        "使用语气词扣2分"
+      ],
+      "zero_score_condition": "全程长篇大论或完全不符合口语化要求。",
+      "evidence_required": "对话记录中需体现回复长度和风格。"
+    },
+    {
+      "dimension_id": "compliance_handling",
+      "name": "合规处理",
+      "weight": 10.0,
+      "description": "评估客服是否正确处理用户忙、开车等特殊情况，以及是否遵守不承诺折扣券等红线。",
+      "full_score_standard": "正确处理所有特殊情况，无违规承诺。",
+      "partial_score_rules": [
+        "用户说忙时未使用'就1分钟，保证简短'扣5分",
+        "用户说开车时未说'那我稍后再打'并挂断扣5分",
+        "承诺折扣券或优惠券扣10分（一票否决）"
+      ],
+      "deduction_rules": [
+        "用户说忙时未使用指定话术扣5分",
+        "用户说开车时未使用指定话术并挂断扣5分",
+        "承诺折扣券或优惠券扣10分"
+      ],
+      "zero_score_condition": "出现严重违规（如承诺折扣券）且未纠正。",
+      "evidence_required": "对话记录中需体现特殊情况处理。"
+    }
+  ],
+  "veto_rules": [
+    {
+      "rule_id": "veto_discount_promise",
+      "description": "客服承诺给商家折扣券或优惠券，例如'可以给您一张优惠券'或'下次给您折扣'。",
+      "severity": "critical",
+      "evidence_required": "对话记录中出现任何承诺折扣券或优惠券的表述。"
+    },
+    {
+      "rule_id": "veto_driving_continue",
+      "description": "用户说在开车时，客服未礼貌说'那我稍后再打'后挂断，而是继续通话或强行推销。",
+      "severity": "critical",
+      "evidence_required": "用户明确表示在开车，客服未按规则结束通话。"
+    }
+  ],
+  "risk_rules": [
+    {
+      "rule_id": "risk_busy_handling",
+      "description": "用户说忙时，客服未说'就1分钟，保证简短'后继续简短说明，而是直接挂断或长篇大论。",
+      "severity": "high",
+      "default_deduction": 5.0,
+      "evidence_required": "用户明确表示忙，客服未使用指定话术或处理不当。"
+    },
+    {
+      "rule_id": "risk_concise_violation",
+      "description": "客服单次回复超过20字，或使用正式冗长解释，或使用语气词。",
+      "severity": "medium",
+      "default_deduction": 2.0,
+      "evidence_required": "对话记录中客服回复长度或风格不符合要求。"
+    },
+    {
+      "rule_id": "risk_turn_taking_violation",
+      "description": "客服连续输出多条信息不给用户插话机会。",
+      "severity": "medium",
+      "default_deduction": 3.0,
+      "evidence_required": "对话记录中客服在未等待用户回应的情况下连续输出。"
+    },
+    {
+      "rule_id": "risk_identity_confirmation_missing",
+      "description": "客服未确认用户是否为机构负责人直接进入后续流程。",
+      "severity": "high",
+      "default_deduction": 5.0,
+      "evidence_required": "对话记录中缺少身份确认步骤。"
+    },
+    {
+      "rule_id": "risk_awareness_check_missing",
+      "description": "客服未询问用户是否知道后台已启用低延迟线路。",
+      "severity": "high",
+      "default_deduction": 5.0,
+      "evidence_required": "对话记录中缺少知情确认步骤。"
+    },
+    {
+      "rule_id": "risk_upgrade_content_missing",
+      "description": "客服未告知用户发布页将分开显示两个直播选项。",
+      "severity": "high",
+      "default_deduction": 5.0,
+      "evidence_required": "对话记录中缺少升级内容传达。"
+    },
+    {
+      "rule_id": "risk_publishing_method_missing",
+      "description": "客服未询问用户发布方式直接给出配置指引。",
+      "severity": "high",
+      "default_deduction": 5.0,
+      "evidence_required": "对话记录中缺少发布方式询问。"
+    },
+    {
+      "rule_id": "risk_wechat_work_missing",
+      "description": "客服未引导用户添加企业微信。",
+      "severity": "high",
+      "default_deduction": 5.0,
+      "evidence_required": "对话记录中缺少企业微信添加引导。"
+    }
+  ],
+  "generation_metadata": {
+    "model": "deepseek-chat",
+    "created_at": "2026-05-16T05:09:17.104930+00:00",
+    "input_hash": "b441bfa3c89f3a9481459effe87461a5b82ce8285436fc00ddcd4d19504ff646",
+    "source_eval_standard_path": "outputs/extracted_eval_standards/eval_standard_row_003.md",
+    "asset_version": "1.0"
+  }
+}

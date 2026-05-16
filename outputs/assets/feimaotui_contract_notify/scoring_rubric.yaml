@@ -1,0 +1,165 @@
+{
+  "scene_id": "feimaotui_contract_notify",
+  "total_score": 100.0,
+  "pass_threshold": 80.0,
+  "dimensions": [
+    {
+      "dimension_id": "task_completion",
+      "name": "任务完成度",
+      "weight": 30.0,
+      "description": "是否完成核心业务目标：通知合同生效、确认配送意愿、提醒最低单量要求。",
+      "full_score_standard": "完成合同生效通知、配送意愿确认、最低单量要求说明三项核心任务。",
+      "partial_score_rules": [
+        "完成其中两项得20分",
+        "完成其中一项得10分"
+      ],
+      "deduction_rules": [
+        "未完成合同生效通知扣10分",
+        "未确认配送意愿扣10分",
+        "未说明最低单量要求扣10分"
+      ],
+      "zero_score_condition": "三项核心任务均未完成",
+      "evidence_required": "对话中需包含合同生效告知、配送意愿询问、最低单量说明的明确语句。"
+    },
+    {
+      "dimension_id": "process_execution",
+      "name": "流程执行",
+      "weight": 25.0,
+      "description": "是否按照评测标准中的对话流程执行：身份确认、连续配送要求说明、挽留尝试、排名机制说明。",
+      "full_score_standard": "完整执行身份确认、连续配送要求说明、挽留尝试、排名机制说明四个流程步骤。",
+      "partial_score_rules": [
+        "执行其中三个步骤得20分",
+        "执行其中两个步骤得15分",
+        "执行其中一个步骤得8分"
+      ],
+      "deduction_rules": [
+        "未进行身份确认扣5分",
+        "未说明连续配送要求扣5分",
+        "骑手拒绝时未做挽留尝试扣5分",
+        "未说明排名机制扣5分"
+      ],
+      "zero_score_condition": "未执行任何流程步骤",
+      "evidence_required": "对话中需包含身份确认语句、连续配送天数说明、挽留语句、排名机制说明。"
+    },
+    {
+      "dimension_id": "knowledge_accuracy",
+      "name": "知识准确性",
+      "weight": 20.0,
+      "description": "传达的业务信息是否准确，包括合同类型、最低单量、连续天数、退出流程等。",
+      "full_score_standard": "所有传达的业务信息与评测标准中的知识项完全一致，无错误或遗漏。",
+      "partial_score_rules": [
+        "出现1处轻微不准确（如数字错误但整体意思正确）扣5分",
+        "出现2处轻微不准确扣10分"
+      ],
+      "deduction_rules": [
+        "最低单量数字错误（如将5单说成3单）扣10分",
+        "连续配送天数错误（如将7天说成14天）扣10分",
+        "退出流程说明错误（如时间或操作方式错误）扣10分",
+        "遗漏关键信息（如未说明连续配送天数）扣5分"
+      ],
+      "zero_score_condition": "出现严重错误（如将单日合同说成多日合同）或遗漏所有关键信息",
+      "evidence_required": "对话中涉及的业务信息需与知识项内容一致。"
+    },
+    {
+      "dimension_id": "expression_quality",
+      "name": "表达质量",
+      "weight": 15.0,
+      "description": "回复是否简短自然、不重复、语气随意。",
+      "full_score_standard": "每次回复约30字以内，语气自然口语化，无重复表述。",
+      "partial_score_rules": [
+        "大部分回复符合要求，偶尔超出字数或稍显生硬得10分",
+        "回复普遍偏长或语气不够自然得5分"
+      ],
+      "deduction_rules": [
+        "单次回复超过50字扣2分（累计不超过6分）",
+        "出现完全相同的重复语句扣3分",
+        "语气生硬像读脚本扣3分"
+      ],
+      "zero_score_condition": "所有回复均远超30字且语气机械",
+      "evidence_required": "站长回复的长度和语气需符合自然简短要求。"
+    },
+    {
+      "dimension_id": "compliance",
+      "name": "合规性",
+      "weight": 10.0,
+      "description": "是否遵守合规规则，包括不承诺固定收益、不超出职责范围、不透露其他骑手信息、如实传达信息。",
+      "full_score_standard": "完全遵守所有合规规则，无任何违规行为。",
+      "partial_score_rules": [
+        "出现1次轻微违规（如措辞稍有不妥但未造成实质误导）扣3分",
+        "出现2次轻微违规扣6分"
+      ],
+      "deduction_rules": [
+        "承诺固定收益或名额保证扣5分",
+        "做出超出职责范围的承诺扣5分",
+        "透露其他骑手信息扣5分",
+        "夸大或虚构奖励或惩罚扣5分"
+      ],
+      "zero_score_condition": "出现严重违规（如承诺修改排名或透露其他骑手信息）且未纠正",
+      "evidence_required": "对话中不应出现任何违规语句。"
+    }
+  ],
+  "veto_rules": [
+    {
+      "rule_id": "veto_commitment_guarantee",
+      "description": "向骑手承诺固定收益、名额保证或特殊待遇，如'保证你一定能保住名额'、'我帮你调整排名'。",
+      "severity": "critical",
+      "evidence_required": "对话中出现明确的承诺性语句，如'保证'、'一定'等措辞。"
+    },
+    {
+      "rule_id": "veto_scope_commitment",
+      "description": "对骑手做出超出站长职责范围的承诺，如修改系统排名、干预派单算法等。",
+      "severity": "critical",
+      "evidence_required": "对话中出现承诺修改系统排名或干预派单的语句。"
+    },
+    {
+      "rule_id": "veto_unauthorized_info",
+      "description": "透露其他骑手的个人信息或排名细节，如'张三比你排名高'、'李四已经签了多日合同'。",
+      "severity": "critical",
+      "evidence_required": "对话中出现提及具体其他骑手姓名、排名或合同信息的语句。"
+    }
+  ],
+  "risk_rules": [
+    {
+      "rule_id": "risk_honest_representation",
+      "description": "传达信息时夸大或虚构奖励或惩罚，如'不完成5单会被永久拉黑'（实际仅影响合同及派单）。",
+      "severity": "high",
+      "default_deduction": 5.0,
+      "evidence_required": "对话中出现与评测标准不符的夸大或虚构后果的语句。"
+    },
+    {
+      "rule_id": "risk_no_retention",
+      "description": "骑手表示拒绝配送时，站长未做任何挽留尝试，直接同意挂断。",
+      "severity": "medium",
+      "default_deduction": 5.0,
+      "evidence_required": "骑手明确表示不想配送后，站长未给出鼓励、强调重要性或提供解决方案的语句。"
+    },
+    {
+      "rule_id": "risk_no_identity_confirmation",
+      "description": "开场未确认骑手身份，直接开始通知内容。",
+      "severity": "medium",
+      "default_deduction": 5.0,
+      "evidence_required": "对话开头未包含对骑手姓名的确认或询问。"
+    },
+    {
+      "rule_id": "risk_repetition",
+      "description": "连续两次或以上使用完全相同的句子进行回复。",
+      "severity": "low",
+      "default_deduction": 3.0,
+      "evidence_required": "对话中出现完全相同的重复语句。"
+    },
+    {
+      "rule_id": "risk_excessive_length",
+      "description": "单次回复远超30字（超过50字），影响自然表达。",
+      "severity": "low",
+      "default_deduction": 2.0,
+      "evidence_required": "站长单次回复字数超过50字。"
+    }
+  ],
+  "generation_metadata": {
+    "model": "deepseek-chat",
+    "created_at": "2026-05-16T05:07:40.488934+00:00",
+    "input_hash": "2d34418c8c0b718557ec148812d462197fe71fdbb61001496053034157881ceb",
+    "source_eval_standard_path": "outputs/extracted_eval_standards/eval_standard_row_002.md",
+    "asset_version": "1.0"
+  }
+}

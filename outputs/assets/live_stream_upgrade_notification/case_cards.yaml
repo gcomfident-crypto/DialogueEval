@@ -1,0 +1,571 @@
+{
+  "scene_id": "live_stream_upgrade_notification",
+  "cases": [
+    {
+      "case_id": "case_001",
+      "scene_id": "live_stream_upgrade_notification",
+      "case_name": "配合型校长-知情确认与升级传达",
+      "priority": "P0",
+      "profile_id": "prof_001",
+      "coverage_targets": [
+        "identity_confirmation",
+        "awareness_check",
+        "upgrade_content_communication",
+        "publishing_method_inquiry",
+        "wechat_work_addition"
+      ],
+      "hidden_user_context": {
+        "known_facts": [
+          "当前使用标准直播",
+          "后台已启用低延迟线路"
+        ],
+        "unknown_facts": [
+          "前端将分开显示两个选项",
+          "低延迟直播的具体延迟和费用"
+        ],
+        "wrong_beliefs": [],
+        "private_goal": "快速确认升级内容，不影响现有发课流程",
+        "main_objection": ""
+      },
+      "initial_state": {
+        "emotion": "neutral",
+        "patience": 80,
+        "busy_level": "low",
+        "environment": "办公室",
+        "willingness": "high"
+      },
+      "behavior_policy": {
+        "disclosure_policy": "如实回答，不主动提供额外信息",
+        "if_agent_clear": "直接确认并配合",
+        "if_agent_wrong": "礼貌指出并纠正",
+        "if_agent_too_long": "打断并请其简短",
+        "if_agent_pushy": "表示理解但坚持配合",
+        "if_agent_violates_rule": "指出违规"
+      },
+      "stop_policy": {
+        "max_turns": 12,
+        "success_end": "确认理解升级内容，同意添加企业微信",
+        "forced_end": ""
+      }
+    },
+    {
+      "case_id": "case_002",
+      "scene_id": "live_stream_upgrade_notification",
+      "case_name": "忙碌型负责人-忙时回应处理",
+      "priority": "P0",
+      "profile_id": "prof_002",
+      "coverage_targets": [
+        "identity_confirmation",
+        "busy_response_handling",
+        "upgrade_content_communication",
+        "publishing_method_inquiry",
+        "wechat_work_addition"
+      ],
+      "hidden_user_context": {
+        "known_facts": [
+          "对升级完全不知情"
+        ],
+        "unknown_facts": [
+          "升级内容",
+          "低延迟直播的用途"
+        ],
+        "wrong_beliefs": [
+          "以为升级会导致额外费用或操作复杂"
+        ],
+        "private_goal": "尽快结束通话，不增加工作量",
+        "main_objection": "担心操作复杂"
+      },
+      "initial_state": {
+        "emotion": "impatient",
+        "patience": 40,
+        "busy_level": "high",
+        "environment": "准备上课材料",
+        "willingness": "low"
+      },
+      "behavior_policy": {
+        "disclosure_policy": "先表示忙，若客服简短则配合",
+        "if_agent_clear": "快速确认",
+        "if_agent_wrong": "直接指出",
+        "if_agent_too_long": "打断并说忙",
+        "if_agent_pushy": "表示不耐烦",
+        "if_agent_violates_rule": "指出违规"
+      },
+      "stop_policy": {
+        "max_turns": 12,
+        "success_end": "理解升级内容，同意添加企业微信",
+        "forced_end": ""
+      }
+    },
+    {
+      "case_id": "case_003",
+      "scene_id": "live_stream_upgrade_notification",
+      "case_name": "开车中负责人-开车回应处理",
+      "priority": "P0",
+      "profile_id": "prof_003",
+      "coverage_targets": [
+        "identity_confirmation",
+        "driving_response_handling"
+      ],
+      "hidden_user_context": {
+        "known_facts": [],
+        "unknown_facts": [
+          "升级内容"
+        ],
+        "wrong_beliefs": [],
+        "private_goal": "安全驾驶，稍后再处理",
+        "main_objection": "当前不便"
+      },
+      "initial_state": {
+        "emotion": "neutral",
+        "patience": 50,
+        "busy_level": "high",
+        "environment": "开车中",
+        "willingness": "low"
+      },
+      "behavior_policy": {
+        "disclosure_policy": "告知在开车，要求稍后再打",
+        "if_agent_clear": "不适用",
+        "if_agent_wrong": "不适用",
+        "if_agent_too_long": "不适用",
+        "if_agent_pushy": "不适用",
+        "if_agent_violates_rule": "不适用"
+      },
+      "stop_policy": {
+        "max_turns": 12,
+        "success_end": "客服说稍后再打并挂断",
+        "forced_end": ""
+      }
+    },
+    {
+      "case_id": "case_004",
+      "scene_id": "live_stream_upgrade_notification",
+      "case_name": "技术小白负责人-第三方系统配置指引",
+      "priority": "P1",
+      "profile_id": "prof_004",
+      "coverage_targets": [
+        "identity_confirmation",
+        "awareness_check",
+        "upgrade_content_communication",
+        "publishing_method_inquiry",
+        "third_party_guidance",
+        "wechat_work_addition"
+      ],
+      "hidden_user_context": {
+        "known_facts": [
+          "当前使用第三方系统发课"
+        ],
+        "unknown_facts": [
+          "低延迟直播如何开通",
+          "升级内容"
+        ],
+        "wrong_beliefs": [
+          "以为低延迟直播需要额外付费才能使用",
+          "担心操作失误影响现有课程"
+        ],
+        "private_goal": "在客服指导下完成配置，不犯错",
+        "main_objection": "害怕操作失误"
+      },
+      "initial_state": {
+        "emotion": "confused",
+        "patience": 60,
+        "busy_level": "low",
+        "environment": "电脑前",
+        "willingness": "high"
+      },
+      "behavior_policy": {
+        "disclosure_policy": "如实描述问题，等待分步指导",
+        "if_agent_clear": "按步骤操作并确认",
+        "if_agent_wrong": "指出错误并请求纠正",
+        "if_agent_too_long": "耐心等待",
+        "if_agent_pushy": "表示需要慢慢来",
+        "if_agent_violates_rule": "指出违规"
+      },
+      "stop_policy": {
+        "max_turns": 12,
+        "success_end": "完成配置，同意添加企业微信",
+        "forced_end": ""
+      }
+    },
+    {
+      "case_id": "case_005",
+      "scene_id": "live_stream_upgrade_notification",
+      "case_name": "质疑型教务主任-区别与价格说明",
+      "priority": "P1",
+      "profile_id": "prof_005",
+      "coverage_targets": [
+        "identity_confirmation",
+        "awareness_check",
+        "upgrade_content_communication",
+        "difference_explanation",
+        "price_difference_explanation",
+        "wechat_work_addition"
+      ],
+      "hidden_user_context": {
+        "known_facts": [
+          "标准直播延迟约5-10秒"
+        ],
+        "unknown_facts": [
+          "低延迟直播的具体延迟和费用"
+        ],
+        "wrong_beliefs": [
+          "认为标准直播已经够用",
+          "低延迟直播是变相收费"
+        ],
+        "private_goal": "确认升级的必要性和性价比",
+        "main_objection": "认为低延迟直播是变相收费"
+      },
+      "initial_state": {
+        "emotion": "skeptical",
+        "patience": 70,
+        "busy_level": "medium",
+        "environment": "会议间隙",
+        "willingness": "medium"
+      },
+      "behavior_policy": {
+        "disclosure_policy": "直接提问，要求提供证据",
+        "if_agent_clear": "要求进一步解释",
+        "if_agent_wrong": "指出并质疑",
+        "if_agent_too_long": "打断并要求简短",
+        "if_agent_pushy": "表示怀疑",
+        "if_agent_violates_rule": "指出违规"
+      },
+      "stop_policy": {
+        "max_turns": 12,
+        "success_end": "理解区别和价格，同意添加企业微信",
+        "forced_end": ""
+      }
+    },
+    {
+      "case_id": "case_006",
+      "scene_id": "live_stream_upgrade_notification",
+      "case_name": "易怒型负责人-拒绝沟通",
+      "priority": "P0",
+      "profile_id": "prof_006",
+      "coverage_targets": [
+        "identity_confirmation",
+        "no_discount_promise"
+      ],
+      "hidden_user_context": {
+        "known_facts": [],
+        "unknown_facts": [
+          "升级内容"
+        ],
+        "wrong_beliefs": [
+          "认为客服是推销"
+        ],
+        "private_goal": "尽快挂断电话",
+        "main_objection": "认为与己无关"
+      },
+      "initial_state": {
+        "emotion": "angry",
+        "patience": 20,
+        "busy_level": "high",
+        "environment": "处理投诉中",
+        "willingness": "very low"
+      },
+      "behavior_policy": {
+        "disclosure_policy": "直接拒绝，不提供信息",
+        "if_agent_clear": "不适用",
+        "if_agent_wrong": "不适用",
+        "if_agent_too_long": "打断并挂断",
+        "if_agent_pushy": "表示要投诉",
+        "if_agent_violates_rule": "指出违规"
+      },
+      "stop_policy": {
+        "max_turns": 12,
+        "success_end": "客服结束通话",
+        "forced_end": ""
+      }
+    },
+    {
+      "case_id": "case_007",
+      "scene_id": "live_stream_upgrade_notification",
+      "case_name": "第三方系统用户-配置指引与费用检查",
+      "priority": "P1",
+      "profile_id": "prof_007",
+      "coverage_targets": [
+        "identity_confirmation",
+        "awareness_check",
+        "upgrade_content_communication",
+        "publishing_method_inquiry",
+        "third_party_guidance",
+        "student_fee_check",
+        "wechat_work_addition"
+      ],
+      "hidden_user_context": {
+        "known_facts": [
+          "知道升级但不会操作",
+          "低延迟直播未显示"
+        ],
+        "unknown_facts": [
+          "如何开通低延迟直播",
+          "学员端费用设置"
+        ],
+        "wrong_beliefs": [
+          "以为低延迟直播需要额外申请"
+        ],
+        "private_goal": "在指导下完成开通和费用设置",
+        "main_objection": "对第三方系统不熟悉"
+      },
+      "initial_state": {
+        "emotion": "confused",
+        "patience": 70,
+        "busy_level": "low",
+        "environment": "使用第三方系统",
+        "willingness": "high"
+      },
+      "behavior_policy": {
+        "disclosure_policy": "详细描述问题，等待分步指导",
+        "if_agent_clear": "按步骤操作并确认",
+        "if_agent_wrong": "指出并请求纠正",
+        "if_agent_too_long": "耐心等待",
+        "if_agent_pushy": "表示需要慢慢来",
+        "if_agent_violates_rule": "指出违规"
+      },
+      "stop_policy": {
+        "max_turns": 12,
+        "success_end": "完成配置和费用检查，同意添加企业微信",
+        "forced_end": ""
+      }
+    },
+    {
+      "case_id": "case_008",
+      "scene_id": "live_stream_upgrade_notification",
+      "case_name": "成本敏感型负责人-价格询问与拒绝折扣",
+      "priority": "P0",
+      "profile_id": "prof_008",
+      "coverage_targets": [
+        "identity_confirmation",
+        "awareness_check",
+        "upgrade_content_communication",
+        "price_difference_explanation",
+        "no_discount_promise",
+        "wechat_work_addition"
+      ],
+      "hidden_user_context": {
+        "known_facts": [
+          "两种直播价格有差异"
+        ],
+        "unknown_facts": [
+          "具体价格差异"
+        ],
+        "wrong_beliefs": [
+          "认为升级后费用会大幅增加",
+          "希望获得折扣"
+        ],
+        "private_goal": "争取优惠或折扣",
+        "main_objection": "价格问题"
+      },
+      "initial_state": {
+        "emotion": "calculative",
+        "patience": 70,
+        "busy_level": "low",
+        "environment": "查看后台数据",
+        "willingness": "medium"
+      },
+      "behavior_policy": {
+        "disclosure_policy": "直接询问价格，试图争取优惠",
+        "if_agent_clear": "要求折扣",
+        "if_agent_wrong": "指出并质疑",
+        "if_agent_too_long": "打断并要求简短",
+        "if_agent_pushy": "表示不满",
+        "if_agent_violates_rule": "指出违规"
+      },
+      "stop_policy": {
+        "max_turns": 12,
+        "success_end": "理解价格差异，放弃折扣要求，同意添加企业微信",
+        "forced_end": ""
+      }
+    },
+    {
+      "case_id": "case_009",
+      "scene_id": "live_stream_upgrade_notification",
+      "case_name": "Web控制台用户-后台配置指引",
+      "priority": "P1",
+      "profile_id": "prof_009",
+      "coverage_targets": [
+        "identity_confirmation",
+        "awareness_check",
+        "upgrade_content_communication",
+        "publishing_method_inquiry",
+        "web_console_guidance",
+        "wechat_work_addition"
+      ],
+      "hidden_user_context": {
+        "known_facts": [
+          "低延迟直播未显示"
+        ],
+        "unknown_facts": [
+          "升级内容",
+          "后台配置流程"
+        ],
+        "wrong_beliefs": [
+          "以为低延迟直播未显示是系统故障"
+        ],
+        "private_goal": "确认问题能解决，不影响发课",
+        "main_objection": "担心影响发课"
+      },
+      "initial_state": {
+        "emotion": "anxious",
+        "patience": 50,
+        "busy_level": "medium",
+        "environment": "使用Web控制台",
+        "willingness": "high"
+      },
+      "behavior_policy": {
+        "disclosure_policy": "描述问题，等待解决方案",
+        "if_agent_clear": "确认并询问细节",
+        "if_agent_wrong": "指出并请求纠正",
+        "if_agent_too_long": "打断并要求简短",
+        "if_agent_pushy": "表示焦虑",
+        "if_agent_violates_rule": "指出违规"
+      },
+      "stop_policy": {
+        "max_turns": 12,
+        "success_end": "理解后台配置，同意添加企业微信",
+        "forced_end": ""
+      }
+    },
+    {
+      "case_id": "case_010",
+      "scene_id": "live_stream_upgrade_notification",
+      "case_name": "IT负责人-技术细节探讨",
+      "priority": "P1",
+      "profile_id": "prof_010",
+      "coverage_targets": [
+        "identity_confirmation",
+        "awareness_check",
+        "upgrade_content_communication",
+        "difference_explanation",
+        "publishing_method_inquiry",
+        "wechat_work_addition"
+      ],
+      "hidden_user_context": {
+        "known_facts": [
+          "直播技术细节"
+        ],
+        "unknown_facts": [
+          "本次升级的具体安排"
+        ],
+        "wrong_beliefs": [
+          "认为低延迟直播的延迟数据不准确"
+        ],
+        "private_goal": "确认技术细节，验证升级合理性",
+        "main_objection": "对延迟数据有疑问"
+      },
+      "initial_state": {
+        "emotion": "professional",
+        "patience": 80,
+        "busy_level": "low",
+        "environment": "测试系统",
+        "willingness": "high"
+      },
+      "behavior_policy": {
+        "disclosure_policy": "使用技术术语提问，要求详细解释",
+        "if_agent_clear": "满意后快速结束",
+        "if_agent_wrong": "指出并纠正",
+        "if_agent_too_long": "打断并要求精确",
+        "if_agent_pushy": "表示不需要",
+        "if_agent_violates_rule": "指出违规"
+      },
+      "stop_policy": {
+        "max_turns": 12,
+        "success_end": "技术细节满意，同意添加企业微信",
+        "forced_end": ""
+      }
+    },
+    {
+      "case_id": "case_011",
+      "scene_id": "live_stream_upgrade_notification",
+      "case_name": "财务谨慎型负责人-学员端费用设置",
+      "priority": "P1",
+      "profile_id": "prof_011",
+      "coverage_targets": [
+        "identity_confirmation",
+        "awareness_check",
+        "upgrade_content_communication",
+        "publishing_method_inquiry",
+        "student_fee_check",
+        "wechat_work_addition"
+      ],
+      "hidden_user_context": {
+        "known_facts": [
+          "知道升级但未设置学员端费用"
+        ],
+        "unknown_facts": [
+          "如何设置低延迟直播的费用"
+        ],
+        "wrong_beliefs": [
+          "以为低延迟直播的费用需要单独向学员收取"
+        ],
+        "private_goal": "正确设置费用，避免财务错误",
+        "main_objection": "害怕财务错误"
+      },
+      "initial_state": {
+        "emotion": "cautious",
+        "patience": 70,
+        "busy_level": "low",
+        "environment": "处理财务",
+        "willingness": "high"
+      },
+      "behavior_policy": {
+        "disclosure_policy": "提问具体，需要确认每一步",
+        "if_agent_clear": "按步骤操作并确认",
+        "if_agent_wrong": "指出并请求纠正",
+        "if_agent_too_long": "耐心等待",
+        "if_agent_pushy": "表示需要慢慢来",
+        "if_agent_violates_rule": "指出违规"
+      },
+      "stop_policy": {
+        "max_turns": 12,
+        "success_end": "完成费用设置，同意添加企业微信",
+        "forced_end": ""
+      }
+    },
+    {
+      "case_id": "case_012",
+      "scene_id": "live_stream_upgrade_notification",
+      "case_name": "隐私警惕型负责人-拒绝添加企业微信",
+      "priority": "P0",
+      "profile_id": "prof_012",
+      "coverage_targets": [
+        "identity_confirmation",
+        "awareness_check",
+        "upgrade_content_communication",
+        "publishing_method_inquiry",
+        "wechat_work_addition"
+      ],
+      "hidden_user_context": {
+        "known_facts": [
+          "升级内容基本了解"
+        ],
+        "unknown_facts": [],
+        "wrong_beliefs": [
+          "认为添加企业微信会导致骚扰"
+        ],
+        "private_goal": "避免提供额外信息",
+        "main_objection": "隐私顾虑"
+      },
+      "initial_state": {
+        "emotion": "suspicious",
+        "patience": 50,
+        "busy_level": "low",
+        "environment": "使用手机",
+        "willingness": "medium"
+      },
+      "behavior_policy": {
+        "disclosure_policy": "前期配合，但在添加企业微信环节拒绝",
+        "if_agent_clear": "确认信息",
+        "if_agent_wrong": "指出",
+        "if_agent_too_long": "打断",
+        "if_agent_pushy": "表示不满",
+        "if_agent_violates_rule": "指出违规"
+      },
+      "stop_policy": {
+        "max_turns": 12,
+        "success_end": "拒绝添加企业微信，客服结束通话",
+        "forced_end": ""
+      }
+    }
+  ]
+}

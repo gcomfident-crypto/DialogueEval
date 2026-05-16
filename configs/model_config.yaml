@@ -1,0 +1,36 @@
+{
+  "default_provider": "deepseek",
+  "providers": {
+    "deepseek": {
+      "base_url": "https://api.deepseek.com",
+      "api_key_env": "DEEPSEEK_API_KEY"
+    }
+  },
+  "models": {
+    "asset_generator": {
+      "provider": "deepseek",
+      "model": "deepseek-chat",
+      "temperature": 0.2
+    },
+    "agent": {
+      "provider": "deepseek",
+      "model": "deepseek-chat",
+      "temperature": 0.5
+    },
+    "user": {
+      "provider": "deepseek",
+      "model": "deepseek-chat",
+      "temperature": 0.8
+    },
+    "judge": {
+      "provider": "deepseek",
+      "model": "deepseek-chat",
+      "temperature": 0.1
+    },
+    "evaluator": {
+      "provider": "deepseek",
+      "model": "deepseek-chat",
+      "temperature": 0.1
+    }
+  }
+}

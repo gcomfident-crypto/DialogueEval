@@ -1,0 +1,140 @@
+{
+  "scene_id": "live_stream_upgrade_notification",
+  "coverage_labels": [
+    {
+      "label": "identity_confirmation",
+      "name": "身份确认",
+      "definition": "客服确认用户是否为机构负责人，若不是则请其转达。",
+      "evidence_required": "对话中客服明确询问用户是否为负责人，并根据回答采取相应行动（继续或请转达）。",
+      "priority": "P0",
+      "positive_evidence_examples_description": "客服询问负责人身份并得到肯定或否定回答后，执行对应流程。",
+      "negative_evidence_examples_description": "客服未确认身份直接进入后续流程。"
+    },
+    {
+      "label": "awareness_check",
+      "name": "知情确认",
+      "definition": "客服询问用户是否知道后台已为其启用低延迟线路。",
+      "evidence_required": "客服明确提问用户是否知道后台已走低延迟线路，并根据用户回答（知情/不知情）进行不同解释。",
+      "priority": "P0",
+      "positive_evidence_examples_description": "客服提出知情确认问题，用户回答后客服给出相应说明。",
+      "negative_evidence_examples_description": "客服未询问知情情况直接告知升级内容。"
+    },
+    {
+      "label": "upgrade_content_communication",
+      "name": "升级内容传达",
+      "definition": "客服告知用户发布页将分开显示标准直播和低延迟直播两个选项。",
+      "evidence_required": "客服明确说明发布页面将新增两个独立选项，用户可自行选择。",
+      "priority": "P0",
+      "positive_evidence_examples_description": "客服用口语化短句传达升级信息，并等待用户回应。",
+      "negative_evidence_examples_description": "客服未传达升级内容或使用冗长解释。"
+    },
+    {
+      "label": "difference_explanation",
+      "name": "区别说明",
+      "definition": "客服解释标准直播与低延迟直播在延迟、费用、适用场景上的区别。",
+      "evidence_required": "客服主动或应要求说明两种直播的延迟时间、费用高低和适用课程类型。",
+      "priority": "P1",
+      "positive_evidence_examples_description": "客服用简短对比方式说明区别，例如延迟时间、费用、适合班型。",
+      "negative_evidence_examples_description": "客服未提供区别或给出错误信息。"
+    },
+    {
+      "label": "price_difference_explanation",
+      "name": "价格差异说明",
+      "definition": "客服说明标准直播更便宜，低延迟直播费用略高。",
+      "evidence_required": "客服明确提及两种直播的价格高低对比。",
+      "priority": "P1",
+      "positive_evidence_examples_description": "客服用口语化短句说明价格差异。",
+      "negative_evidence_examples_description": "客服未提及价格或给出矛盾信息。"
+    },
+    {
+      "label": "publishing_method_inquiry",
+      "name": "发布方式询问",
+      "definition": "客服询问用户是通过Web控制台、校务系统A还是SaaS系统B发课。",
+      "evidence_required": "客服明确提问用户使用的发布方式，并列出选项。",
+      "priority": "P0",
+      "positive_evidence_examples_description": "客服用简短问句询问发布方式，用户回答后进入对应指引。",
+      "negative_evidence_examples_description": "客服未询问发布方式直接给出配置指引。"
+    },
+    {
+      "label": "web_console_guidance",
+      "name": "Web控制台配置指引",
+      "definition": "针对Web控制台用户，若低延迟直播未显示，告知后台配置后明天再查看。",
+      "evidence_required": "当用户使用Web控制台且低延迟直播未显示时，客服说明后台会配置并请用户明天查看。",
+      "priority": "P1",
+      "positive_evidence_examples_description": "客服给出后台配置和等待时间的指引。",
+      "negative_evidence_examples_description": "客服未按流程指引或给出错误步骤。"
+    },
+    {
+      "label": "third_party_guidance",
+      "name": "第三方系统配置指引",
+      "definition": "针对第三方系统用户，若低延迟直播未显示，引导用户逐步开通。",
+      "evidence_required": "当用户使用第三方系统且低延迟直播未显示时，客服按步骤引导用户进入【我的】→【服务商/直播平台管理】→【直播平台】→勾选低延迟直播并保存。",
+      "priority": "P1",
+      "positive_evidence_examples_description": "客服分步引导用户操作，每步暂停等待用户确认。",
+      "negative_evidence_examples_description": "客服跳过步骤或一次性给出所有步骤。"
+    },
+    {
+      "label": "student_fee_check",
+      "name": "学员端费用检查",
+      "definition": "客服询问用户是否已设置学员端费用或加速线路费，并引导相应操作。",
+      "evidence_required": "客服主动询问用户是否已设置费用，并根据是否已设置给出不同指引。",
+      "priority": "P1",
+      "positive_evidence_examples_description": "客服询问费用设置情况，并引导用户确认或配置低延迟直播的费用。",
+      "negative_evidence_examples_description": "客服未提及费用检查直接进入下一步。"
+    },
+    {
+      "label": "wechat_work_addition",
+      "name": "企业微信添加引导",
+      "definition": "客服引导用户添加企业微信，并根据号码可用性提供不同方案。",
+      "evidence_required": "客服在通话结束前提出添加企业微信的请求，并根据用户号码是否可添加给出相应提示。",
+      "priority": "P0",
+      "positive_evidence_examples_description": "客服告知稍后通过企业微信添加，或请用户提供可添加的手机号。",
+      "negative_evidence_examples_description": "客服未引导添加企业微信。"
+    },
+    {
+      "label": "busy_response_handling",
+      "name": "忙时回应处理",
+      "definition": "若用户表示忙，客服说'就1分钟，保证简短'后继续简短说明。",
+      "evidence_required": "当用户明确表示忙时，客服使用指定话术并继续简短说明。",
+      "priority": "P0",
+      "positive_evidence_examples_description": "客服在用户说忙后使用'就1分钟，保证简短'并继续。",
+      "negative_evidence_examples_description": "客服直接挂断或长篇大论。"
+    },
+    {
+      "label": "driving_response_handling",
+      "name": "开车回应处理",
+      "definition": "若用户说在开车，客服礼貌说'那我稍后再打'后挂断。",
+      "evidence_required": "当用户明确表示在开车时，客服使用指定话术并结束通话。",
+      "priority": "P0",
+      "positive_evidence_examples_description": "客服在用户说开车后说'那我稍后再打'并挂断。",
+      "negative_evidence_examples_description": "客服继续通话或强行推销。"
+    },
+    {
+      "label": "no_discount_promise",
+      "name": "不承诺折扣券",
+      "definition": "客服不得承诺给商家折扣券或优惠券。",
+      "evidence_required": "整个对话中客服未出现任何承诺折扣券或优惠券的表述。",
+      "priority": "P0",
+      "positive_evidence_examples_description": "客服未提及任何折扣、优惠券相关承诺。",
+      "negative_evidence_examples_description": "客服出现'可以给您一张优惠券'或'下次给您折扣'等表述。"
+    },
+    {
+      "label": "concise_reply_style",
+      "name": "极简回复风格",
+      "definition": "客服每次回复控制在15-20字以内，使用口语化短句。",
+      "evidence_required": "对话中客服的回复大多在15-20字以内，且风格口语化、简短。",
+      "priority": "P1",
+      "positive_evidence_examples_description": "客服回复简短，每句不超过20字，自然口语化。",
+      "negative_evidence_examples_description": "客服回复冗长、正式或超过20字。"
+    },
+    {
+      "label": "turn_taking",
+      "name": "频繁给用户发言机会",
+      "definition": "客服在给出信息后暂停，等待用户回应再继续。",
+      "evidence_required": "对话中客服在每段信息后有明显停顿或等待用户回应的迹象。",
+      "priority": "P1",
+      "positive_evidence_examples_description": "客服在给出信息后等待用户回应，不连续输出。",
+      "negative_evidence_examples_description": "客服连续输出多条信息不给用户插话机会。"
+    }
+  ]
+}
