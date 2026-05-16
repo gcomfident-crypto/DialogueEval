@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from contextlib import asynccontextmanager
+
 from fastapi import FastAPI, File, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import PlainTextResponse
@@ -10,13 +12,25 @@ from apps.api.service import (
     ExtractEvalStandardsRequest,
     GenerateAssetsRequest,
     RunEvaluationRequest,
+    SyncPromptsRequest,
 )
+from dialogue_simulator.tracing import setup_tracing, shutdown_tracing
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    setup_tracing("dialogue-eval-api")
+    try:
+        yield
+    finally:
+        shutdown_tracing()
 
 
 app = FastAPI(
     title="DialogueEval API",
     description="API wrapper for asset generation, dialogue simulation, and evaluation reports.",
     version="0.1.0",
+    lifespan=lifespan,
 )
 app.add_middleware(
     CORSMiddleware,
@@ -45,6 +59,22 @@ async def upload_file(file: UploadFile = File(...)):
 def extract_eval_standards(request: ExtractEvalStandardsRequest):
     try:
         return service.extract_eval_standards(request)
+    except Exception as exc:
+        raise _http_error(exc) from exc
+
+
+@app.get("/prompts/status")
+def get_prompt_status():
+    try:
+        return service.get_prompt_status()
+    except Exception as exc:
+        raise _http_error(exc) from exc
+
+
+@app.post("/prompts/sync")
+def sync_prompts(request: SyncPromptsRequest):
+    try:
+        return service.sync_prompts(request)
     except Exception as exc:
         raise _http_error(exc) from exc
 

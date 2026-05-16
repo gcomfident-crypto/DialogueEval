@@ -40,6 +40,7 @@ from dialogue_simulator.storage import (
     read_text,
     write_model,
 )
+from dialogue_simulator.tracing import trace_span
 from dialogue_simulator.user_model import generate_user_turn
 
 
@@ -76,69 +77,127 @@ def build_asset_generation_graph(
         business_config_path = state.get("business_config_path")
         generation_policy_path = state.get("generation_policy_path")
 
-        business_config = (
-            BusinessConfig.model_validate(read_structured_file(business_config_path))
-            if business_config_path
-            else BusinessConfig()
-        )
-        generation_policy = (
-            GenerationPolicy.model_validate(read_structured_file(generation_policy_path))
-            if generation_policy_path
-            else GenerationPolicy()
-        )
-        raw_eval_standard_text = read_text(eval_standard_path)
-        eval_standard_text = raw_eval_standard_text
-        materialized_eval_standard = None
-        if generation_policy.variable_materialization.enabled:
-            materialized_eval_standard = materialize_eval_standard(
-                llm,
-                eval_standard_text=raw_eval_standard_text,
-                business_config=business_config,
-                generation_policy=generation_policy,
-                retry_count=generation_policy.validation.retry_on_schema_error,
+        with trace_span(
+            "asset.load_eval_standard",
+            attributes={
+                "dialogue_eval.graph": "asset_generation",
+                "dialogue_eval.node": "load_eval_standard",
+                "dialogue_eval.eval_standard_path": str(eval_standard_path),
+            },
+            input_data={
+                "eval_standard_path": eval_standard_path,
+                "business_config_path": business_config_path,
+                "generation_policy_path": generation_policy_path,
+            },
+        ) as span:
+            business_config = (
+                BusinessConfig.model_validate(read_structured_file(business_config_path))
+                if business_config_path
+                else BusinessConfig()
             )
-            eval_standard_text = materialized_eval_standard.materialized_text
+            generation_policy = (
+                GenerationPolicy.model_validate(read_structured_file(generation_policy_path))
+                if generation_policy_path
+                else GenerationPolicy()
+            )
+            raw_eval_standard_text = read_text(eval_standard_path)
+            eval_standard_text = raw_eval_standard_text
+            materialized_eval_standard = None
+            if generation_policy.variable_materialization.enabled:
+                materialized_eval_standard = materialize_eval_standard(
+                    llm,
+                    eval_standard_text=raw_eval_standard_text,
+                    business_config=business_config,
+                    generation_policy=generation_policy,
+                    retry_count=generation_policy.validation.retry_on_schema_error,
+                )
+                eval_standard_text = materialized_eval_standard.materialized_text
 
-        return {
-            "raw_eval_standard_text": raw_eval_standard_text,
-            "eval_standard_text": eval_standard_text,
-            "materialized_eval_standard": materialized_eval_standard,
-            "input_hash": file_sha256(eval_standard_path),
-            "business_config": business_config,
-            "generation_policy": generation_policy,
-        }
+            result = {
+                "raw_eval_standard_text": raw_eval_standard_text,
+                "eval_standard_text": eval_standard_text,
+                "materialized_eval_standard": materialized_eval_standard,
+                "input_hash": file_sha256(eval_standard_path),
+                "business_config": business_config,
+                "generation_policy": generation_policy,
+            }
+            span.set_output(
+                {
+                    "input_hash": result["input_hash"],
+                    "raw_length": len(raw_eval_standard_text),
+                    "materialized": materialized_eval_standard is not None,
+                    "materialized_length": len(eval_standard_text),
+                }
+            )
+            return result
 
     def generate_scene_brief(state: AssetGenerationState) -> dict[str, Any]:
-        policy = state["generation_policy"]
-        scene_asset = generate_scene_asset(
-            llm,
-            eval_standard_text=state["eval_standard_text"],
-            eval_standard_path=state["eval_standard_path"],
-            business_config=state["business_config"],
-            input_hash=state["input_hash"],
-            retry_count=policy.validation.retry_on_schema_error,
-        )
-        metadata = scene_asset.generation_metadata.model_copy(
-            update={"asset_version": policy.asset_version}
-        )
-        return {"scene_asset": scene_asset.model_copy(update={"generation_metadata": metadata})}
+        with trace_span(
+            "asset.generate_scene_brief",
+            attributes={
+                "dialogue_eval.graph": "asset_generation",
+                "dialogue_eval.node": "generate_scene_brief",
+                "dialogue_eval.input_hash": state["input_hash"],
+            },
+            input_data={"eval_standard_text": state["eval_standard_text"]},
+        ) as span:
+            policy = state["generation_policy"]
+            scene_asset = generate_scene_asset(
+                llm,
+                eval_standard_text=state["eval_standard_text"],
+                eval_standard_path=state["eval_standard_path"],
+                business_config=state["business_config"],
+                input_hash=state["input_hash"],
+                retry_count=policy.validation.retry_on_schema_error,
+            )
+            metadata = scene_asset.generation_metadata.model_copy(
+                update={"asset_version": policy.asset_version}
+            )
+            result = {"scene_asset": scene_asset.model_copy(update={"generation_metadata": metadata})}
+            span.set_output(
+                {
+                    "scene_id": result["scene_asset"].scene_id,
+                    "scene_name": result["scene_asset"].scene_name,
+                }
+            )
+            return result
 
     def generate_coverage(state: AssetGenerationState) -> dict[str, Any]:
-        policy = state["generation_policy"]
-        return {
-            "coverage_plan": generate_coverage_plan(
+        with trace_span(
+            "asset.generate_coverage_plan",
+            attributes={
+                "dialogue_eval.graph": "asset_generation",
+                "dialogue_eval.node": "generate_coverage_plan",
+                "dialogue_eval.scene_id": state["scene_asset"].scene_id,
+            },
+        ) as span:
+            policy = state["generation_policy"]
+            coverage_plan = generate_coverage_plan(
                 llm,
                 eval_standard_text=state["eval_standard_text"],
                 scene_asset=state["scene_asset"],
                 generation_policy=policy,
                 retry_count=policy.validation.retry_on_schema_error,
             )
-        }
+            span.set_output(
+                {
+                    "scene_id": coverage_plan.scene_id,
+                    "coverage_label_count": len(coverage_plan.coverage_labels),
+                }
+            )
+            return {"coverage_plan": coverage_plan}
 
     def generate_profiles(state: AssetGenerationState) -> dict[str, Any]:
-        policy = state["generation_policy"]
-        return {
-            "user_profiles": generate_user_profiles(
+        with trace_span(
+            "asset.generate_user_profiles",
+            attributes={
+                "dialogue_eval.graph": "asset_generation",
+                "dialogue_eval.node": "generate_user_profiles",
+                "dialogue_eval.scene_id": state["scene_asset"].scene_id,
+            },
+        ) as span:
+            policy = state["generation_policy"]
+            user_profiles = generate_user_profiles(
                 llm,
                 eval_standard_text=state["eval_standard_text"],
                 scene_asset=state["scene_asset"],
@@ -146,12 +205,25 @@ def build_asset_generation_graph(
                 generation_policy=policy,
                 retry_count=policy.validation.retry_on_schema_error,
             )
-        }
+            span.set_output(
+                {
+                    "scene_id": user_profiles.scene_id,
+                    "profile_count": len(user_profiles.profiles),
+                }
+            )
+            return {"user_profiles": user_profiles}
 
     def generate_rubric(state: AssetGenerationState) -> dict[str, Any]:
-        policy = state["generation_policy"]
-        return {
-            "scoring_rubric": generate_scoring_rubric(
+        with trace_span(
+            "asset.generate_scoring_rubric",
+            attributes={
+                "dialogue_eval.graph": "asset_generation",
+                "dialogue_eval.node": "generate_scoring_rubric",
+                "dialogue_eval.scene_id": state["scene_asset"].scene_id,
+            },
+        ) as span:
+            policy = state["generation_policy"]
+            scoring_rubric = generate_scoring_rubric(
                 llm,
                 eval_standard_text=state["eval_standard_text"],
                 scene_asset=state["scene_asset"],
@@ -159,12 +231,27 @@ def build_asset_generation_graph(
                 input_hash=state["input_hash"],
                 retry_count=policy.validation.retry_on_schema_error,
             )
-        }
+            span.set_output(
+                {
+                    "scene_id": scoring_rubric.scene_id,
+                    "dimension_count": len(scoring_rubric.dimensions),
+                    "total_score": scoring_rubric.total_score,
+                    "pass_threshold": scoring_rubric.pass_threshold,
+                }
+            )
+            return {"scoring_rubric": scoring_rubric}
 
     def generate_cases(state: AssetGenerationState) -> dict[str, Any]:
-        policy = state["generation_policy"]
-        return {
-            "case_cards": generate_case_cards(
+        with trace_span(
+            "asset.generate_case_cards",
+            attributes={
+                "dialogue_eval.graph": "asset_generation",
+                "dialogue_eval.node": "generate_case_cards",
+                "dialogue_eval.scene_id": state["scene_asset"].scene_id,
+            },
+        ) as span:
+            policy = state["generation_policy"]
+            case_cards = generate_case_cards(
                 llm,
                 eval_standard_text=state["eval_standard_text"],
                 scene_asset=state["scene_asset"],
@@ -173,44 +260,75 @@ def build_asset_generation_graph(
                 generation_policy=policy,
                 retry_count=policy.validation.retry_on_schema_error,
             )
-        }
+            span.set_output(
+                {
+                    "scene_id": case_cards.scene_id,
+                    "case_count": len(case_cards.cases),
+                }
+            )
+            return {"case_cards": case_cards}
 
     def validate_assets(state: AssetGenerationState) -> dict[str, Any]:
-        GeneratedAssets(
-            scene_asset=state["scene_asset"],
-            coverage_plan=state["coverage_plan"],
-            user_profiles=state["user_profiles"],
-            case_cards=state["case_cards"],
-            scoring_rubric=state["scoring_rubric"],
-        )
-        return {}
+        with trace_span(
+            "asset.validate_assets",
+            attributes={
+                "dialogue_eval.graph": "asset_generation",
+                "dialogue_eval.node": "validate_assets",
+                "dialogue_eval.scene_id": state["scene_asset"].scene_id,
+            },
+        ) as span:
+            GeneratedAssets(
+                scene_asset=state["scene_asset"],
+                coverage_plan=state["coverage_plan"],
+                user_profiles=state["user_profiles"],
+                case_cards=state["case_cards"],
+                scoring_rubric=state["scoring_rubric"],
+            )
+            span.set_output({"valid": True})
+            return {}
 
     def persist_assets(state: AssetGenerationState) -> dict[str, Any]:
-        root = Path(output_root)
-        existing_asset_dir = _find_asset_dir_by_input_hash(root, state["input_hash"])
-        scene_id = (
-            _load_existing_scene_id(existing_asset_dir)
-            if existing_asset_dir is not None
-            else state["scene_asset"].scene_id
-        )
-        _normalize_scene_ids(state, scene_id)
-
-        asset_dir = existing_asset_dir or root / scene_id
-        asset_dir.mkdir(parents=True, exist_ok=True)
-        write_model(asset_dir / "scene_asset.yaml", state["scene_asset"])
-        write_model(asset_dir / "coverage_plan.yaml", state["coverage_plan"])
-        write_model(asset_dir / "user_profiles.yaml", state["user_profiles"])
-        write_model(asset_dir / "case_cards.yaml", state["case_cards"])
-        write_model(asset_dir / "scoring_rubric.yaml", state["scoring_rubric"])
-        materialized_eval_standard = state.get("materialized_eval_standard")
-        if materialized_eval_standard is not None:
-            (asset_dir / "materialized_eval_standard.md").write_text(
-                materialized_eval_standard.materialized_text.rstrip() + "\n",
-                encoding="utf-8",
+        with trace_span(
+            "asset.persist_assets",
+            attributes={
+                "dialogue_eval.graph": "asset_generation",
+                "dialogue_eval.node": "persist_assets",
+                "dialogue_eval.scene_id": state["scene_asset"].scene_id,
+                "dialogue_eval.input_hash": state["input_hash"],
+            },
+        ) as span:
+            root = Path(output_root)
+            existing_asset_dir = _find_asset_dir_by_input_hash(root, state["input_hash"])
+            scene_id = (
+                _load_existing_scene_id(existing_asset_dir)
+                if existing_asset_dir is not None
+                else state["scene_asset"].scene_id
             )
-            write_model(asset_dir / "variable_assignments.yaml", materialized_eval_standard)
-        write_asset_generation_report(asset_dir, state["scene_asset"])
-        return {"asset_dir": str(asset_dir)}
+            _normalize_scene_ids(state, scene_id)
+
+            asset_dir = existing_asset_dir or root / scene_id
+            asset_dir.mkdir(parents=True, exist_ok=True)
+            write_model(asset_dir / "scene_asset.yaml", state["scene_asset"])
+            write_model(asset_dir / "coverage_plan.yaml", state["coverage_plan"])
+            write_model(asset_dir / "user_profiles.yaml", state["user_profiles"])
+            write_model(asset_dir / "case_cards.yaml", state["case_cards"])
+            write_model(asset_dir / "scoring_rubric.yaml", state["scoring_rubric"])
+            materialized_eval_standard = state.get("materialized_eval_standard")
+            if materialized_eval_standard is not None:
+                (asset_dir / "materialized_eval_standard.md").write_text(
+                    materialized_eval_standard.materialized_text.rstrip() + "\n",
+                    encoding="utf-8",
+                )
+                write_model(asset_dir / "variable_assignments.yaml", materialized_eval_standard)
+            write_asset_generation_report(asset_dir, state["scene_asset"])
+            result = {"asset_dir": str(asset_dir)}
+            span.set_output(
+                {
+                    "asset_dir": str(asset_dir),
+                    "reused_existing_asset": existing_asset_dir is not None,
+                }
+            )
+            return result
 
     nodes = [
         ("load_eval_standard", load_eval_standard),
@@ -236,97 +354,220 @@ def build_conversation_graph(
     def initialize_case(state: ConversationGraphState) -> dict[str, Any]:
         case_card = state["case_card"]
         initial = case_card.initial_state
-        return {
-            "conversation_state": ConversationState(
-                emotion=initial.emotion,
-                patience=initial.patience,
-                willingness=initial.willingness,
-            ),
-            "history": [],
-        }
+        with trace_span(
+            "conversation.initialize_case",
+            attributes={
+                "dialogue_eval.graph": "conversation",
+                "dialogue_eval.node": "initialize_case",
+                "dialogue_eval.run_id": state["run_id"],
+                "dialogue_eval.case_id": case_card.case_id,
+                "dialogue_eval.scene_id": case_card.scene_id,
+            },
+            input_data=case_card,
+            session_id=state["run_id"],
+            metadata={"case_id": case_card.case_id, "scene_id": case_card.scene_id},
+        ) as span:
+            result = {
+                "conversation_state": ConversationState(
+                    emotion=initial.emotion,
+                    patience=initial.patience,
+                    willingness=initial.willingness,
+                ),
+                "history": [],
+            }
+            span.set_output(result["conversation_state"])
+            return result
 
     def agent_turn(state: ConversationGraphState) -> dict[str, Any]:
-        agent_output = generate_agent_turn(
-            agent_llm,
-            scene_asset=state["scene_asset"],
-            coverage_plan=state["coverage_plan"],
-            case_card=state["case_card"],
-            business_config=state.get("business_config") or BusinessConfig(),
-            conversation_state=state["conversation_state"],
-            history=state["history"],
-            retry_count=retry_count,
-        )
-        history = list(state["history"])
-        history.append(
-            TurnRecord(
-                role="agent",
-                text=agent_output.visible_reply,
-                intent=agent_output.agent_intent,
-                risk_flags=agent_output.risk_flags,
+        case_card = state["case_card"]
+        with trace_span(
+            "conversation.agent_turn",
+            attributes={
+                "dialogue_eval.graph": "conversation",
+                "dialogue_eval.node": "agent_turn",
+                "dialogue_eval.run_id": state["run_id"],
+                "dialogue_eval.case_id": case_card.case_id,
+                "dialogue_eval.turn_index": len(state["history"]) + 1,
+            },
+            input_data={
+                "conversation_state": state["conversation_state"],
+                "history": state["history"],
+            },
+            session_id=state["run_id"],
+            metadata={"case_id": case_card.case_id, "scene_id": case_card.scene_id},
+        ) as span:
+            agent_output = generate_agent_turn(
+                agent_llm,
+                scene_asset=state["scene_asset"],
+                coverage_plan=state["coverage_plan"],
+                case_card=case_card,
+                business_config=state.get("business_config") or BusinessConfig(),
+                conversation_state=state["conversation_state"],
+                history=state["history"],
+                retry_count=retry_count,
             )
-        )
-        return {"agent_output": agent_output, "history": history}
+            history = list(state["history"])
+            history.append(
+                TurnRecord(
+                    role="agent",
+                    text=agent_output.visible_reply,
+                    intent=agent_output.agent_intent,
+                    risk_flags=agent_output.risk_flags,
+                )
+            )
+            span.set_output(
+                {
+                    "visible_reply": agent_output.visible_reply,
+                    "agent_intent": agent_output.agent_intent,
+                    "risk_flags": agent_output.risk_flags,
+                }
+            )
+            return {"agent_output": agent_output, "history": history}
 
     def user_turn(state: ConversationGraphState) -> dict[str, Any]:
+        case_card = state["case_card"]
         profile = _profile_for_case(state)
-        user_output = generate_user_turn(
-            user_llm,
-            scene_asset=state["scene_asset"],
-            user_profile=profile,
-            case_card=state["case_card"],
-            conversation_state=state["conversation_state"],
-            history=state["history"],
-            retry_count=retry_count,
-        )
-        history = list(state["history"])
-        history.append(
-            TurnRecord(
-                role="user",
-                text=user_output.visible_reply,
-                intent=user_output.user_intent,
-                emotion=user_output.emotion,
-                patience=user_output.patience,
+        with trace_span(
+            "conversation.user_turn",
+            attributes={
+                "dialogue_eval.graph": "conversation",
+                "dialogue_eval.node": "user_turn",
+                "dialogue_eval.run_id": state["run_id"],
+                "dialogue_eval.case_id": case_card.case_id,
+                "dialogue_eval.profile_id": profile.profile_id,
+                "dialogue_eval.turn_index": len(state["history"]) + 1,
+            },
+            input_data={
+                "conversation_state": state["conversation_state"],
+                "history": state["history"],
+                "user_profile": profile,
+            },
+            session_id=state["run_id"],
+            metadata={"case_id": case_card.case_id, "scene_id": case_card.scene_id},
+        ) as span:
+            user_output = generate_user_turn(
+                user_llm,
+                scene_asset=state["scene_asset"],
+                user_profile=profile,
+                case_card=case_card,
+                conversation_state=state["conversation_state"],
+                history=state["history"],
+                retry_count=retry_count,
             )
-        )
-        return {"user_output": user_output, "history": history}
+            history = list(state["history"])
+            history.append(
+                TurnRecord(
+                    role="user",
+                    text=user_output.visible_reply,
+                    intent=user_output.user_intent,
+                    emotion=user_output.emotion,
+                    patience=user_output.patience,
+                )
+            )
+            span.set_output(
+                {
+                    "visible_reply": user_output.visible_reply,
+                    "user_intent": user_output.user_intent,
+                    "emotion": user_output.emotion,
+                    "patience": user_output.patience,
+                }
+            )
+            return {"user_output": user_output, "history": history}
 
     def coverage_node(state: ConversationGraphState) -> dict[str, Any]:
-        coverage_output = judge_coverage(
-            judge_llm,
-            coverage_plan=state["coverage_plan"],
-            scene_asset=state["scene_asset"],
-            case_card=state["case_card"],
-            history=state["history"],
-            current_triggered_targets=state["conversation_state"].triggered_targets,
-            retry_count=retry_count,
-        )
-        return {"coverage_output": coverage_output}
+        case_card = state["case_card"]
+        with trace_span(
+            "conversation.coverage_judge",
+            attributes={
+                "dialogue_eval.graph": "conversation",
+                "dialogue_eval.node": "coverage_judge",
+                "dialogue_eval.run_id": state["run_id"],
+                "dialogue_eval.case_id": case_card.case_id,
+                "dialogue_eval.turn_count": len(state["history"]),
+            },
+            input_data={
+                "history": state["history"],
+                "current_triggered_targets": state["conversation_state"].triggered_targets,
+            },
+            session_id=state["run_id"],
+            metadata={"case_id": case_card.case_id, "scene_id": case_card.scene_id},
+        ) as span:
+            coverage_output = judge_coverage(
+                judge_llm,
+                coverage_plan=state["coverage_plan"],
+                scene_asset=state["scene_asset"],
+                case_card=case_card,
+                history=state["history"],
+                current_triggered_targets=state["conversation_state"].triggered_targets,
+                retry_count=retry_count,
+            )
+            span.set_output(
+                {
+                    "triggered_targets": [
+                        item.model_dump(mode="json")
+                        for item in coverage_output.triggered_targets
+                    ],
+                    "missing_targets": coverage_output.missing_targets,
+                    "risk_flags": coverage_output.risk_flags,
+                }
+            )
+            return {"coverage_output": coverage_output}
 
     def state_update(state: ConversationGraphState) -> dict[str, Any]:
-        updated = update_conversation_state(
-            state["conversation_state"],
-            case_card=state["case_card"],
-            user_output=state["user_output"],
-            coverage_output=state["coverage_output"],
-        )
-        return {"conversation_state": updated}
+        case_card = state["case_card"]
+        with trace_span(
+            "conversation.state_update",
+            attributes={
+                "dialogue_eval.graph": "conversation",
+                "dialogue_eval.node": "state_update",
+                "dialogue_eval.run_id": state["run_id"],
+                "dialogue_eval.case_id": case_card.case_id,
+            },
+            input_data={
+                "conversation_state": state["conversation_state"],
+                "user_output": state["user_output"],
+                "coverage_output": state["coverage_output"],
+            },
+            session_id=state["run_id"],
+            metadata={"case_id": case_card.case_id, "scene_id": case_card.scene_id},
+        ) as span:
+            updated = update_conversation_state(
+                state["conversation_state"],
+                case_card=case_card,
+                user_output=state["user_output"],
+                coverage_output=state["coverage_output"],
+            )
+            span.set_output(updated)
+            return {"conversation_state": updated}
 
     def finalize_case(state: ConversationGraphState) -> dict[str, Any]:
-        conversation_state = state["conversation_state"]
-        coverage_output = state.get("coverage_output") or CoverageJudgeOutput()
-        triggered = conversation_state.triggered_targets
-        missing = [
-            target
-            for target in state["case_card"].coverage_targets
-            if target not in set(triggered)
-        ]
-        return {
-            "conversation_result": ConversationResult(
+        case_card = state["case_card"]
+        with trace_span(
+            "conversation.finalize_case",
+            attributes={
+                "dialogue_eval.graph": "conversation",
+                "dialogue_eval.node": "finalize_case",
+                "dialogue_eval.run_id": state["run_id"],
+                "dialogue_eval.case_id": case_card.case_id,
+            },
+            input_data={"history": state["history"], "conversation_state": state["conversation_state"]},
+            session_id=state["run_id"],
+            metadata={"case_id": case_card.case_id, "scene_id": case_card.scene_id},
+        ) as span:
+            conversation_state = state["conversation_state"]
+            coverage_output = state.get("coverage_output") or CoverageJudgeOutput()
+            triggered = conversation_state.triggered_targets
+            missing = [
+                target
+                for target in case_card.coverage_targets
+                if target not in set(triggered)
+            ]
+            conversation_result = ConversationResult(
                 run_id=state["run_id"],
-                case_id=state["case_card"].case_id,
-                scene_id=state["case_card"].scene_id,
-                priority=state["case_card"].priority,
-                planned_targets=state["case_card"].coverage_targets,
+                case_id=case_card.case_id,
+                scene_id=case_card.scene_id,
+                priority=case_card.priority,
+                planned_targets=case_card.coverage_targets,
                 triggered_targets=triggered,
                 missing_targets=missing,
                 coverage_success=not missing,
@@ -335,7 +576,15 @@ def build_conversation_graph(
                 risk_flags=conversation_state.risk_flags,
                 end_reason=conversation_state.end_reason or "finished",
             )
-        }
+            span.set_output(
+                {
+                    "coverage_success": conversation_result.coverage_success,
+                    "missing_targets": conversation_result.missing_targets,
+                    "turn_count": len(conversation_result.turns),
+                    "risk_flags": conversation_result.risk_flags,
+                }
+            )
+            return {"conversation_result": conversation_result}
 
     if not LANGGRAPH_AVAILABLE:
         return ConversationSequentialGraph(

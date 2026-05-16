@@ -44,6 +44,7 @@ from dialogue_simulator.schemas import (
     VariableAssignment,
     utc_now_iso,
 )
+from dialogue_simulator.tracing import trace_span
 
 
 class LLMClient(Protocol):
@@ -90,18 +91,29 @@ class OpenAICompatibleClient:
         started_at = utc_now_iso()
         started = time.monotonic()
         call_id = uuid4().hex
-        try:
-            response = self._client.chat.completions.create(
-                model=self.model_name,
-                messages=messages,
-                temperature=self._temperature,
-                stream=False,
-            )
-            content = response.choices[0].message.content
-            if not content:
-                raise RuntimeError(f"LLM returned empty content for task {task_name}.")
-            self.call_records.append(
-                self._record_from_response(
+        with trace_span(
+            f"llm.{task_name}",
+            kind="llm",
+            attributes={
+                "llm.call_id": call_id,
+                "llm.task_name": task_name,
+                "llm.role": self.role,
+                "llm.model_name": self.model_name,
+                "llm.temperature": self._temperature,
+            },
+            input_data={"messages": messages},
+        ) as span:
+            try:
+                response = self._client.chat.completions.create(
+                    model=self.model_name,
+                    messages=messages,
+                    temperature=self._temperature,
+                    stream=False,
+                )
+                content = response.choices[0].message.content
+                if not content:
+                    raise RuntimeError(f"LLM returned empty content for task {task_name}.")
+                record = self._record_from_response(
                     call_id=call_id,
                     task_name=task_name,
                     started_at=started_at,
@@ -110,24 +122,35 @@ class OpenAICompatibleClient:
                     success=True,
                     error="",
                 )
-            )
-            return content
-        except Exception as exc:
-            self.call_records.append(
-                LLMCallRecord(
-                    call_id=call_id,
-                    task_name=task_name,
-                    role=self.role,
-                    model=self.model_name,
-                    temperature=self._temperature,
-                    started_at=started_at,
-                    ended_at=utc_now_iso(),
-                    latency_ms=int((time.monotonic() - started) * 1000),
-                    success=False,
-                    error=str(exc),
+                self.call_records.append(record)
+                span.set_attributes(
+                    {
+                        "llm.prompt_tokens": record.prompt_tokens,
+                        "llm.completion_tokens": record.completion_tokens,
+                        "llm.total_tokens": record.total_tokens,
+                        "llm.latency_ms": record.latency_ms,
+                        "llm.success": True,
+                    }
                 )
-            )
-            raise
+                span.set_output(content)
+                return content
+            except Exception as exc:
+                self.call_records.append(
+                    LLMCallRecord(
+                        call_id=call_id,
+                        task_name=task_name,
+                        role=self.role,
+                        model=self.model_name,
+                        temperature=self._temperature,
+                        started_at=started_at,
+                        ended_at=utc_now_iso(),
+                        latency_ms=int((time.monotonic() - started) * 1000),
+                        success=False,
+                        error=str(exc),
+                    )
+                )
+                span.set_attributes({"llm.success": False, "llm.error": str(exc)})
+                raise
 
     def _record_from_response(
         self,
@@ -167,21 +190,38 @@ class FakeLLMClient:
     call_records: list[LLMCallRecord] = []
 
     def complete(self, messages: list[dict[str, str]], *, task_name: str) -> str:
-        payload = self._payload_for_task(task_name)
-        self.call_records.append(
-            LLMCallRecord(
-                call_id=uuid4().hex,
-                task_name=task_name,
-                role=self.role,
-                model=self.model_name,
-                temperature=0.0,
-                started_at=utc_now_iso(),
-                ended_at=utc_now_iso(),
-                latency_ms=0,
-                success=True,
+        call_id = uuid4().hex
+        with trace_span(
+            f"llm.{task_name}",
+            kind="llm",
+            attributes={
+                "llm.call_id": call_id,
+                "llm.task_name": task_name,
+                "llm.role": self.role,
+                "llm.model_name": self.model_name,
+                "llm.temperature": 0.0,
+                "llm.fake": True,
+            },
+            input_data={"messages": messages},
+        ) as span:
+            payload = self._payload_for_task(task_name)
+            self.call_records.append(
+                LLMCallRecord(
+                    call_id=call_id,
+                    task_name=task_name,
+                    role=self.role,
+                    model=self.model_name,
+                    temperature=0.0,
+                    started_at=utc_now_iso(),
+                    ended_at=utc_now_iso(),
+                    latency_ms=0,
+                    success=True,
+                )
             )
-        )
-        return payload.model_dump_json() if hasattr(payload, "model_dump_json") else payload
+            output = payload.model_dump_json() if hasattr(payload, "model_dump_json") else payload
+            span.set_attributes({"llm.success": True, "llm.latency_ms": 0})
+            span.set_output(output)
+            return output
 
     def _payload_for_task(self, task_name: str) -> Any:
         if task_name == "eval_standard_materialization":

@@ -1,4 +1,14 @@
 services:
+  phoenix:
+    image: arizephoenix/phoenix:latest
+    ports:
+      - "6006:6006"
+      - "4317:4317"
+    environment:
+      PHOENIX_WORKING_DIR: /mnt/data
+    volumes:
+      - phoenix_data:/mnt/data
+
   api:
     build: .
     command: uvicorn apps.api.main:app --host 0.0.0.0 --port 8000
@@ -6,10 +16,20 @@ services:
       - "8000:8000"
     environment:
       DEEPSEEK_API_KEY: ${DEEPSEEK_API_KEY:-}
+      DIALOGUE_EVAL_TRACING_ENABLED: ${DIALOGUE_EVAL_TRACING_ENABLED:-true}
+      PHOENIX_COLLECTOR_ENDPOINT: ${PHOENIX_COLLECTOR_ENDPOINT:-http://phoenix:6006/v1/traces}
+      PHOENIX_BASE_URL: ${PHOENIX_BASE_URL:-http://phoenix:6006}
+      PHOENIX_PROJECT_NAME: ${PHOENIX_PROJECT_NAME:-dialogue-eval}
+      PHOENIX_AUTO_INSTRUMENT: ${PHOENIX_AUTO_INSTRUMENT:-false}
+      DIALOGUE_EVAL_TRACE_CONTENT: ${DIALOGUE_EVAL_TRACE_CONTENT:-true}
+      DIALOGUE_EVAL_PROMPTS_PROVIDER: ${DIALOGUE_EVAL_PROMPTS_PROVIDER:-phoenix}
+      DIALOGUE_EVAL_PROMPT_CACHE_SECONDS: ${DIALOGUE_EVAL_PROMPT_CACHE_SECONDS:-30}
     volumes:
       - ./outputs:/app/outputs
       - ./configs:/app/configs
       - ./Resource:/app/Resource
+    depends_on:
+      - phoenix
 
   web:
     build: .
@@ -18,6 +38,7 @@ services:
       - "8501:8501"
     environment:
       API_BASE_URL: http://api:8000
+      PHOENIX_UI_URL: http://127.0.0.1:6006
       STREAMLIT_BROWSER_GATHER_USAGE_STATS: "false"
     volumes:
       - ./outputs:/app/outputs
@@ -25,3 +46,6 @@ services:
       - ./Resource:/app/Resource
     depends_on:
       - api
+
+volumes:
+  phoenix_data:

@@ -19,6 +19,8 @@ from dialogue_simulator.report_exporter import (
 )
 from dialogue_simulator.schemas import BusinessConfig, ConversationResult, ModelConfig
 from dialogue_simulator.storage import read_structured_file, read_text
+from dialogue_simulator.prompt_store import prompt_status, sync_default_prompts
+from dialogue_simulator.tracing import setup_tracing, shutdown_tracing, trace_span
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -77,43 +79,67 @@ def build_parser() -> argparse.ArgumentParser:
     extract.add_argument("--excel-start-row", type=int, default=2, help="Excel 起始行，1-based，默认第2行。")
     extract.add_argument("--excel-sheet", help="Excel sheet 名，不填则使用第一个 sheet。")
 
+    sync_prompts = subparsers.add_parser("sync-prompts", help="同步默认提示词到 Phoenix Prompts。")
+    sync_prompts.add_argument("--phoenix-base-url", default=None, help="Phoenix base URL，默认读取 PHOENIX_BASE_URL。")
+    sync_prompts.add_argument("--model-name", default="deepseek-chat", help="提示词版本记录的模型名。")
+    sync_prompts.add_argument("--dry-run", action="store_true", help="只列出将同步的提示词，不写入 Phoenix。")
+
     return parser
 
 
 def main() -> None:
     args = build_parser().parse_args()
-    if args.command == "generate-assets":
-        generate_assets_command(args)
-        return
-    if args.command == "run":
-        run_command(args)
-        return
-    if args.command == "evaluate":
-        evaluate_command(args)
-        return
-    if args.command == "extract-eval-standards":
-        extract_eval_standards_command(args)
-        return
-    raise SystemExit(f"Unknown command: {args.command}")
+    setup_tracing("dialogue-eval-cli")
+    try:
+        if args.command == "generate-assets":
+            generate_assets_command(args)
+            return
+        if args.command == "run":
+            run_command(args)
+            return
+        if args.command == "evaluate":
+            evaluate_command(args)
+            return
+        if args.command == "extract-eval-standards":
+            extract_eval_standards_command(args)
+            return
+        if args.command == "sync-prompts":
+            sync_prompts_command(args)
+            return
+        raise SystemExit(f"Unknown command: {args.command}")
+    finally:
+        shutdown_tracing()
 
 
 def generate_assets_command(args: argparse.Namespace) -> None:
     eval_standard_paths = resolve_eval_standard_paths(args)
     llm = build_llm(args, "asset_generator")
     asset_dirs = []
-    for index, eval_standard_path in enumerate(eval_standard_paths, start=1):
-        print(f"正在生成资产 {index}/{len(eval_standard_paths)}：{eval_standard_path}", flush=True)
-        graph = build_asset_generation_graph(llm, output_root=args.output)
-        result = graph.invoke(
-            {
-                "eval_standard_path": str(eval_standard_path),
-                "business_config_path": args.business_config,
-                "generation_policy_path": args.generation_policy,
-            }
-        )
-        asset_dirs.append(Path(result["asset_dir"]))
-        export_llm_call_records(get_call_records([llm]), result["asset_dir"])
-        print(f"资产已生成：{Path(result['asset_dir']).resolve()}")
+    with trace_span(
+        "cli.generate_assets",
+        attributes={"dialogue_eval.command": "generate-assets"},
+        input_data={
+            "eval_standard_paths": [str(path) for path in eval_standard_paths],
+            "business_config": args.business_config,
+            "generation_policy": args.generation_policy,
+            "output": args.output,
+        },
+    ) as span:
+        for index, eval_standard_path in enumerate(eval_standard_paths, start=1):
+            print(f"正在生成资产 {index}/{len(eval_standard_paths)}：{eval_standard_path}", flush=True)
+            graph = build_asset_generation_graph(llm, output_root=args.output)
+            result = graph.invoke(
+                {
+                    "eval_standard_path": str(eval_standard_path),
+                    "business_config_path": args.business_config,
+                    "generation_policy_path": args.generation_policy,
+                }
+            )
+            asset_dirs.append(Path(result["asset_dir"]))
+            export_llm_call_records(get_call_records([llm]), result["asset_dir"])
+            print(f"资产已生成：{Path(result['asset_dir']).resolve()}")
+
+        span.set_output({"asset_dirs": [str(path) for path in asset_dirs]})
 
     if len(asset_dirs) > 1:
         print("批量生成完成：")
@@ -158,6 +184,22 @@ def extract_eval_standards_command(args: argparse.Namespace) -> None:
         print(f"- row {item.source_row}: {Path(item.output_path).resolve()}")
 
 
+def sync_prompts_command(args: argparse.Namespace) -> None:
+    print("Phoenix Prompt 配置：")
+    status = prompt_status()
+    print(f"- base_url: {args.phoenix_base_url or status['phoenix_base_url']}")
+    print(f"- prompt_count: {status['prompt_count']}")
+    results = sync_default_prompts(
+        base_url=args.phoenix_base_url,
+        model_name=args.model_name,
+        dry_run=args.dry_run,
+    )
+    for result in results:
+        suffix = f" version={result.version_id}" if result.version_id else ""
+        error = f" error={result.error}" if result.error else ""
+        print(f"- {result.name}: {result.status}{suffix}{error}")
+
+
 def run_command(args: argparse.Namespace) -> None:
     assets = load_generated_assets(args.assets)
     business_config = (
@@ -179,35 +221,80 @@ def run_command(args: argparse.Namespace) -> None:
     case_cards = assets.case_cards.cases[: args.limit] if args.limit else assets.case_cards.cases
     results = []
     output_dir = Path(args.output) / run_id
-    for index, case_card in enumerate(case_cards, start=1):
-        print(f"正在运行 case {index}/{len(case_cards)}：{case_card.case_id}", flush=True)
-        result = graph.invoke(
+    with trace_span(
+        "cli.run_evaluation",
+        attributes={
+            "dialogue_eval.command": "run",
+            "dialogue_eval.run_id": run_id,
+            "dialogue_eval.scene_id": assets.scene_asset.scene_id,
+            "dialogue_eval.case_count": len(case_cards),
+        },
+        input_data={
+            "assets": args.assets,
+            "limit": args.limit,
+            "skip_evaluation": args.skip_evaluation,
+        },
+        session_id=run_id,
+    ) as run_span:
+        for index, case_card in enumerate(case_cards, start=1):
+            print(f"正在运行 case {index}/{len(case_cards)}：{case_card.case_id}", flush=True)
+            with trace_span(
+                "case.run",
+                attributes={
+                    "dialogue_eval.run_id": run_id,
+                    "dialogue_eval.case_id": case_card.case_id,
+                    "dialogue_eval.scene_id": case_card.scene_id,
+                    "dialogue_eval.case_index": index,
+                },
+                input_data=case_card,
+                session_id=run_id,
+                metadata={"case_id": case_card.case_id, "scene_id": case_card.scene_id},
+            ) as case_span:
+                result = graph.invoke(
+                    {
+                        "run_id": run_id,
+                        "scene_asset": assets.scene_asset,
+                        "coverage_plan": assets.coverage_plan,
+                        "user_profiles": assets.user_profiles,
+                        "case_card": case_card,
+                        "business_config": business_config,
+                    },
+                    {"recursion_limit": case_card.stop_policy.max_turns * 6 + 10},
+                )
+                conversation_result = result["conversation_result"]
+                case_span.set_output(
+                    {
+                        "coverage_success": conversation_result.coverage_success,
+                        "turn_count": len(conversation_result.turns),
+                        "missing_targets": conversation_result.missing_targets,
+                    }
+                )
+            results.append(result["conversation_result"])
+            export_run_reports(results, output_dir)
+
+        export_run_reports(results, output_dir)
+        evaluation_count = 0
+        if evaluator_llm is not None:
+            evaluations = evaluate_results(
+                evaluator_llm=evaluator_llm,
+                assets=assets,
+                results=results,
+                business_config=business_config,
+            )
+            evaluation_count = len(evaluations)
+            export_evaluation_reports(evaluations, output_dir, conversations=results)
+        export_llm_call_records(
+            get_call_records([agent_llm, user_llm, judge_llm, evaluator_llm]),
+            output_dir,
+        )
+        run_span.set_output(
             {
                 "run_id": run_id,
-                "scene_asset": assets.scene_asset,
-                "coverage_plan": assets.coverage_plan,
-                "user_profiles": assets.user_profiles,
-                "case_card": case_card,
-                "business_config": business_config,
-            },
-            {"recursion_limit": case_card.stop_policy.max_turns * 6 + 10},
+                "cases_run": len(results),
+                "cases_evaluated": evaluation_count,
+                "output_dir": str(output_dir),
+            }
         )
-        results.append(result["conversation_result"])
-        export_run_reports(results, output_dir)
-
-    export_run_reports(results, output_dir)
-    if evaluator_llm is not None:
-        evaluations = evaluate_results(
-            evaluator_llm=evaluator_llm,
-            assets=assets,
-            results=results,
-            business_config=business_config,
-        )
-        export_evaluation_reports(evaluations, output_dir, conversations=results)
-    export_llm_call_records(
-        get_call_records([agent_llm, user_llm, judge_llm, evaluator_llm]),
-        output_dir,
-    )
     print(f"已运行 {len(results)} 个 case。")
     print(f"报告目录：{output_dir.resolve()}")
 
@@ -222,14 +309,25 @@ def evaluate_command(args: argparse.Namespace) -> None:
     run_dir = Path(args.run_dir)
     results = load_conversation_results(run_dir / "conversation_log.jsonl")
     evaluator_llm = build_llm(args, "evaluator")
-    evaluations = evaluate_results(
-        evaluator_llm=evaluator_llm,
-        assets=assets,
-        results=results,
-        business_config=business_config,
-    )
-    export_evaluation_reports(evaluations, run_dir, conversations=results)
-    export_llm_call_records(get_call_records([evaluator_llm]), run_dir)
+    with trace_span(
+        "cli.evaluate_run",
+        attributes={
+            "dialogue_eval.command": "evaluate",
+            "dialogue_eval.run_dir": str(run_dir),
+            "dialogue_eval.case_count": len(results),
+        },
+        input_data={"assets": args.assets, "run_dir": args.run_dir},
+        session_id=run_dir.name,
+    ) as span:
+        evaluations = evaluate_results(
+            evaluator_llm=evaluator_llm,
+            assets=assets,
+            results=results,
+            business_config=business_config,
+        )
+        export_evaluation_reports(evaluations, run_dir, conversations=results)
+        export_llm_call_records(get_call_records([evaluator_llm]), run_dir)
+        span.set_output({"cases_evaluated": len(evaluations), "run_dir": str(run_dir)})
     print(f"已评估 {len(evaluations)} 个 case。")
     print(f"报告目录：{run_dir.resolve()}")
 
@@ -251,18 +349,38 @@ def evaluate_results(
     evaluations = []
     for index, result in enumerate(results, start=1):
         print(f"正在评估 case {index}/{len(results)}：{result.case_id}", flush=True)
-        evaluated = graph.invoke(
-            {
-                "run_id": result.run_id,
-                "scene_asset": assets.scene_asset,
-                "coverage_plan": assets.coverage_plan,
-                "scoring_rubric": assets.scoring_rubric,
-                "conversation_result": result,
-                "eval_standard_text": eval_standard_text,
-                "business_config": business_config,
+        with trace_span(
+            "case.evaluate",
+            attributes={
+                "dialogue_eval.run_id": result.run_id,
+                "dialogue_eval.case_id": result.case_id,
+                "dialogue_eval.scene_id": result.scene_id,
+                "dialogue_eval.case_index": index,
             },
-            {"recursion_limit": 20},
-        )
+            input_data=result,
+            session_id=result.run_id,
+            metadata={"case_id": result.case_id, "scene_id": result.scene_id},
+        ) as span:
+            evaluated = graph.invoke(
+                {
+                    "run_id": result.run_id,
+                    "scene_asset": assets.scene_asset,
+                    "coverage_plan": assets.coverage_plan,
+                    "scoring_rubric": assets.scoring_rubric,
+                    "conversation_result": result,
+                    "eval_standard_text": eval_standard_text,
+                    "business_config": business_config,
+                },
+                {"recursion_limit": 20},
+            )
+            case_evaluation = evaluated["case_evaluation"]
+            span.set_output(
+                {
+                    "total_score": case_evaluation.total_score,
+                    "passed": case_evaluation.passed,
+                    "veto_triggered": case_evaluation.veto_triggered,
+                }
+            )
         evaluations.append(evaluated["case_evaluation"])
     return evaluations
 

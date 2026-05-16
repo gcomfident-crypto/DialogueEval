@@ -46,10 +46,89 @@ docker compose up --build
 
 - API 文档：http://127.0.0.1:8000/docs
 - WebUI：http://127.0.0.1:8501
+- Phoenix Trace UI：http://127.0.0.1:6006
 
 WebUI 只需要上传任务模板文件。系统会自动识别 Markdown 或 Excel；Excel 默认读取第 2 列、第 2 行之后的 Markdown。
 
 同一份任务模板会按输入内容 hash 复用已有资产目录；重复上传或重复生成时会更新原资产，不会再新增一个同任务场景。
+
+## Phoenix Trace
+
+Docker Compose 会同时启动 `phoenix`、`api`、`web` 三个服务。API 默认开启 tracing，并把 trace 发送到 Phoenix：
+
+```text
+PHOENIX_COLLECTOR_ENDPOINT=http://phoenix:6006/v1/traces
+PHOENIX_PROJECT_NAME=dialogue-eval
+DIALOGUE_EVAL_TRACING_ENABLED=true
+```
+
+在 Phoenix 里可以看到：
+
+- `api.generate_assets`：WebUI/API 发起的一次资产生成。
+- `asset.*`：评测标准读取、变量实例化、场景资产、覆盖计划、用户画像、case card、评分规则、资产落盘。
+- `api.run_evaluation`：一次完整评测运行。
+- `case.run`：单个 case 的运行根节点。
+- `conversation.*`：AI 客服轮次、AI 用户轮次、coverage judge、状态更新、case 收尾。
+- `case.evaluate` 和 `evaluation.*`：单 case 评分、维度评分聚合。
+- `llm.*`：所有模型调用，包含 task、role、model、latency、token 统计和输入输出内容。
+
+如果不想采集提示词和模型输出内容，可以关闭内容采集：
+
+```bash
+DIALOGUE_EVAL_TRACE_CONTENT=false docker compose up --build
+```
+
+本地非 Docker 启动时，设置以下环境变量即可把 CLI 或 API trace 发到本机 Phoenix：
+
+```bash
+export DIALOGUE_EVAL_TRACING_ENABLED=true
+export PHOENIX_COLLECTOR_ENDPOINT=http://127.0.0.1:6006/v1/traces
+export PHOENIX_PROJECT_NAME=dialogue-eval
+```
+
+## Phoenix Prompts
+
+项目提示词可以同步到 Phoenix Prompts 做版本管理。Docker Compose 下 API 默认启用 Phoenix prompt provider：
+
+```text
+DIALOGUE_EVAL_PROMPTS_PROVIDER=phoenix
+PHOENIX_BASE_URL=http://phoenix:6006
+DIALOGUE_EVAL_PROMPT_CACHE_SECONDS=30
+```
+
+同步默认提示词：
+
+```bash
+python -m dialogue_simulator.cli sync-prompts \
+  --phoenix-base-url http://127.0.0.1:6006 \
+  --model-name deepseek-chat
+```
+
+也可以在 WebUI 的“提示词”页面点击“同步默认提示词到 Phoenix”。
+
+同步后 Phoenix 中会出现这些 prompt：
+
+```text
+dialogue-eval-system-json-only
+dialogue-eval-materialize-eval-standard
+dialogue-eval-scene-asset
+dialogue-eval-coverage-plan
+dialogue-eval-user-profiles
+dialogue-eval-case-cards
+dialogue-eval-scoring-rubric
+dialogue-eval-agent-turn
+dialogue-eval-user-turn
+dialogue-eval-coverage-judge
+dialogue-eval-case-evaluation
+```
+
+运行时会优先按 prompt name 从 Phoenix 拉取最新版；Phoenix 不可用或指定 prompt 缺失时，默认回退到代码内置模板。若希望缺失时直接失败，可以设置：
+
+```bash
+export DIALOGUE_EVAL_PROMPTS_STRICT=true
+```
+
+Phoenix prompt 模板使用 Mustache 变量，例如 `{{ scene_asset }}`、`{{ history }}`、`{{ output_schema }}`。在 Phoenix 上编辑提示词时，应保留当前 prompt 所需变量名，否则运行时对应内容会渲染为空。
 
 ## 生成场景资产
 

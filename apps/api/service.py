@@ -22,6 +22,7 @@ from dialogue_simulator.graph import (
     load_generated_assets,
 )
 from dialogue_simulator.llm_client import FakeLLMClient, OpenAICompatibleClient
+from dialogue_simulator.prompt_store import prompt_status, sync_default_prompts
 from dialogue_simulator.report_exporter import (
     export_evaluation_reports,
     export_llm_call_records,
@@ -29,6 +30,7 @@ from dialogue_simulator.report_exporter import (
 )
 from dialogue_simulator.schemas import BusinessConfig, ConversationResult, ModelConfig
 from dialogue_simulator.storage import read_structured_file
+from dialogue_simulator.tracing import trace_span, tracing_status
 
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
@@ -104,13 +106,54 @@ class ExtractEvalStandardsRequest(BaseModel):
     excel_sheet: Optional[str] = None
 
 
+class SyncPromptsRequest(BaseModel):
+    phoenix_base_url: Optional[str] = None
+    model_name: str = "deepseek-chat"
+    dry_run: bool = False
+
+
 def health() -> dict[str, Any]:
     return {
         "status": "ok",
         "project_root": str(PROJECT_ROOT),
         "assets_root": str(_resolve_path(DEFAULT_ASSETS_ROOT)),
         "runs_root": str(_resolve_path(DEFAULT_RUNS_ROOT)),
+        "tracing": tracing_status(),
     }
+
+
+def get_prompt_status() -> dict[str, Any]:
+    return prompt_status()
+
+
+def sync_prompts(request: SyncPromptsRequest) -> dict[str, Any]:
+    with trace_span(
+        "api.sync_prompts",
+        attributes={
+            "dialogue_eval.operation": "sync_prompts",
+            "dialogue_eval.dry_run": request.dry_run,
+        },
+        input_data=request,
+    ) as span:
+        results = sync_default_prompts(
+            base_url=request.phoenix_base_url,
+            model_name=request.model_name,
+            dry_run=request.dry_run,
+        )
+        output = {
+            "count": len(results),
+            "results": [
+                {
+                    "name": item.name,
+                    "version_id": item.version_id,
+                    "status": item.status,
+                    "error": item.error,
+                }
+                for item in results
+            ],
+        }
+        span.set_output(output)
+        return output
 
 
 def extract_eval_standards(request: ExtractEvalStandardsRequest) -> dict[str, Any]:
@@ -142,29 +185,39 @@ def generate_assets(request: GenerateAssetsRequest) -> dict[str, Any]:
     asset_summaries: list[dict[str, Any]] = []
     output_root = _resolve_path(request.output_root)
 
-    for eval_standard_path in eval_standard_paths:
-        llm = _build_llm(
-            fake_llm=request.fake_llm,
-            role="asset_generator",
-            model_config_path=request.model_config_path,
-        )
-        graph = build_asset_generation_graph(llm, output_root=output_root)
-        result = graph.invoke(
-            {
-                "eval_standard_path": str(eval_standard_path),
-                "business_config_path": _optional_path_str(request.business_config_path),
-                "generation_policy_path": _optional_path_str(request.generation_policy_path),
-            }
-        )
-        asset_dir = Path(result["asset_dir"])
-        export_llm_call_records(get_call_records([llm]), asset_dir)
-        asset_summaries.append(summarize_asset_dir(asset_dir))
+    with trace_span(
+        "api.generate_assets",
+        attributes={
+            "dialogue_eval.operation": "generate_assets",
+            "dialogue_eval.eval_standard_count": len(eval_standard_paths),
+        },
+        input_data=request,
+    ) as span:
+        for eval_standard_path in eval_standard_paths:
+            llm = _build_llm(
+                fake_llm=request.fake_llm,
+                role="asset_generator",
+                model_config_path=request.model_config_path,
+            )
+            graph = build_asset_generation_graph(llm, output_root=output_root)
+            result = graph.invoke(
+                {
+                    "eval_standard_path": str(eval_standard_path),
+                    "business_config_path": _optional_path_str(request.business_config_path),
+                    "generation_policy_path": _optional_path_str(request.generation_policy_path),
+                }
+            )
+            asset_dir = Path(result["asset_dir"])
+            export_llm_call_records(get_call_records([llm]), asset_dir)
+            asset_summaries.append(summarize_asset_dir(asset_dir))
 
-    return {
-        "count": len(asset_summaries),
-        "assets": asset_summaries,
-        "extracted_eval_standards": extracted_items,
-    }
+        output = {
+            "count": len(asset_summaries),
+            "assets": asset_summaries,
+            "extracted_eval_standards": extracted_items,
+        }
+        span.set_output(output)
+        return output
 
 
 def run_evaluation(request: RunEvaluationRequest) -> dict[str, Any]:
@@ -212,46 +265,79 @@ def run_evaluation(request: RunEvaluationRequest) -> dict[str, Any]:
     )
 
     results: list[ConversationResult] = []
-    for case_card in case_cards:
-        result = graph.invoke(
-            {
-                "run_id": run_id,
-                "scene_asset": assets.scene_asset,
-                "coverage_plan": assets.coverage_plan,
-                "user_profiles": assets.user_profiles,
-                "case_card": case_card,
-                "business_config": business_config,
-            },
-            {"recursion_limit": case_card.stop_policy.max_turns * 6 + 10},
-        )
-        results.append(result["conversation_result"])
+    with trace_span(
+        "api.run_evaluation",
+        attributes={
+            "dialogue_eval.operation": "run_evaluation",
+            "dialogue_eval.run_id": run_id,
+            "dialogue_eval.scene_id": assets.scene_asset.scene_id,
+            "dialogue_eval.case_count": len(case_cards),
+        },
+        input_data=request,
+        session_id=run_id,
+        metadata={"scene_id": assets.scene_asset.scene_id},
+    ) as run_span:
+        for index, case_card in enumerate(case_cards, start=1):
+            with trace_span(
+                "case.run",
+                attributes={
+                    "dialogue_eval.run_id": run_id,
+                    "dialogue_eval.case_id": case_card.case_id,
+                    "dialogue_eval.scene_id": case_card.scene_id,
+                    "dialogue_eval.case_index": index,
+                },
+                input_data=case_card,
+                session_id=run_id,
+                metadata={"case_id": case_card.case_id, "scene_id": case_card.scene_id},
+            ) as case_span:
+                result = graph.invoke(
+                    {
+                        "run_id": run_id,
+                        "scene_asset": assets.scene_asset,
+                        "coverage_plan": assets.coverage_plan,
+                        "user_profiles": assets.user_profiles,
+                        "case_card": case_card,
+                        "business_config": business_config,
+                    },
+                    {"recursion_limit": case_card.stop_policy.max_turns * 6 + 10},
+                )
+                conversation_result = result["conversation_result"]
+                case_span.set_output(
+                    {
+                        "coverage_success": conversation_result.coverage_success,
+                        "turn_count": len(conversation_result.turns),
+                        "missing_targets": conversation_result.missing_targets,
+                    }
+                )
+            results.append(result["conversation_result"])
+            export_run_reports(results, output_dir)
+
         export_run_reports(results, output_dir)
+        evaluation_count = 0
+        if evaluator_llm is not None:
+            evaluations = evaluate_results(
+                evaluator_llm=evaluator_llm,
+                assets=assets,
+                results=results,
+                business_config=business_config,
+            )
+            evaluation_count = len(evaluations)
+            export_evaluation_reports(evaluations, output_dir, conversations=results)
 
-    export_run_reports(results, output_dir)
-    evaluation_count = 0
-    if evaluator_llm is not None:
-        evaluations = evaluate_results(
-            evaluator_llm=evaluator_llm,
-            assets=assets,
-            results=results,
-            business_config=business_config,
+        export_llm_call_records(
+            get_call_records([agent_llm, user_llm, judge_llm, evaluator_llm]),
+            output_dir,
         )
-        evaluation_count = len(evaluations)
-        export_evaluation_reports(evaluations, output_dir, conversations=results)
-
-    export_llm_call_records(
-        get_call_records([agent_llm, user_llm, judge_llm, evaluator_llm]),
-        output_dir,
-    )
-    summary = summarize_run_dir(output_dir)
-    summary.update(
-        {
-            "asset_dir": str(asset_dir),
-            "cases_run": len(results),
-            "cases_evaluated": evaluation_count,
-        }
-    )
-    return summary
+        summary = summarize_run_dir(output_dir)
+        summary.update(
+            {
+                "asset_dir": str(asset_dir),
+                "cases_run": len(results),
+                "cases_evaluated": evaluation_count,
+            }
+        )
+        run_span.set_output(summary)
+        return summary
 
 
 def evaluate_existing_run(request: EvaluateRunRequest) -> dict[str, Any]:
@@ -268,17 +354,28 @@ def evaluate_existing_run(request: EvaluateRunRequest) -> dict[str, Any]:
         role="evaluator",
         model_config_path=request.model_config_path,
     )
-    evaluations = evaluate_results(
-        evaluator_llm=evaluator_llm,
-        assets=assets,
-        results=results,
-        business_config=business_config,
-    )
-    export_evaluation_reports(evaluations, run_dir, conversations=results)
-    export_llm_call_records(get_call_records([evaluator_llm]), run_dir)
-    summary = summarize_run_dir(run_dir)
-    summary.update({"asset_dir": str(asset_dir), "cases_evaluated": len(evaluations)})
-    return summary
+    with trace_span(
+        "api.evaluate_existing_run",
+        attributes={
+            "dialogue_eval.operation": "evaluate_existing_run",
+            "dialogue_eval.run_id": run_dir.name,
+            "dialogue_eval.case_count": len(results),
+        },
+        input_data=request,
+        session_id=run_dir.name,
+    ) as span:
+        evaluations = evaluate_results(
+            evaluator_llm=evaluator_llm,
+            assets=assets,
+            results=results,
+            business_config=business_config,
+        )
+        export_evaluation_reports(evaluations, run_dir, conversations=results)
+        export_llm_call_records(get_call_records([evaluator_llm]), run_dir)
+        summary = summarize_run_dir(run_dir)
+        summary.update({"asset_dir": str(asset_dir), "cases_evaluated": len(evaluations)})
+        span.set_output(summary)
+        return summary
 
 
 def list_assets(*, include_legacy: bool = False) -> list[dict[str, Any]]:

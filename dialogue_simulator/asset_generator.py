@@ -4,13 +4,13 @@ from pathlib import Path
 
 from dialogue_simulator.llm_client import LLMClient
 from dialogue_simulator.prompt_templates import (
-    SYSTEM_JSON_ONLY,
     case_cards_prompt,
     coverage_plan_prompt,
     materialize_eval_standard_prompt,
     scene_asset_prompt,
     schema_text,
     scoring_rubric_prompt,
+    system_json_only_prompt,
     user_profiles_prompt,
 )
 from dialogue_simulator.schemas import (
@@ -37,7 +37,7 @@ def complete_model(
     retry_count: int = 1,
 ):
     messages = [
-        {"role": "system", "content": SYSTEM_JSON_ONLY},
+        {"role": "system", "content": system_json_only_prompt()},
         {"role": "user", "content": prompt},
     ]
     last_error = ""

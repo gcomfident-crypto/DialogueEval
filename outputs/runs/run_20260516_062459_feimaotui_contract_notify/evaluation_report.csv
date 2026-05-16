@@ -1,0 +1,2 @@
+run_id,case_id,scene_id,priority,raw_score,risk_deduction_total,total_score,pass_threshold,passed,veto_triggered,coverage_success,missing_targets,dimension_scores,risk_deductions,final_comment
+run_20260516_062459_feimaotui_contract_notify,case_001,feimaotui_contract_notify,P0,55.0,0.0,55.0,80.0,false,false,true,,任务完成度:10.0/30.0;流程执行:5.0/25.0;知识准确性:15.0/20.0;表达质量:15.0/15.0;合规性:10.0/10.0,risk_no_identity_confirmation:0.0,客服模型完成了合同生效通知和身份确认，但遗漏了配送意愿确认、最低单量说明、连续配送要求说明和排名机制说明等核心任务，导致任务完成度和流程执行得分较低。表达质量和合规性表现良好。

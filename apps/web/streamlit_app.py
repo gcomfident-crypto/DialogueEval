@@ -10,6 +10,7 @@ import streamlit as st
 
 
 API_BASE_URL = os.getenv("API_BASE_URL", "http://127.0.0.1:8000").rstrip("/")
+PHOENIX_UI_URL = os.getenv("PHOENIX_UI_URL", "http://127.0.0.1:6006").rstrip("/")
 
 st.set_page_config(
     page_title="DialogueEval",
@@ -24,11 +25,12 @@ def main() -> None:
 
     page = st.sidebar.radio(
         "页面",
-        ["Dashboard", "生成资产", "运行评测", "报告", "模型调用"],
+        ["Dashboard", "生成资产", "运行评测", "报告", "模型调用", "提示词"],
         label_visibility="collapsed",
     )
     st.sidebar.divider()
     st.sidebar.text_input("API Base URL", value=API_BASE_URL, key="api_base_url")
+    st.sidebar.link_button("Phoenix Trace UI", PHOENIX_UI_URL)
 
     if page == "Dashboard":
         render_dashboard()
@@ -40,6 +42,8 @@ def main() -> None:
         render_reports()
     elif page == "模型调用":
         render_llm_calls()
+    elif page == "提示词":
+        render_prompts()
 
 
 def render_dashboard() -> None:
@@ -48,11 +52,14 @@ def render_dashboard() -> None:
     runs = safe_get("/runs", default={"runs": []}).get("runs", [])
     latest_run = runs[0] if runs else {}
 
-    col1, col2, col3, col4 = st.columns(4)
+    tracing = (health or {}).get("tracing", {})
+
+    col1, col2, col3, col4, col5 = st.columns(5)
     col1.metric("API", health.get("status", "unavailable") if health else "unavailable")
     col2.metric("场景资产", len(assets))
     col3.metric("运行记录", len(runs))
     col4.metric("最近平均分", value_or_dash(latest_run.get("average_score")))
+    col5.metric("Trace", "on" if tracing.get("configured") else "off")
 
     left, right = st.columns([1.1, 1])
     with left:
@@ -259,6 +266,39 @@ def render_llm_calls() -> None:
         "error",
     ]
     st.dataframe(_select_columns(frame, columns), use_container_width=True)
+
+
+def render_prompts() -> None:
+    st.subheader("提示词")
+    status = safe_get("/prompts/status", default={})
+    if status:
+        col1, col2, col3 = st.columns(3)
+        col1.metric("Provider", status.get("provider") or "local")
+        col2.metric("Phoenix", "on" if status.get("enabled") else "off")
+        col3.metric("Prompt 数量", status.get("prompt_count", 0))
+        st.caption(status.get("phoenix_base_url", ""))
+
+    prompts = status.get("prompts", []) if status else []
+    if prompts:
+        st.dataframe(
+            _select_columns(pd.DataFrame(prompts), ["name", "role", "description", "variables"]),
+            use_container_width=True,
+            hide_index=True,
+        )
+
+    model_name = st.text_input("同步记录模型名", value="deepseek-chat")
+    dry_run = st.checkbox("只预览，不写入 Phoenix", value=False)
+    if st.button("同步默认提示词到 Phoenix", type="primary"):
+        result = safe_post(
+            "/prompts/sync",
+            {
+                "model_name": model_name,
+                "dry_run": dry_run,
+            },
+        )
+        if result:
+            st.success(f"同步完成：{result.get('count', 0)} 个提示词")
+            st.dataframe(pd.DataFrame(result.get("results", [])), use_container_width=True, hide_index=True)
 
 
 def render_asset_viewer() -> None:
