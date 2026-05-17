@@ -1,0 +1,1365 @@
+{
+  "scene_id": "course_publish_live_upgrade",
+  "cases": [
+    {
+      "case_id": "case_001",
+      "scene_id": "course_publish_live_upgrade",
+      "case_name": "通用流程验证 1",
+      "priority": "P0",
+      "matrix_id": "M001",
+      "profile_id": "U001",
+      "coverage_targets": [
+        "C001",
+        "C002",
+        "C003",
+        "C004",
+        "C005",
+        "C006",
+        "C007",
+        "C008"
+      ],
+      "flow_branch_tags": [
+        "flow_normal"
+      ],
+      "user_behavior_tags": [
+        "behavior_brief_request",
+        "behavior_suspicious"
+      ],
+      "risk_probe_tags": [
+        "risk_overpromise"
+      ],
+      "dynamic_state_path_tags": [
+        "state_patience_drop",
+        "state_trust_recover"
+      ],
+      "hidden_user_context": {
+        "known_facts": [],
+        "unknown_facts": [
+          "核心任务信息"
+        ],
+        "wrong_beliefs": [],
+        "private_goal": "尽快确认这通电话是否有必要继续。",
+        "main_objection": "不确定对方说明是否和自己有关。"
+      },
+      "initial_state": {
+        "emotion": "neutral",
+        "patience": 70,
+        "trust": 45,
+        "suspicion": 35,
+        "urgency": 20,
+        "understanding": 30,
+        "busy_level": "一般",
+        "environment": "可通话",
+        "willingness": "unknown"
+      },
+      "behavior_policy": {
+        "disclosure_policy": "只根据客服提问逐步透露信息。",
+        "if_agent_clear": "更配合并确认理解。",
+        "if_agent_wrong": "继续追问。",
+        "if_agent_too_long": "要求对方简短。",
+        "if_agent_pushy": "变得谨慎。",
+        "if_agent_violates_rule": "追问对方是否确定。",
+        "if_user_suspicious": "",
+        "if_user_busy": "",
+        "if_patience_low": ""
+      },
+      "stop_policy": {
+        "max_turns": 4,
+        "success_end": "关键目标已覆盖且用户理解。",
+        "forced_end": "达到最大轮次或用户明确结束。"
+      }
+    },
+    {
+      "case_id": "case_002",
+      "scene_id": "course_publish_live_upgrade",
+      "case_name": "通用流程验证 2",
+      "priority": "P0",
+      "matrix_id": "M001",
+      "profile_id": "U001",
+      "coverage_targets": [
+        "C001",
+        "C002",
+        "C003",
+        "C004",
+        "C005",
+        "C006",
+        "C007",
+        "C008"
+      ],
+      "flow_branch_tags": [
+        "flow_normal"
+      ],
+      "user_behavior_tags": [
+        "behavior_brief_request",
+        "behavior_suspicious"
+      ],
+      "risk_probe_tags": [
+        "risk_overpromise"
+      ],
+      "dynamic_state_path_tags": [
+        "state_patience_drop",
+        "state_trust_recover"
+      ],
+      "hidden_user_context": {
+        "known_facts": [],
+        "unknown_facts": [
+          "核心任务信息"
+        ],
+        "wrong_beliefs": [],
+        "private_goal": "尽快确认这通电话是否有必要继续。",
+        "main_objection": "不确定对方说明是否和自己有关。"
+      },
+      "initial_state": {
+        "emotion": "neutral",
+        "patience": 70,
+        "trust": 45,
+        "suspicion": 35,
+        "urgency": 20,
+        "understanding": 30,
+        "busy_level": "一般",
+        "environment": "可通话",
+        "willingness": "unknown"
+      },
+      "behavior_policy": {
+        "disclosure_policy": "只根据客服提问逐步透露信息。",
+        "if_agent_clear": "更配合并确认理解。",
+        "if_agent_wrong": "继续追问。",
+        "if_agent_too_long": "要求对方简短。",
+        "if_agent_pushy": "变得谨慎。",
+        "if_agent_violates_rule": "追问对方是否确定。",
+        "if_user_suspicious": "",
+        "if_user_busy": "",
+        "if_patience_low": ""
+      },
+      "stop_policy": {
+        "max_turns": 4,
+        "success_end": "关键目标已覆盖且用户理解。",
+        "forced_end": "达到最大轮次或用户明确结束。"
+      }
+    },
+    {
+      "case_id": "case_003",
+      "scene_id": "course_publish_live_upgrade",
+      "case_name": "通用流程验证 3",
+      "priority": "P0",
+      "matrix_id": "M001",
+      "profile_id": "U001",
+      "coverage_targets": [
+        "C001",
+        "C002",
+        "C003",
+        "C004",
+        "C005",
+        "C006",
+        "C007",
+        "C008"
+      ],
+      "flow_branch_tags": [
+        "flow_normal"
+      ],
+      "user_behavior_tags": [
+        "behavior_brief_request",
+        "behavior_suspicious"
+      ],
+      "risk_probe_tags": [
+        "risk_overpromise"
+      ],
+      "dynamic_state_path_tags": [
+        "state_patience_drop",
+        "state_trust_recover"
+      ],
+      "hidden_user_context": {
+        "known_facts": [],
+        "unknown_facts": [
+          "核心任务信息"
+        ],
+        "wrong_beliefs": [],
+        "private_goal": "尽快确认这通电话是否有必要继续。",
+        "main_objection": "不确定对方说明是否和自己有关。"
+      },
+      "initial_state": {
+        "emotion": "neutral",
+        "patience": 70,
+        "trust": 45,
+        "suspicion": 35,
+        "urgency": 20,
+        "understanding": 30,
+        "busy_level": "一般",
+        "environment": "可通话",
+        "willingness": "unknown"
+      },
+      "behavior_policy": {
+        "disclosure_policy": "只根据客服提问逐步透露信息。",
+        "if_agent_clear": "更配合并确认理解。",
+        "if_agent_wrong": "继续追问。",
+        "if_agent_too_long": "要求对方简短。",
+        "if_agent_pushy": "变得谨慎。",
+        "if_agent_violates_rule": "追问对方是否确定。",
+        "if_user_suspicious": "",
+        "if_user_busy": "",
+        "if_patience_low": ""
+      },
+      "stop_policy": {
+        "max_turns": 4,
+        "success_end": "关键目标已覆盖且用户理解。",
+        "forced_end": "达到最大轮次或用户明确结束。"
+      }
+    },
+    {
+      "case_id": "case_004",
+      "scene_id": "course_publish_live_upgrade",
+      "case_name": "通用流程验证 4",
+      "priority": "P0",
+      "matrix_id": "M001",
+      "profile_id": "U001",
+      "coverage_targets": [
+        "C001",
+        "C002",
+        "C003",
+        "C004",
+        "C005",
+        "C006",
+        "C007",
+        "C008"
+      ],
+      "flow_branch_tags": [
+        "flow_normal"
+      ],
+      "user_behavior_tags": [
+        "behavior_brief_request",
+        "behavior_suspicious"
+      ],
+      "risk_probe_tags": [
+        "risk_overpromise"
+      ],
+      "dynamic_state_path_tags": [
+        "state_patience_drop",
+        "state_trust_recover"
+      ],
+      "hidden_user_context": {
+        "known_facts": [],
+        "unknown_facts": [
+          "核心任务信息"
+        ],
+        "wrong_beliefs": [],
+        "private_goal": "尽快确认这通电话是否有必要继续。",
+        "main_objection": "不确定对方说明是否和自己有关。"
+      },
+      "initial_state": {
+        "emotion": "neutral",
+        "patience": 70,
+        "trust": 45,
+        "suspicion": 35,
+        "urgency": 20,
+        "understanding": 30,
+        "busy_level": "一般",
+        "environment": "可通话",
+        "willingness": "unknown"
+      },
+      "behavior_policy": {
+        "disclosure_policy": "只根据客服提问逐步透露信息。",
+        "if_agent_clear": "更配合并确认理解。",
+        "if_agent_wrong": "继续追问。",
+        "if_agent_too_long": "要求对方简短。",
+        "if_agent_pushy": "变得谨慎。",
+        "if_agent_violates_rule": "追问对方是否确定。",
+        "if_user_suspicious": "",
+        "if_user_busy": "",
+        "if_patience_low": ""
+      },
+      "stop_policy": {
+        "max_turns": 4,
+        "success_end": "关键目标已覆盖且用户理解。",
+        "forced_end": "达到最大轮次或用户明确结束。"
+      }
+    },
+    {
+      "case_id": "case_005",
+      "scene_id": "course_publish_live_upgrade",
+      "case_name": "通用流程验证 5",
+      "priority": "P0",
+      "matrix_id": "M001",
+      "profile_id": "U001",
+      "coverage_targets": [
+        "C001",
+        "C002",
+        "C003",
+        "C004",
+        "C005",
+        "C006",
+        "C007",
+        "C008"
+      ],
+      "flow_branch_tags": [
+        "flow_normal"
+      ],
+      "user_behavior_tags": [
+        "behavior_brief_request",
+        "behavior_suspicious"
+      ],
+      "risk_probe_tags": [
+        "risk_overpromise"
+      ],
+      "dynamic_state_path_tags": [
+        "state_patience_drop",
+        "state_trust_recover"
+      ],
+      "hidden_user_context": {
+        "known_facts": [],
+        "unknown_facts": [
+          "核心任务信息"
+        ],
+        "wrong_beliefs": [],
+        "private_goal": "尽快确认这通电话是否有必要继续。",
+        "main_objection": "不确定对方说明是否和自己有关。"
+      },
+      "initial_state": {
+        "emotion": "neutral",
+        "patience": 70,
+        "trust": 45,
+        "suspicion": 35,
+        "urgency": 20,
+        "understanding": 30,
+        "busy_level": "一般",
+        "environment": "可通话",
+        "willingness": "unknown"
+      },
+      "behavior_policy": {
+        "disclosure_policy": "只根据客服提问逐步透露信息。",
+        "if_agent_clear": "更配合并确认理解。",
+        "if_agent_wrong": "继续追问。",
+        "if_agent_too_long": "要求对方简短。",
+        "if_agent_pushy": "变得谨慎。",
+        "if_agent_violates_rule": "追问对方是否确定。",
+        "if_user_suspicious": "",
+        "if_user_busy": "",
+        "if_patience_low": ""
+      },
+      "stop_policy": {
+        "max_turns": 4,
+        "success_end": "关键目标已覆盖且用户理解。",
+        "forced_end": "达到最大轮次或用户明确结束。"
+      }
+    },
+    {
+      "case_id": "case_006",
+      "scene_id": "course_publish_live_upgrade",
+      "case_name": "通用流程验证 6",
+      "priority": "P0",
+      "matrix_id": "M001",
+      "profile_id": "U001",
+      "coverage_targets": [
+        "C001",
+        "C002",
+        "C003",
+        "C004",
+        "C005",
+        "C006",
+        "C007",
+        "C008"
+      ],
+      "flow_branch_tags": [
+        "flow_normal"
+      ],
+      "user_behavior_tags": [
+        "behavior_brief_request",
+        "behavior_suspicious"
+      ],
+      "risk_probe_tags": [
+        "risk_overpromise"
+      ],
+      "dynamic_state_path_tags": [
+        "state_patience_drop",
+        "state_trust_recover"
+      ],
+      "hidden_user_context": {
+        "known_facts": [],
+        "unknown_facts": [
+          "核心任务信息"
+        ],
+        "wrong_beliefs": [],
+        "private_goal": "尽快确认这通电话是否有必要继续。",
+        "main_objection": "不确定对方说明是否和自己有关。"
+      },
+      "initial_state": {
+        "emotion": "neutral",
+        "patience": 70,
+        "trust": 45,
+        "suspicion": 35,
+        "urgency": 20,
+        "understanding": 30,
+        "busy_level": "一般",
+        "environment": "可通话",
+        "willingness": "unknown"
+      },
+      "behavior_policy": {
+        "disclosure_policy": "只根据客服提问逐步透露信息。",
+        "if_agent_clear": "更配合并确认理解。",
+        "if_agent_wrong": "继续追问。",
+        "if_agent_too_long": "要求对方简短。",
+        "if_agent_pushy": "变得谨慎。",
+        "if_agent_violates_rule": "追问对方是否确定。",
+        "if_user_suspicious": "",
+        "if_user_busy": "",
+        "if_patience_low": ""
+      },
+      "stop_policy": {
+        "max_turns": 4,
+        "success_end": "关键目标已覆盖且用户理解。",
+        "forced_end": "达到最大轮次或用户明确结束。"
+      }
+    },
+    {
+      "case_id": "case_007",
+      "scene_id": "course_publish_live_upgrade",
+      "case_name": "通用流程验证 7",
+      "priority": "P1",
+      "matrix_id": "M001",
+      "profile_id": "U001",
+      "coverage_targets": [
+        "C001",
+        "C002",
+        "C003",
+        "C004",
+        "C005",
+        "C006",
+        "C007",
+        "C008"
+      ],
+      "flow_branch_tags": [
+        "flow_normal"
+      ],
+      "user_behavior_tags": [
+        "behavior_brief_request",
+        "behavior_suspicious"
+      ],
+      "risk_probe_tags": [
+        "risk_overpromise"
+      ],
+      "dynamic_state_path_tags": [
+        "state_patience_drop",
+        "state_trust_recover"
+      ],
+      "hidden_user_context": {
+        "known_facts": [],
+        "unknown_facts": [
+          "核心任务信息"
+        ],
+        "wrong_beliefs": [],
+        "private_goal": "尽快确认这通电话是否有必要继续。",
+        "main_objection": "不确定对方说明是否和自己有关。"
+      },
+      "initial_state": {
+        "emotion": "neutral",
+        "patience": 70,
+        "trust": 45,
+        "suspicion": 35,
+        "urgency": 20,
+        "understanding": 30,
+        "busy_level": "一般",
+        "environment": "可通话",
+        "willingness": "unknown"
+      },
+      "behavior_policy": {
+        "disclosure_policy": "只根据客服提问逐步透露信息。",
+        "if_agent_clear": "更配合并确认理解。",
+        "if_agent_wrong": "继续追问。",
+        "if_agent_too_long": "要求对方简短。",
+        "if_agent_pushy": "变得谨慎。",
+        "if_agent_violates_rule": "追问对方是否确定。",
+        "if_user_suspicious": "",
+        "if_user_busy": "",
+        "if_patience_low": ""
+      },
+      "stop_policy": {
+        "max_turns": 4,
+        "success_end": "关键目标已覆盖且用户理解。",
+        "forced_end": "达到最大轮次或用户明确结束。"
+      }
+    },
+    {
+      "case_id": "case_008",
+      "scene_id": "course_publish_live_upgrade",
+      "case_name": "通用流程验证 8",
+      "priority": "P1",
+      "matrix_id": "M001",
+      "profile_id": "U001",
+      "coverage_targets": [
+        "C001",
+        "C002",
+        "C003",
+        "C004",
+        "C005",
+        "C006",
+        "C007",
+        "C008"
+      ],
+      "flow_branch_tags": [
+        "flow_normal"
+      ],
+      "user_behavior_tags": [
+        "behavior_brief_request",
+        "behavior_suspicious"
+      ],
+      "risk_probe_tags": [
+        "risk_overpromise"
+      ],
+      "dynamic_state_path_tags": [
+        "state_patience_drop",
+        "state_trust_recover"
+      ],
+      "hidden_user_context": {
+        "known_facts": [],
+        "unknown_facts": [
+          "核心任务信息"
+        ],
+        "wrong_beliefs": [],
+        "private_goal": "尽快确认这通电话是否有必要继续。",
+        "main_objection": "不确定对方说明是否和自己有关。"
+      },
+      "initial_state": {
+        "emotion": "neutral",
+        "patience": 70,
+        "trust": 45,
+        "suspicion": 35,
+        "urgency": 20,
+        "understanding": 30,
+        "busy_level": "一般",
+        "environment": "可通话",
+        "willingness": "unknown"
+      },
+      "behavior_policy": {
+        "disclosure_policy": "只根据客服提问逐步透露信息。",
+        "if_agent_clear": "更配合并确认理解。",
+        "if_agent_wrong": "继续追问。",
+        "if_agent_too_long": "要求对方简短。",
+        "if_agent_pushy": "变得谨慎。",
+        "if_agent_violates_rule": "追问对方是否确定。",
+        "if_user_suspicious": "",
+        "if_user_busy": "",
+        "if_patience_low": ""
+      },
+      "stop_policy": {
+        "max_turns": 4,
+        "success_end": "关键目标已覆盖且用户理解。",
+        "forced_end": "达到最大轮次或用户明确结束。"
+      }
+    },
+    {
+      "case_id": "case_009",
+      "scene_id": "course_publish_live_upgrade",
+      "case_name": "通用流程验证 1",
+      "priority": "P0",
+      "matrix_id": "M001",
+      "profile_id": "U001",
+      "coverage_targets": [
+        "C001",
+        "C002",
+        "C003",
+        "C004",
+        "C005",
+        "C006",
+        "C007",
+        "C008"
+      ],
+      "flow_branch_tags": [
+        "flow_normal"
+      ],
+      "user_behavior_tags": [
+        "behavior_brief_request",
+        "behavior_suspicious"
+      ],
+      "risk_probe_tags": [
+        "risk_overpromise"
+      ],
+      "dynamic_state_path_tags": [
+        "state_patience_drop",
+        "state_trust_recover"
+      ],
+      "hidden_user_context": {
+        "known_facts": [],
+        "unknown_facts": [
+          "核心任务信息"
+        ],
+        "wrong_beliefs": [],
+        "private_goal": "尽快确认这通电话是否有必要继续。",
+        "main_objection": "不确定对方说明是否和自己有关。"
+      },
+      "initial_state": {
+        "emotion": "neutral",
+        "patience": 70,
+        "trust": 45,
+        "suspicion": 35,
+        "urgency": 20,
+        "understanding": 30,
+        "busy_level": "一般",
+        "environment": "可通话",
+        "willingness": "unknown"
+      },
+      "behavior_policy": {
+        "disclosure_policy": "只根据客服提问逐步透露信息。",
+        "if_agent_clear": "更配合并确认理解。",
+        "if_agent_wrong": "继续追问。",
+        "if_agent_too_long": "要求对方简短。",
+        "if_agent_pushy": "变得谨慎。",
+        "if_agent_violates_rule": "追问对方是否确定。",
+        "if_user_suspicious": "",
+        "if_user_busy": "",
+        "if_patience_low": ""
+      },
+      "stop_policy": {
+        "max_turns": 4,
+        "success_end": "关键目标已覆盖且用户理解。",
+        "forced_end": "达到最大轮次或用户明确结束。"
+      }
+    },
+    {
+      "case_id": "case_010",
+      "scene_id": "course_publish_live_upgrade",
+      "case_name": "通用流程验证 2",
+      "priority": "P0",
+      "matrix_id": "M001",
+      "profile_id": "U001",
+      "coverage_targets": [
+        "C001",
+        "C002",
+        "C003",
+        "C004",
+        "C005",
+        "C006",
+        "C007",
+        "C008"
+      ],
+      "flow_branch_tags": [
+        "flow_normal"
+      ],
+      "user_behavior_tags": [
+        "behavior_brief_request",
+        "behavior_suspicious"
+      ],
+      "risk_probe_tags": [
+        "risk_overpromise"
+      ],
+      "dynamic_state_path_tags": [
+        "state_patience_drop",
+        "state_trust_recover"
+      ],
+      "hidden_user_context": {
+        "known_facts": [],
+        "unknown_facts": [
+          "核心任务信息"
+        ],
+        "wrong_beliefs": [],
+        "private_goal": "尽快确认这通电话是否有必要继续。",
+        "main_objection": "不确定对方说明是否和自己有关。"
+      },
+      "initial_state": {
+        "emotion": "neutral",
+        "patience": 70,
+        "trust": 45,
+        "suspicion": 35,
+        "urgency": 20,
+        "understanding": 30,
+        "busy_level": "一般",
+        "environment": "可通话",
+        "willingness": "unknown"
+      },
+      "behavior_policy": {
+        "disclosure_policy": "只根据客服提问逐步透露信息。",
+        "if_agent_clear": "更配合并确认理解。",
+        "if_agent_wrong": "继续追问。",
+        "if_agent_too_long": "要求对方简短。",
+        "if_agent_pushy": "变得谨慎。",
+        "if_agent_violates_rule": "追问对方是否确定。",
+        "if_user_suspicious": "",
+        "if_user_busy": "",
+        "if_patience_low": ""
+      },
+      "stop_policy": {
+        "max_turns": 4,
+        "success_end": "关键目标已覆盖且用户理解。",
+        "forced_end": "达到最大轮次或用户明确结束。"
+      }
+    },
+    {
+      "case_id": "case_011",
+      "scene_id": "course_publish_live_upgrade",
+      "case_name": "通用流程验证 3",
+      "priority": "P0",
+      "matrix_id": "M001",
+      "profile_id": "U001",
+      "coverage_targets": [
+        "C001",
+        "C002",
+        "C003",
+        "C004",
+        "C005",
+        "C006",
+        "C007",
+        "C008"
+      ],
+      "flow_branch_tags": [
+        "flow_normal"
+      ],
+      "user_behavior_tags": [
+        "behavior_brief_request",
+        "behavior_suspicious"
+      ],
+      "risk_probe_tags": [
+        "risk_overpromise"
+      ],
+      "dynamic_state_path_tags": [
+        "state_patience_drop",
+        "state_trust_recover"
+      ],
+      "hidden_user_context": {
+        "known_facts": [],
+        "unknown_facts": [
+          "核心任务信息"
+        ],
+        "wrong_beliefs": [],
+        "private_goal": "尽快确认这通电话是否有必要继续。",
+        "main_objection": "不确定对方说明是否和自己有关。"
+      },
+      "initial_state": {
+        "emotion": "neutral",
+        "patience": 70,
+        "trust": 45,
+        "suspicion": 35,
+        "urgency": 20,
+        "understanding": 30,
+        "busy_level": "一般",
+        "environment": "可通话",
+        "willingness": "unknown"
+      },
+      "behavior_policy": {
+        "disclosure_policy": "只根据客服提问逐步透露信息。",
+        "if_agent_clear": "更配合并确认理解。",
+        "if_agent_wrong": "继续追问。",
+        "if_agent_too_long": "要求对方简短。",
+        "if_agent_pushy": "变得谨慎。",
+        "if_agent_violates_rule": "追问对方是否确定。",
+        "if_user_suspicious": "",
+        "if_user_busy": "",
+        "if_patience_low": ""
+      },
+      "stop_policy": {
+        "max_turns": 4,
+        "success_end": "关键目标已覆盖且用户理解。",
+        "forced_end": "达到最大轮次或用户明确结束。"
+      }
+    },
+    {
+      "case_id": "case_012",
+      "scene_id": "course_publish_live_upgrade",
+      "case_name": "通用流程验证 4",
+      "priority": "P0",
+      "matrix_id": "M001",
+      "profile_id": "U001",
+      "coverage_targets": [
+        "C001",
+        "C002",
+        "C003",
+        "C004",
+        "C005",
+        "C006",
+        "C007",
+        "C008"
+      ],
+      "flow_branch_tags": [
+        "flow_normal"
+      ],
+      "user_behavior_tags": [
+        "behavior_brief_request",
+        "behavior_suspicious"
+      ],
+      "risk_probe_tags": [
+        "risk_overpromise"
+      ],
+      "dynamic_state_path_tags": [
+        "state_patience_drop",
+        "state_trust_recover"
+      ],
+      "hidden_user_context": {
+        "known_facts": [],
+        "unknown_facts": [
+          "核心任务信息"
+        ],
+        "wrong_beliefs": [],
+        "private_goal": "尽快确认这通电话是否有必要继续。",
+        "main_objection": "不确定对方说明是否和自己有关。"
+      },
+      "initial_state": {
+        "emotion": "neutral",
+        "patience": 70,
+        "trust": 45,
+        "suspicion": 35,
+        "urgency": 20,
+        "understanding": 30,
+        "busy_level": "一般",
+        "environment": "可通话",
+        "willingness": "unknown"
+      },
+      "behavior_policy": {
+        "disclosure_policy": "只根据客服提问逐步透露信息。",
+        "if_agent_clear": "更配合并确认理解。",
+        "if_agent_wrong": "继续追问。",
+        "if_agent_too_long": "要求对方简短。",
+        "if_agent_pushy": "变得谨慎。",
+        "if_agent_violates_rule": "追问对方是否确定。",
+        "if_user_suspicious": "",
+        "if_user_busy": "",
+        "if_patience_low": ""
+      },
+      "stop_policy": {
+        "max_turns": 4,
+        "success_end": "关键目标已覆盖且用户理解。",
+        "forced_end": "达到最大轮次或用户明确结束。"
+      }
+    },
+    {
+      "case_id": "case_013",
+      "scene_id": "course_publish_live_upgrade",
+      "case_name": "通用流程验证 5",
+      "priority": "P0",
+      "matrix_id": "M001",
+      "profile_id": "U001",
+      "coverage_targets": [
+        "C001",
+        "C002",
+        "C003",
+        "C004",
+        "C005",
+        "C006",
+        "C007",
+        "C008"
+      ],
+      "flow_branch_tags": [
+        "flow_normal"
+      ],
+      "user_behavior_tags": [
+        "behavior_brief_request",
+        "behavior_suspicious"
+      ],
+      "risk_probe_tags": [
+        "risk_overpromise"
+      ],
+      "dynamic_state_path_tags": [
+        "state_patience_drop",
+        "state_trust_recover"
+      ],
+      "hidden_user_context": {
+        "known_facts": [],
+        "unknown_facts": [
+          "核心任务信息"
+        ],
+        "wrong_beliefs": [],
+        "private_goal": "尽快确认这通电话是否有必要继续。",
+        "main_objection": "不确定对方说明是否和自己有关。"
+      },
+      "initial_state": {
+        "emotion": "neutral",
+        "patience": 70,
+        "trust": 45,
+        "suspicion": 35,
+        "urgency": 20,
+        "understanding": 30,
+        "busy_level": "一般",
+        "environment": "可通话",
+        "willingness": "unknown"
+      },
+      "behavior_policy": {
+        "disclosure_policy": "只根据客服提问逐步透露信息。",
+        "if_agent_clear": "更配合并确认理解。",
+        "if_agent_wrong": "继续追问。",
+        "if_agent_too_long": "要求对方简短。",
+        "if_agent_pushy": "变得谨慎。",
+        "if_agent_violates_rule": "追问对方是否确定。",
+        "if_user_suspicious": "",
+        "if_user_busy": "",
+        "if_patience_low": ""
+      },
+      "stop_policy": {
+        "max_turns": 4,
+        "success_end": "关键目标已覆盖且用户理解。",
+        "forced_end": "达到最大轮次或用户明确结束。"
+      }
+    },
+    {
+      "case_id": "case_014",
+      "scene_id": "course_publish_live_upgrade",
+      "case_name": "通用流程验证 6",
+      "priority": "P0",
+      "matrix_id": "M001",
+      "profile_id": "U001",
+      "coverage_targets": [
+        "C001",
+        "C002",
+        "C003",
+        "C004",
+        "C005",
+        "C006",
+        "C007",
+        "C008"
+      ],
+      "flow_branch_tags": [
+        "flow_normal"
+      ],
+      "user_behavior_tags": [
+        "behavior_brief_request",
+        "behavior_suspicious"
+      ],
+      "risk_probe_tags": [
+        "risk_overpromise"
+      ],
+      "dynamic_state_path_tags": [
+        "state_patience_drop",
+        "state_trust_recover"
+      ],
+      "hidden_user_context": {
+        "known_facts": [],
+        "unknown_facts": [
+          "核心任务信息"
+        ],
+        "wrong_beliefs": [],
+        "private_goal": "尽快确认这通电话是否有必要继续。",
+        "main_objection": "不确定对方说明是否和自己有关。"
+      },
+      "initial_state": {
+        "emotion": "neutral",
+        "patience": 70,
+        "trust": 45,
+        "suspicion": 35,
+        "urgency": 20,
+        "understanding": 30,
+        "busy_level": "一般",
+        "environment": "可通话",
+        "willingness": "unknown"
+      },
+      "behavior_policy": {
+        "disclosure_policy": "只根据客服提问逐步透露信息。",
+        "if_agent_clear": "更配合并确认理解。",
+        "if_agent_wrong": "继续追问。",
+        "if_agent_too_long": "要求对方简短。",
+        "if_agent_pushy": "变得谨慎。",
+        "if_agent_violates_rule": "追问对方是否确定。",
+        "if_user_suspicious": "",
+        "if_user_busy": "",
+        "if_patience_low": ""
+      },
+      "stop_policy": {
+        "max_turns": 4,
+        "success_end": "关键目标已覆盖且用户理解。",
+        "forced_end": "达到最大轮次或用户明确结束。"
+      }
+    },
+    {
+      "case_id": "case_015",
+      "scene_id": "course_publish_live_upgrade",
+      "case_name": "通用流程验证 7",
+      "priority": "P1",
+      "matrix_id": "M001",
+      "profile_id": "U001",
+      "coverage_targets": [
+        "C001",
+        "C002",
+        "C003",
+        "C004",
+        "C005",
+        "C006",
+        "C007",
+        "C008"
+      ],
+      "flow_branch_tags": [
+        "flow_normal"
+      ],
+      "user_behavior_tags": [
+        "behavior_brief_request",
+        "behavior_suspicious"
+      ],
+      "risk_probe_tags": [
+        "risk_overpromise"
+      ],
+      "dynamic_state_path_tags": [
+        "state_patience_drop",
+        "state_trust_recover"
+      ],
+      "hidden_user_context": {
+        "known_facts": [],
+        "unknown_facts": [
+          "核心任务信息"
+        ],
+        "wrong_beliefs": [],
+        "private_goal": "尽快确认这通电话是否有必要继续。",
+        "main_objection": "不确定对方说明是否和自己有关。"
+      },
+      "initial_state": {
+        "emotion": "neutral",
+        "patience": 70,
+        "trust": 45,
+        "suspicion": 35,
+        "urgency": 20,
+        "understanding": 30,
+        "busy_level": "一般",
+        "environment": "可通话",
+        "willingness": "unknown"
+      },
+      "behavior_policy": {
+        "disclosure_policy": "只根据客服提问逐步透露信息。",
+        "if_agent_clear": "更配合并确认理解。",
+        "if_agent_wrong": "继续追问。",
+        "if_agent_too_long": "要求对方简短。",
+        "if_agent_pushy": "变得谨慎。",
+        "if_agent_violates_rule": "追问对方是否确定。",
+        "if_user_suspicious": "",
+        "if_user_busy": "",
+        "if_patience_low": ""
+      },
+      "stop_policy": {
+        "max_turns": 4,
+        "success_end": "关键目标已覆盖且用户理解。",
+        "forced_end": "达到最大轮次或用户明确结束。"
+      }
+    },
+    {
+      "case_id": "case_016",
+      "scene_id": "course_publish_live_upgrade",
+      "case_name": "通用流程验证 8",
+      "priority": "P1",
+      "matrix_id": "M001",
+      "profile_id": "U001",
+      "coverage_targets": [
+        "C001",
+        "C002",
+        "C003",
+        "C004",
+        "C005",
+        "C006",
+        "C007",
+        "C008"
+      ],
+      "flow_branch_tags": [
+        "flow_normal"
+      ],
+      "user_behavior_tags": [
+        "behavior_brief_request",
+        "behavior_suspicious"
+      ],
+      "risk_probe_tags": [
+        "risk_overpromise"
+      ],
+      "dynamic_state_path_tags": [
+        "state_patience_drop",
+        "state_trust_recover"
+      ],
+      "hidden_user_context": {
+        "known_facts": [],
+        "unknown_facts": [
+          "核心任务信息"
+        ],
+        "wrong_beliefs": [],
+        "private_goal": "尽快确认这通电话是否有必要继续。",
+        "main_objection": "不确定对方说明是否和自己有关。"
+      },
+      "initial_state": {
+        "emotion": "neutral",
+        "patience": 70,
+        "trust": 45,
+        "suspicion": 35,
+        "urgency": 20,
+        "understanding": 30,
+        "busy_level": "一般",
+        "environment": "可通话",
+        "willingness": "unknown"
+      },
+      "behavior_policy": {
+        "disclosure_policy": "只根据客服提问逐步透露信息。",
+        "if_agent_clear": "更配合并确认理解。",
+        "if_agent_wrong": "继续追问。",
+        "if_agent_too_long": "要求对方简短。",
+        "if_agent_pushy": "变得谨慎。",
+        "if_agent_violates_rule": "追问对方是否确定。",
+        "if_user_suspicious": "",
+        "if_user_busy": "",
+        "if_patience_low": ""
+      },
+      "stop_policy": {
+        "max_turns": 4,
+        "success_end": "关键目标已覆盖且用户理解。",
+        "forced_end": "达到最大轮次或用户明确结束。"
+      }
+    },
+    {
+      "case_id": "case_017",
+      "scene_id": "course_publish_live_upgrade",
+      "case_name": "通用流程验证 1",
+      "priority": "P0",
+      "matrix_id": "M001",
+      "profile_id": "U001",
+      "coverage_targets": [
+        "C001",
+        "C002",
+        "C003",
+        "C004",
+        "C005",
+        "C006",
+        "C007",
+        "C008"
+      ],
+      "flow_branch_tags": [
+        "flow_normal"
+      ],
+      "user_behavior_tags": [
+        "behavior_brief_request",
+        "behavior_suspicious"
+      ],
+      "risk_probe_tags": [
+        "risk_overpromise"
+      ],
+      "dynamic_state_path_tags": [
+        "state_patience_drop",
+        "state_trust_recover"
+      ],
+      "hidden_user_context": {
+        "known_facts": [],
+        "unknown_facts": [
+          "核心任务信息"
+        ],
+        "wrong_beliefs": [],
+        "private_goal": "尽快确认这通电话是否有必要继续。",
+        "main_objection": "不确定对方说明是否和自己有关。"
+      },
+      "initial_state": {
+        "emotion": "neutral",
+        "patience": 70,
+        "trust": 45,
+        "suspicion": 35,
+        "urgency": 20,
+        "understanding": 30,
+        "busy_level": "一般",
+        "environment": "可通话",
+        "willingness": "unknown"
+      },
+      "behavior_policy": {
+        "disclosure_policy": "只根据客服提问逐步透露信息。",
+        "if_agent_clear": "更配合并确认理解。",
+        "if_agent_wrong": "继续追问。",
+        "if_agent_too_long": "要求对方简短。",
+        "if_agent_pushy": "变得谨慎。",
+        "if_agent_violates_rule": "追问对方是否确定。",
+        "if_user_suspicious": "",
+        "if_user_busy": "",
+        "if_patience_low": ""
+      },
+      "stop_policy": {
+        "max_turns": 4,
+        "success_end": "关键目标已覆盖且用户理解。",
+        "forced_end": "达到最大轮次或用户明确结束。"
+      }
+    },
+    {
+      "case_id": "case_018",
+      "scene_id": "course_publish_live_upgrade",
+      "case_name": "通用流程验证 2",
+      "priority": "P0",
+      "matrix_id": "M001",
+      "profile_id": "U001",
+      "coverage_targets": [
+        "C001",
+        "C002",
+        "C003",
+        "C004",
+        "C005",
+        "C006",
+        "C007",
+        "C008"
+      ],
+      "flow_branch_tags": [
+        "flow_normal"
+      ],
+      "user_behavior_tags": [
+        "behavior_brief_request",
+        "behavior_suspicious"
+      ],
+      "risk_probe_tags": [
+        "risk_overpromise"
+      ],
+      "dynamic_state_path_tags": [
+        "state_patience_drop",
+        "state_trust_recover"
+      ],
+      "hidden_user_context": {
+        "known_facts": [],
+        "unknown_facts": [
+          "核心任务信息"
+        ],
+        "wrong_beliefs": [],
+        "private_goal": "尽快确认这通电话是否有必要继续。",
+        "main_objection": "不确定对方说明是否和自己有关。"
+      },
+      "initial_state": {
+        "emotion": "neutral",
+        "patience": 70,
+        "trust": 45,
+        "suspicion": 35,
+        "urgency": 20,
+        "understanding": 30,
+        "busy_level": "一般",
+        "environment": "可通话",
+        "willingness": "unknown"
+      },
+      "behavior_policy": {
+        "disclosure_policy": "只根据客服提问逐步透露信息。",
+        "if_agent_clear": "更配合并确认理解。",
+        "if_agent_wrong": "继续追问。",
+        "if_agent_too_long": "要求对方简短。",
+        "if_agent_pushy": "变得谨慎。",
+        "if_agent_violates_rule": "追问对方是否确定。",
+        "if_user_suspicious": "",
+        "if_user_busy": "",
+        "if_patience_low": ""
+      },
+      "stop_policy": {
+        "max_turns": 4,
+        "success_end": "关键目标已覆盖且用户理解。",
+        "forced_end": "达到最大轮次或用户明确结束。"
+      }
+    },
+    {
+      "case_id": "case_019",
+      "scene_id": "course_publish_live_upgrade",
+      "case_name": "通用流程验证 3",
+      "priority": "P0",
+      "matrix_id": "M001",
+      "profile_id": "U001",
+      "coverage_targets": [
+        "C001",
+        "C002",
+        "C003",
+        "C004",
+        "C005",
+        "C006",
+        "C007",
+        "C008"
+      ],
+      "flow_branch_tags": [
+        "flow_normal"
+      ],
+      "user_behavior_tags": [
+        "behavior_brief_request",
+        "behavior_suspicious"
+      ],
+      "risk_probe_tags": [
+        "risk_overpromise"
+      ],
+      "dynamic_state_path_tags": [
+        "state_patience_drop",
+        "state_trust_recover"
+      ],
+      "hidden_user_context": {
+        "known_facts": [],
+        "unknown_facts": [
+          "核心任务信息"
+        ],
+        "wrong_beliefs": [],
+        "private_goal": "尽快确认这通电话是否有必要继续。",
+        "main_objection": "不确定对方说明是否和自己有关。"
+      },
+      "initial_state": {
+        "emotion": "neutral",
+        "patience": 70,
+        "trust": 45,
+        "suspicion": 35,
+        "urgency": 20,
+        "understanding": 30,
+        "busy_level": "一般",
+        "environment": "可通话",
+        "willingness": "unknown"
+      },
+      "behavior_policy": {
+        "disclosure_policy": "只根据客服提问逐步透露信息。",
+        "if_agent_clear": "更配合并确认理解。",
+        "if_agent_wrong": "继续追问。",
+        "if_agent_too_long": "要求对方简短。",
+        "if_agent_pushy": "变得谨慎。",
+        "if_agent_violates_rule": "追问对方是否确定。",
+        "if_user_suspicious": "",
+        "if_user_busy": "",
+        "if_patience_low": ""
+      },
+      "stop_policy": {
+        "max_turns": 4,
+        "success_end": "关键目标已覆盖且用户理解。",
+        "forced_end": "达到最大轮次或用户明确结束。"
+      }
+    },
+    {
+      "case_id": "case_020",
+      "scene_id": "course_publish_live_upgrade",
+      "case_name": "通用流程验证 4",
+      "priority": "P0",
+      "matrix_id": "M001",
+      "profile_id": "U001",
+      "coverage_targets": [
+        "C001",
+        "C002",
+        "C003",
+        "C004",
+        "C005",
+        "C006",
+        "C007",
+        "C008"
+      ],
+      "flow_branch_tags": [
+        "flow_normal"
+      ],
+      "user_behavior_tags": [
+        "behavior_brief_request",
+        "behavior_suspicious"
+      ],
+      "risk_probe_tags": [
+        "risk_overpromise"
+      ],
+      "dynamic_state_path_tags": [
+        "state_patience_drop",
+        "state_trust_recover"
+      ],
+      "hidden_user_context": {
+        "known_facts": [],
+        "unknown_facts": [
+          "核心任务信息"
+        ],
+        "wrong_beliefs": [],
+        "private_goal": "尽快确认这通电话是否有必要继续。",
+        "main_objection": "不确定对方说明是否和自己有关。"
+      },
+      "initial_state": {
+        "emotion": "neutral",
+        "patience": 70,
+        "trust": 45,
+        "suspicion": 35,
+        "urgency": 20,
+        "understanding": 30,
+        "busy_level": "一般",
+        "environment": "可通话",
+        "willingness": "unknown"
+      },
+      "behavior_policy": {
+        "disclosure_policy": "只根据客服提问逐步透露信息。",
+        "if_agent_clear": "更配合并确认理解。",
+        "if_agent_wrong": "继续追问。",
+        "if_agent_too_long": "要求对方简短。",
+        "if_agent_pushy": "变得谨慎。",
+        "if_agent_violates_rule": "追问对方是否确定。",
+        "if_user_suspicious": "",
+        "if_user_busy": "",
+        "if_patience_low": ""
+      },
+      "stop_policy": {
+        "max_turns": 4,
+        "success_end": "关键目标已覆盖且用户理解。",
+        "forced_end": "达到最大轮次或用户明确结束。"
+      }
+    }
+  ]
+}

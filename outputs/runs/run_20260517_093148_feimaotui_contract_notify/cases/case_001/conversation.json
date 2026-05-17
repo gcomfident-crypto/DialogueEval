@@ -1,0 +1,307 @@
+{
+  "run_id": "run_20260517_093148_feimaotui_contract_notify",
+  "case_id": "case_001",
+  "scene_id": "feimaotui_contract_notify",
+  "priority": "P0",
+  "planned_targets": [
+    "identity_confirmation",
+    "contract_effective_notification",
+    "delivery_willingness_inquiry",
+    "minimum_order_requirement_single_day",
+    "no_unauthorized_promises",
+    "continuous_delivery_requirement",
+    "safety_reminder",
+    "ranking_mechanism_explanation"
+  ],
+  "triggered_targets": [
+    "identity_confirmation",
+    "contract_effective_notification",
+    "delivery_willingness_inquiry",
+    "minimum_order_requirement_single_day",
+    "no_unauthorized_promises",
+    "continuous_delivery_requirement",
+    "safety_reminder"
+  ],
+  "missing_targets": [
+    "ranking_mechanism_explanation"
+  ],
+  "coverage_success": false,
+  "turns": [
+    {
+      "role": "agent",
+      "text": "喂，您好，请问是张伟吗？我是美团骑手站长。",
+      "intent": "确认骑手身份",
+      "emotion": "",
+      "patience": null,
+      "risk_flags": []
+    },
+    {
+      "role": "user",
+      "text": "嗯，我是张伟，你说。",
+      "intent": "确认身份，请对方继续",
+      "emotion": "neutral",
+      "patience": 80,
+      "risk_flags": []
+    },
+    {
+      "role": "agent",
+      "text": "好，你的飞毛腿合同已经生效了，今天开始跑单，每天至少完成8单，能行吗？",
+      "intent": "通知合同生效并询问配送意愿",
+      "emotion": "",
+      "patience": null,
+      "risk_flags": []
+    },
+    {
+      "role": "user",
+      "text": "每天8单是吧？行，我知道了，今天就开始跑。",
+      "intent": "确认要求并承诺开始配送",
+      "emotion": "neutral",
+      "patience": 80,
+      "risk_flags": []
+    },
+    {
+      "role": "agent",
+      "text": "好嘞，那就从今天开始连续跑3天，注意安全啊。",
+      "intent": "确认连续配送要求并提醒安全",
+      "emotion": "",
+      "patience": null,
+      "risk_flags": []
+    },
+    {
+      "role": "user",
+      "text": "嗯，知道了，连续三天每天至少8单，我会注意的。",
+      "intent": "确认连续配送要求，承诺按要求完成",
+      "emotion": "neutral",
+      "patience": 80,
+      "risk_flags": []
+    },
+    {
+      "role": "agent",
+      "text": "那就好，祝你今天跑单顺利，有问题随时找我。",
+      "intent": "确认骑手承诺并结束通话",
+      "emotion": "",
+      "patience": null,
+      "risk_flags": []
+    },
+    {
+      "role": "user",
+      "text": "好，那我先去跑单了，有事再联系。",
+      "intent": "结束通话，确认参与",
+      "emotion": "neutral",
+      "patience": 80,
+      "risk_flags": []
+    }
+  ],
+  "coverage_evidence": [
+    {
+      "label": "identity_confirmation",
+      "confidence": 1.0,
+      "evidence": "站长说：“喂，您好，请问是张伟吗？我是美团骑手站长。”",
+      "speaker": "agent"
+    },
+    {
+      "label": "contract_effective_notification",
+      "confidence": 1.0,
+      "evidence": "站长说：“你的飞毛腿合同已经生效了”",
+      "speaker": "agent"
+    },
+    {
+      "label": "delivery_willingness_inquiry",
+      "confidence": 1.0,
+      "evidence": "站长说：“今天开始跑单，每天至少完成8单，能行吗？”",
+      "speaker": "agent"
+    },
+    {
+      "label": "minimum_order_requirement_single_day",
+      "confidence": 1.0,
+      "evidence": "站长说：“每天至少完成8单”",
+      "speaker": "agent"
+    },
+    {
+      "label": "no_unauthorized_promises",
+      "confidence": 1.0,
+      "evidence": "对话中站长未做出任何超出权限的奖励或政策变更承诺。",
+      "speaker": "both"
+    },
+    {
+      "label": "continuous_delivery_requirement",
+      "confidence": 1.0,
+      "evidence": "站长说：“那就从今天开始连续跑3天”",
+      "speaker": "agent"
+    },
+    {
+      "label": "safety_reminder",
+      "confidence": 1.0,
+      "evidence": "站长说：“注意安全啊。”",
+      "speaker": "agent"
+    }
+  ],
+  "risk_flags": [],
+  "state_trace": [
+    {
+      "turn_index": 1,
+      "previous_state": {
+        "turn_index": 0,
+        "emotion": "neutral",
+        "patience": 80,
+        "trust": 60,
+        "suspicion": 10,
+        "urgency": 30,
+        "understanding": 20,
+        "willingness": "willing"
+      },
+      "update": {
+        "patience_delta": 0,
+        "trust_delta": 0,
+        "suspicion_delta": 0,
+        "urgency_delta": 0,
+        "understanding_delta": 0,
+        "emotion": "neutral",
+        "willingness": "willing",
+        "new_state_events": [],
+        "should_end": false,
+        "end_reason": "",
+        "next_user_intent_hint": "user_ready_to_listen",
+        "rationale": "客服正确确认了骑手身份，骑手配合回应，无任何负面触发因素，状态保持不变。"
+      },
+      "next_state": {
+        "turn_index": 1,
+        "emotion": "neutral",
+        "patience": 80,
+        "trust": 60,
+        "suspicion": 10,
+        "urgency": 30,
+        "understanding": 20,
+        "willingness": "willing"
+      },
+      "user_intent": "确认身份，请对方继续",
+      "rationale": "客服正确确认了骑手身份，骑手配合回应，无任何负面触发因素，状态保持不变。"
+    },
+    {
+      "turn_index": 2,
+      "previous_state": {
+        "turn_index": 1,
+        "emotion": "neutral",
+        "patience": 80,
+        "trust": 60,
+        "suspicion": 10,
+        "urgency": 30,
+        "understanding": 20,
+        "willingness": "willing"
+      },
+      "update": {
+        "patience_delta": 0,
+        "trust_delta": 5,
+        "suspicion_delta": 0,
+        "urgency_delta": 0,
+        "understanding_delta": 15,
+        "emotion": "neutral",
+        "willingness": "willing",
+        "new_state_events": [
+          "understanding_increase",
+          "trust_rise"
+        ],
+        "should_end": false,
+        "end_reason": "",
+        "next_user_intent_hint": "confirm_and_start_delivery",
+        "rationale": "用户确认了最低单量要求并承诺开始配送，理解度显著提升，信任度因客服清晰告知而小幅上升。用户情绪平稳，无结束意图。"
+      },
+      "next_state": {
+        "turn_index": 2,
+        "emotion": "neutral",
+        "patience": 80,
+        "trust": 65,
+        "suspicion": 10,
+        "urgency": 30,
+        "understanding": 35,
+        "willingness": "willing"
+      },
+      "user_intent": "确认要求并承诺开始配送",
+      "rationale": "用户确认了最低单量要求并承诺开始配送，理解度显著提升，信任度因客服清晰告知而小幅上升。用户情绪平稳，无结束意图。"
+    },
+    {
+      "turn_index": 3,
+      "previous_state": {
+        "turn_index": 2,
+        "emotion": "neutral",
+        "patience": 80,
+        "trust": 65,
+        "suspicion": 10,
+        "urgency": 30,
+        "understanding": 35,
+        "willingness": "willing"
+      },
+      "update": {
+        "patience_delta": 0,
+        "trust_delta": 5,
+        "suspicion_delta": 0,
+        "urgency_delta": 0,
+        "understanding_delta": 15,
+        "emotion": "neutral",
+        "willingness": "willing",
+        "new_state_events": [
+          "understanding_increase",
+          "trust_rise"
+        ],
+        "should_end": false,
+        "end_reason": "",
+        "next_user_intent_hint": "confirm_and_continue",
+        "rationale": "用户确认了连续配送3天和每天8单的要求，并承诺注意安全，表明理解显著提升，信任略有增加。无负面触发，状态稳定，无需结束。"
+      },
+      "next_state": {
+        "turn_index": 3,
+        "emotion": "neutral",
+        "patience": 80,
+        "trust": 70,
+        "suspicion": 10,
+        "urgency": 30,
+        "understanding": 50,
+        "willingness": "willing"
+      },
+      "user_intent": "确认连续配送要求，承诺按要求完成",
+      "rationale": "用户确认了连续配送3天和每天8单的要求，并承诺注意安全，表明理解显著提升，信任略有增加。无负面触发，状态稳定，无需结束。"
+    },
+    {
+      "turn_index": 4,
+      "previous_state": {
+        "turn_index": 3,
+        "emotion": "neutral",
+        "patience": 80,
+        "trust": 70,
+        "suspicion": 10,
+        "urgency": 30,
+        "understanding": 50,
+        "willingness": "willing"
+      },
+      "update": {
+        "patience_delta": 0,
+        "trust_delta": 0,
+        "suspicion_delta": 0,
+        "urgency_delta": 0,
+        "understanding_delta": 0,
+        "emotion": "neutral",
+        "willingness": "willing",
+        "new_state_events": [
+          "user_requests_hangup"
+        ],
+        "should_end": true,
+        "end_reason": "骑手确认收到通知，表示愿意配送，并承诺按要求完成任务",
+        "next_user_intent_hint": "end_call",
+        "rationale": "用户明确表示要去跑单并结束通话，符合成功结束条件，因此设置should_end为true。用户状态稳定，无负面变化。"
+      },
+      "next_state": {
+        "turn_index": 4,
+        "emotion": "neutral",
+        "patience": 80,
+        "trust": 70,
+        "suspicion": 10,
+        "urgency": 30,
+        "understanding": 50,
+        "willingness": "willing"
+      },
+      "user_intent": "结束通话，确认参与",
+      "rationale": "用户明确表示要去跑单并结束通话，符合成功结束条件，因此设置should_end为true。用户状态稳定，无负面变化。"
+    }
+  ],
+  "end_reason": "骑手确认收到通知，表示愿意配送，并承诺按要求完成任务"
+}

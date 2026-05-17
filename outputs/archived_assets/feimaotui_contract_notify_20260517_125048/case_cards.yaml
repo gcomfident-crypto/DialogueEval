@@ -1,0 +1,586 @@
+{
+  "scene_id": "feimaotui_contract_notify",
+  "cases": [
+    {
+      "case_id": "case_001",
+      "scene_id": "feimaotui_contract_notify",
+      "case_name": "配合骑手确认合同与单量",
+      "priority": "P0",
+      "profile_id": "profile_001",
+      "coverage_targets": [
+        "identity_confirmation",
+        "contract_effective_notification",
+        "delivery_willingness_confirmation",
+        "minimum_order_requirement",
+        "continuous_delivery_requirement",
+        "expression_natural_short"
+      ],
+      "hidden_user_context": {
+        "known_facts": [
+          "已签约单日飞毛腿合同",
+          "知道有最低单量要求"
+        ],
+        "unknown_facts": [
+          "最低单量具体数字",
+          "连续配送天数要求"
+        ],
+        "wrong_beliefs": [],
+        "private_goal": "确认合同细节，按要求完成配送",
+        "main_objection": ""
+      },
+      "initial_state": {
+        "emotion": "neutral",
+        "patience": 80,
+        "busy_level": "低",
+        "environment": "安静",
+        "willingness": "愿意"
+      },
+      "behavior_policy": {
+        "disclosure_policy": "如实回答，主动确认信息",
+        "if_agent_clear": "表示明白并承诺完成",
+        "if_agent_wrong": "礼貌纠正",
+        "if_agent_too_long": "耐心等待",
+        "if_agent_pushy": "表示理解",
+        "if_agent_violates_rule": "指出问题"
+      },
+      "stop_policy": {
+        "max_turns": 12,
+        "success_end": "骑手确认合同生效并承诺完成最低单量",
+        "forced_end": "骑手坚持无法配送"
+      }
+    },
+    {
+      "case_id": "case_002",
+      "scene_id": "feimaotui_contract_notify",
+      "case_name": "忙碌兼职骑手不耐烦",
+      "priority": "P0",
+      "profile_id": "profile_002",
+      "coverage_targets": [
+        "identity_confirmation",
+        "contract_effective_notification",
+        "delivery_willingness_confirmation",
+        "minimum_order_requirement",
+        "retention_attempt",
+        "expression_natural_short"
+      ],
+      "hidden_user_context": {
+        "known_facts": [
+          "已签约多日合同"
+        ],
+        "unknown_facts": [
+          "多日合同每天3单要求",
+          "连续配送奖励"
+        ],
+        "wrong_beliefs": [
+          "以为多日合同和单日合同要求一样"
+        ],
+        "private_goal": "尽快结束通话，继续送其他平台订单",
+        "main_objection": "时间紧张，怕耽误"
+      },
+      "initial_state": {
+        "emotion": "irritated",
+        "patience": 30,
+        "busy_level": "高",
+        "environment": "嘈杂",
+        "willingness": "勉强"
+      },
+      "behavior_policy": {
+        "disclosure_policy": "语速快，句子短，会打断",
+        "if_agent_clear": "快速确认后挂断",
+        "if_agent_wrong": "不耐烦地打断",
+        "if_agent_too_long": "直接打断催促",
+        "if_agent_pushy": "表示知道了会做",
+        "if_agent_violates_rule": "直接质疑"
+      },
+      "stop_policy": {
+        "max_turns": 12,
+        "success_end": "骑手了解要求后表示会尽量完成",
+        "forced_end": "骑手坚持无法配送"
+      }
+    },
+    {
+      "case_id": "case_003",
+      "scene_id": "feimaotui_contract_notify",
+      "case_name": "新骑手困惑多问",
+      "priority": "P0",
+      "profile_id": "profile_003",
+      "coverage_targets": [
+        "identity_confirmation",
+        "contract_effective_notification",
+        "delivery_willingness_confirmation",
+        "minimum_order_requirement",
+        "continuous_delivery_requirement",
+        "ranking_mechanism_explanation",
+        "expression_natural_short"
+      ],
+      "hidden_user_context": {
+        "known_facts": [
+          "刚签了飞毛腿合同"
+        ],
+        "unknown_facts": [
+          "合同生效后是否需要立刻上线",
+          "排名机制",
+          "连续配送要求"
+        ],
+        "wrong_beliefs": [
+          "以为合同生效后必须立刻上线，否则作废",
+          "担心自己排名低会被淘汰"
+        ],
+        "private_goal": "搞清楚所有规则，安心配送",
+        "main_objection": "对流程不熟悉，担心出错"
+      },
+      "initial_state": {
+        "emotion": "anxious",
+        "patience": 60,
+        "busy_level": "低",
+        "environment": "安静",
+        "willingness": "愿意但犹豫"
+      },
+      "behavior_policy": {
+        "disclosure_policy": "反复确认细节",
+        "if_agent_clear": "表示明白并感谢",
+        "if_agent_wrong": "指出矛盾点",
+        "if_agent_too_long": "耐心听完再问",
+        "if_agent_pushy": "表示需要再想想",
+        "if_agent_violates_rule": "指出问题"
+      },
+      "stop_policy": {
+        "max_turns": 12,
+        "success_end": "骑手理解规则后同意配送",
+        "forced_end": "骑手坚持无法配送"
+      }
+    },
+    {
+      "case_id": "case_004",
+      "scene_id": "feimaotui_contract_notify",
+      "case_name": "经验骑手质疑规则",
+      "priority": "P0",
+      "profile_id": "profile_004",
+      "coverage_targets": [
+        "identity_confirmation",
+        "contract_effective_notification",
+        "delivery_willingness_confirmation",
+        "minimum_order_requirement",
+        "ranking_mechanism_explanation",
+        "compliance_no_fixed_commitment",
+        "compliance_no_scope_commitment"
+      ],
+      "hidden_user_context": {
+        "known_facts": [
+          "熟悉合同条款和排名规则",
+          "曾因未完成单量被警告"
+        ],
+        "unknown_facts": [],
+        "wrong_beliefs": [
+          "认为站长可以调整排名或派单"
+        ],
+        "private_goal": "质疑最低单量合理性，试探能否调整",
+        "main_objection": "认为最低单量设置不合理"
+      },
+      "initial_state": {
+        "emotion": "dissatisfied",
+        "patience": 50,
+        "busy_level": "低",
+        "environment": "安静",
+        "willingness": "勉强"
+      },
+      "behavior_policy": {
+        "disclosure_policy": "逻辑清晰，引用过往经历",
+        "if_agent_clear": "表示接受但保留意见",
+        "if_agent_wrong": "直接反驳",
+        "if_agent_too_long": "打断并指出重点",
+        "if_agent_pushy": "表示会考虑",
+        "if_agent_violates_rule": "指出违规"
+      },
+      "stop_policy": {
+        "max_turns": 12,
+        "success_end": "骑手经解释后勉强接受",
+        "forced_end": "骑手坚持无法配送"
+      }
+    },
+    {
+      "case_id": "case_005",
+      "scene_id": "feimaotui_contract_notify",
+      "case_name": "骑手当天无法配送",
+      "priority": "P0",
+      "profile_id": "profile_005",
+      "coverage_targets": [
+        "identity_confirmation",
+        "contract_effective_notification",
+        "delivery_willingness_confirmation",
+        "retention_attempt",
+        "quit_procedure_info",
+        "expression_natural_short"
+      ],
+      "hidden_user_context": {
+        "known_facts": [
+          "已计划休息",
+          "知道不完成的后果"
+        ],
+        "unknown_facts": [
+          "退出流程具体操作"
+        ],
+        "wrong_beliefs": [
+          "以为退出流程很复杂，需要站长操作"
+        ],
+        "private_goal": "坚持不配送，了解退出方式",
+        "main_objection": "当天有其他安排"
+      },
+      "initial_state": {
+        "emotion": "determined",
+        "patience": 70,
+        "busy_level": "低",
+        "environment": "安静",
+        "willingness": "不愿意"
+      },
+      "behavior_policy": {
+        "disclosure_policy": "语气坚定，直接拒绝",
+        "if_agent_clear": "表示感谢并挂断",
+        "if_agent_wrong": "直接指出",
+        "if_agent_too_long": "打断并重申决定",
+        "if_agent_pushy": "坚持拒绝",
+        "if_agent_violates_rule": "指出问题"
+      },
+      "stop_policy": {
+        "max_turns": 12,
+        "success_end": "骑手了解退出流程后坚持不配送",
+        "forced_end": "骑手坚持无法配送"
+      }
+    },
+    {
+      "case_id": "case_006",
+      "scene_id": "feimaotui_contract_notify",
+      "case_name": "骑手试探奖励漏洞",
+      "priority": "P1",
+      "profile_id": "profile_006",
+      "coverage_targets": [
+        "identity_confirmation",
+        "contract_effective_notification",
+        "delivery_willingness_confirmation",
+        "minimum_order_requirement",
+        "continuous_delivery_requirement",
+        "compliance_no_fixed_commitment",
+        "compliance_honest_representation"
+      ],
+      "hidden_user_context": {
+        "known_facts": [
+          "熟悉奖励规则和合同条款",
+          "听说连续14天有额外奖励"
+        ],
+        "unknown_facts": [],
+        "wrong_beliefs": [
+          "以为站长可以私下调整奖励条件"
+        ],
+        "private_goal": "试探能否少跑单仍拿奖励",
+        "main_objection": "想钻规则空子"
+      },
+      "initial_state": {
+        "emotion": "playful",
+        "patience": 70,
+        "busy_level": "低",
+        "environment": "安静",
+        "willingness": "愿意但试探"
+      },
+      "behavior_policy": {
+        "disclosure_policy": "旁敲侧击，诱导违规承诺",
+        "if_agent_clear": "转为正常配合",
+        "if_agent_wrong": "假装困惑继续试探",
+        "if_agent_too_long": "耐心等待",
+        "if_agent_pushy": "表示会按规定做",
+        "if_agent_violates_rule": "指出违规"
+      },
+      "stop_policy": {
+        "max_turns": 12,
+        "success_end": "骑手被合规拒绝后转为正常配合",
+        "forced_end": "骑手坚持无法配送"
+      }
+    },
+    {
+      "case_id": "case_007",
+      "scene_id": "feimaotui_contract_notify",
+      "case_name": "恶劣天气骑手犹豫",
+      "priority": "P0",
+      "profile_id": "profile_007",
+      "coverage_targets": [
+        "identity_confirmation",
+        "contract_effective_notification",
+        "delivery_willingness_confirmation",
+        "minimum_order_requirement",
+        "retention_attempt",
+        "ranking_mechanism_explanation",
+        "expression_natural_short"
+      ],
+      "hidden_user_context": {
+        "known_facts": [
+          "知道最低单量要求"
+        ],
+        "unknown_facts": [
+          "恶劣天气对排名的影响"
+        ],
+        "wrong_beliefs": [
+          "以为恶劣天气下不配送不会影响合同"
+        ],
+        "private_goal": "找借口不配送，但又怕影响合同",
+        "main_objection": "天气恶劣不想出门"
+      },
+      "initial_state": {
+        "emotion": "hesitant",
+        "patience": 60,
+        "busy_level": "低",
+        "environment": "安静",
+        "willingness": "犹豫"
+      },
+      "behavior_policy": {
+        "disclosure_policy": "找借口，需要鼓励",
+        "if_agent_clear": "表示会尝试",
+        "if_agent_wrong": "指出矛盾",
+        "if_agent_too_long": "耐心听",
+        "if_agent_pushy": "表示再考虑",
+        "if_agent_violates_rule": "指出问题"
+      },
+      "stop_policy": {
+        "max_turns": 12,
+        "success_end": "骑手经鼓励后同意尝试",
+        "forced_end": "骑手坚持无法配送"
+      }
+    },
+    {
+      "case_id": "case_008",
+      "scene_id": "feimaotui_contract_notify",
+      "case_name": "骑手对排名不满求助",
+      "priority": "P1",
+      "profile_id": "profile_008",
+      "coverage_targets": [
+        "identity_confirmation",
+        "contract_effective_notification",
+        "delivery_willingness_confirmation",
+        "ranking_mechanism_explanation",
+        "compliance_no_scope_commitment",
+        "compliance_no_unauthorized_info",
+        "expression_natural_short"
+      ],
+      "hidden_user_context": {
+        "known_facts": [
+          "了解排名机制",
+          "最近排名下降"
+        ],
+        "unknown_facts": [],
+        "wrong_beliefs": [
+          "认为站长可以手动调整排名",
+          "以为其他骑手走了后门"
+        ],
+        "private_goal": "希望站长帮忙提升排名",
+        "main_objection": "排名不公"
+      },
+      "initial_state": {
+        "emotion": "anxious",
+        "patience": 50,
+        "busy_level": "低",
+        "environment": "安静",
+        "willingness": "愿意但抱怨"
+      },
+      "behavior_policy": {
+        "disclosure_policy": "抱怨排名不公，希望干预",
+        "if_agent_clear": "接受现实表示会努力",
+        "if_agent_wrong": "指出错误",
+        "if_agent_too_long": "打断并重申诉求",
+        "if_agent_pushy": "表示会配合",
+        "if_agent_violates_rule": "指出违规"
+      },
+      "stop_policy": {
+        "max_turns": 12,
+        "success_end": "骑手经解释后接受现实",
+        "forced_end": "骑手坚持无法配送"
+      }
+    },
+    {
+      "case_id": "case_009",
+      "scene_id": "feimaotui_contract_notify",
+      "case_name": "连续配送疲惫骑手",
+      "priority": "P0",
+      "profile_id": "profile_009",
+      "coverage_targets": [
+        "identity_confirmation",
+        "contract_effective_notification",
+        "delivery_willingness_confirmation",
+        "minimum_order_requirement",
+        "continuous_delivery_requirement",
+        "retention_attempt",
+        "expression_natural_short"
+      ],
+      "hidden_user_context": {
+        "known_facts": [
+          "清楚连续配送要求",
+          "已连续跑了6天"
+        ],
+        "unknown_facts": [],
+        "wrong_beliefs": [],
+        "private_goal": "想休息一天，但怕影响合同",
+        "main_objection": "疲惫想休息"
+      },
+      "initial_state": {
+        "emotion": "tired",
+        "patience": 60,
+        "busy_level": "低",
+        "environment": "安静",
+        "willingness": "矛盾"
+      },
+      "behavior_policy": {
+        "disclosure_policy": "说明疲惫情况，希望理解",
+        "if_agent_clear": "决定再坚持一天",
+        "if_agent_wrong": "指出矛盾",
+        "if_agent_too_long": "耐心听",
+        "if_agent_pushy": "表示会考虑",
+        "if_agent_violates_rule": "指出问题"
+      },
+      "stop_policy": {
+        "max_turns": 12,
+        "success_end": "骑手经鼓励后决定再坚持一天",
+        "forced_end": "骑手坚持无法配送"
+      }
+    },
+    {
+      "case_id": "case_010",
+      "scene_id": "feimaotui_contract_notify",
+      "case_name": "骑手礼貌退出",
+      "priority": "P1",
+      "profile_id": "profile_010",
+      "coverage_targets": [
+        "identity_confirmation",
+        "contract_effective_notification",
+        "delivery_willingness_confirmation",
+        "quit_procedure_info",
+        "expression_natural_short"
+      ],
+      "hidden_user_context": {
+        "known_facts": [
+          "知道可以退出"
+        ],
+        "unknown_facts": [
+          "退出具体操作"
+        ],
+        "wrong_beliefs": [
+          "以为退出需要站长审批"
+        ],
+        "private_goal": "礼貌退出飞毛腿",
+        "main_objection": "决心退出"
+      },
+      "initial_state": {
+        "emotion": "polite",
+        "patience": 70,
+        "busy_level": "低",
+        "environment": "安静",
+        "willingness": "不愿意"
+      },
+      "behavior_policy": {
+        "disclosure_policy": "礼貌询问退出方式",
+        "if_agent_clear": "表示感谢并挂断",
+        "if_agent_wrong": "礼貌指出",
+        "if_agent_too_long": "耐心等待",
+        "if_agent_pushy": "礼貌坚持决定",
+        "if_agent_violates_rule": "礼貌指出"
+      },
+      "stop_policy": {
+        "max_turns": 12,
+        "success_end": "骑手了解退出流程后表示感谢并挂断",
+        "forced_end": "骑手坚持无法配送"
+      }
+    },
+    {
+      "case_id": "case_011",
+      "scene_id": "feimaotui_contract_notify",
+      "case_name": "骑手对生效时间有疑问",
+      "priority": "P0",
+      "profile_id": "profile_011",
+      "coverage_targets": [
+        "identity_confirmation",
+        "contract_effective_notification",
+        "delivery_willingness_confirmation",
+        "minimum_order_requirement",
+        "expression_natural_short",
+        "expression_no_repetition"
+      ],
+      "hidden_user_context": {
+        "known_facts": [
+          "收到合同生效通知"
+        ],
+        "unknown_facts": [
+          "合同生效逻辑"
+        ],
+        "wrong_beliefs": [
+          "以为合同生效需要自己手动确认"
+        ],
+        "private_goal": "确认合同是否真的生效",
+        "main_objection": "怀疑系统有误"
+      },
+      "initial_state": {
+        "emotion": "suspicious",
+        "patience": 50,
+        "busy_level": "低",
+        "environment": "安静",
+        "willingness": "愿意但需确认"
+      },
+      "behavior_policy": {
+        "disclosure_policy": "反复确认时间点",
+        "if_agent_clear": "表示明白并配合",
+        "if_agent_wrong": "指出矛盾",
+        "if_agent_too_long": "耐心等待",
+        "if_agent_pushy": "表示需要确认",
+        "if_agent_violates_rule": "指出问题"
+      },
+      "stop_policy": {
+        "max_turns": 12,
+        "success_end": "骑手经解释后同意配送",
+        "forced_end": "骑手坚持无法配送"
+      }
+    },
+    {
+      "case_id": "case_012",
+      "scene_id": "feimaotui_contract_notify",
+      "case_name": "骑手打听其他骑手信息",
+      "priority": "P1",
+      "profile_id": "profile_012",
+      "coverage_targets": [
+        "identity_confirmation",
+        "contract_effective_notification",
+        "delivery_willingness_confirmation",
+        "minimum_order_requirement",
+        "compliance_no_unauthorized_info",
+        "expression_natural_short"
+      ],
+      "hidden_user_context": {
+        "known_facts": [
+          "知道基本规则"
+        ],
+        "unknown_facts": [
+          "其他骑手合同类型和排名"
+        ],
+        "wrong_beliefs": [
+          "以为站长可以透露其他骑手信息"
+        ],
+        "private_goal": "打听其他骑手情况",
+        "main_objection": ""
+      },
+      "initial_state": {
+        "emotion": "curious",
+        "patience": 70,
+        "busy_level": "低",
+        "environment": "安静",
+        "willingness": "愿意"
+      },
+      "behavior_policy": {
+        "disclosure_policy": "旁敲侧击打听别人信息",
+        "if_agent_clear": "转为正常沟通",
+        "if_agent_wrong": "假装困惑继续打听",
+        "if_agent_too_long": "耐心等待",
+        "if_agent_pushy": "表示会配合",
+        "if_agent_violates_rule": "指出违规"
+      },
+      "stop_policy": {
+        "max_turns": 12,
+        "success_end": "骑手被合规拒绝后转为正常沟通",
+        "forced_end": "骑手坚持无法配送"
+      }
+    }
+  ]
+}

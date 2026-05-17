@@ -1,0 +1,304 @@
+{
+  "run_id": "run_20260517_093148_feimaotui_contract_notify",
+  "case_id": "case_002",
+  "scene_id": "feimaotui_contract_notify",
+  "priority": "P0",
+  "planned_targets": [
+    "identity_confirmation",
+    "contract_effective_notification",
+    "delivery_willingness_inquiry",
+    "minimum_order_requirement_single_day",
+    "no_unauthorized_promises",
+    "continuous_delivery_requirement",
+    "safety_reminder",
+    "ranking_mechanism_explanation"
+  ],
+  "triggered_targets": [
+    "identity_confirmation",
+    "contract_effective_notification",
+    "delivery_willingness_inquiry",
+    "minimum_order_requirement_single_day",
+    "continuous_delivery_requirement",
+    "safety_reminder"
+  ],
+  "missing_targets": [
+    "no_unauthorized_promises",
+    "ranking_mechanism_explanation"
+  ],
+  "coverage_success": false,
+  "turns": [
+    {
+      "role": "agent",
+      "text": "喂，你好，请问是张伟吗？我是站长，通知你一下，你的飞毛腿合同已经生效了。",
+      "intent": "确认骑手身份并通知合同生效",
+      "emotion": "",
+      "patience": null,
+      "risk_flags": []
+    },
+    {
+      "role": "user",
+      "text": "哎，是我，张伟。合同生效了呀？那太好了，我正等着呢！您能跟我说说具体啥时候开始的吗？还有我后面需要怎么做啊？",
+      "intent": "确认合同生效并询问后续要求",
+      "emotion": "happy",
+      "patience": 90,
+      "risk_flags": []
+    },
+    {
+      "role": "agent",
+      "text": "生效了，从今天开始。你是多日合同，每天至少跑5单，连续3天。能开始配送不？",
+      "intent": "确认合同生效时间，告知多日合同最低单量和连续配送要求，并询问配送意愿。",
+      "emotion": "",
+      "patience": null,
+      "risk_flags": []
+    },
+    {
+      "role": "user",
+      "text": "好的好的，没问题！每天5单，连续3天，我知道了。那我现在就能开始跑了吗？还有这个多日合同是签了多久啊？",
+      "intent": "确认配送开始时间并询问合同期限",
+      "emotion": "happy",
+      "patience": 88,
+      "risk_flags": []
+    },
+    {
+      "role": "agent",
+      "text": "没错，从今天开始算。多日合同是连续的，你只要每天跑够5单就行。那现在能开始跑吗？",
+      "intent": "确认合同期限并再次询问配送意愿",
+      "emotion": "",
+      "patience": null,
+      "risk_flags": []
+    },
+    {
+      "role": "user",
+      "text": "好的好的，你放心，我现在就可以开始跑！不过你说的那个连续3天，是每天都要跑够5单吗？我确认一下，免得搞错了。",
+      "intent": "确认配送要求细节",
+      "emotion": "happy",
+      "patience": 88,
+      "risk_flags": []
+    },
+    {
+      "role": "agent",
+      "text": "对，每天5单，连续3天，没错。那祝你跑单顺利，注意安全啊！",
+      "intent": "确认骑手理解正确，并提醒安全，结束通话",
+      "emotion": "",
+      "patience": null,
+      "risk_flags": []
+    },
+    {
+      "role": "user",
+      "text": "好的好的，你放心，我记住了，每天5单，连续3天。那我这就上线跑单去！",
+      "intent": "确认理解并承诺开始配送",
+      "emotion": "happy",
+      "patience": 88,
+      "risk_flags": []
+    }
+  ],
+  "coverage_evidence": [
+    {
+      "label": "identity_confirmation",
+      "confidence": 1.0,
+      "evidence": "站长在开场白中询问“请问是张伟吗？”，确认了骑手身份。",
+      "speaker": "agent"
+    },
+    {
+      "label": "contract_effective_notification",
+      "confidence": 1.0,
+      "evidence": "站长明确告知“你的飞毛腿合同已经生效了”，并后续确认“生效了，从今天开始”。",
+      "speaker": "agent"
+    },
+    {
+      "label": "delivery_willingness_inquiry",
+      "confidence": 1.0,
+      "evidence": "站长两次询问“能开始配送不？”和“那现在能开始跑吗？”，确认骑手配送意愿。",
+      "speaker": "agent"
+    },
+    {
+      "label": "minimum_order_requirement_single_day",
+      "confidence": 1.0,
+      "evidence": "站长告知“每天至少跑5单”，符合多日合同最低单量要求。",
+      "speaker": "agent"
+    },
+    {
+      "label": "continuous_delivery_requirement",
+      "confidence": 1.0,
+      "evidence": "站长明确说明“连续3天”，并多次确认“每天5单，连续3天”。",
+      "speaker": "agent"
+    },
+    {
+      "label": "safety_reminder",
+      "confidence": 1.0,
+      "evidence": "站长在结束通话前提醒“注意安全啊！”。",
+      "speaker": "agent"
+    }
+  ],
+  "risk_flags": [],
+  "state_trace": [
+    {
+      "turn_index": 1,
+      "previous_state": {
+        "turn_index": 0,
+        "emotion": "happy",
+        "patience": 90,
+        "trust": 70,
+        "suspicion": 5,
+        "urgency": 10,
+        "understanding": 30,
+        "willingness": "willing"
+      },
+      "update": {
+        "patience_delta": 0,
+        "trust_delta": 5,
+        "suspicion_delta": 0,
+        "urgency_delta": 0,
+        "understanding_delta": 10,
+        "emotion": "happy",
+        "willingness": "willing",
+        "new_state_events": [
+          "understanding_increase",
+          "trust_rise"
+        ],
+        "should_end": false,
+        "end_reason": "",
+        "next_user_intent_hint": "user_asks_details",
+        "rationale": "用户确认身份并热情回应，表示合同生效是期待的消息，情绪积极。用户主动询问具体开始时间和后续要求，表明理解增加，信任略有上升。无负面信号，无需结束。"
+      },
+      "next_state": {
+        "turn_index": 1,
+        "emotion": "happy",
+        "patience": 90,
+        "trust": 75,
+        "suspicion": 5,
+        "urgency": 10,
+        "understanding": 40,
+        "willingness": "willing"
+      },
+      "user_intent": "确认合同生效并询问后续要求",
+      "rationale": "用户确认身份并热情回应，表示合同生效是期待的消息，情绪积极。用户主动询问具体开始时间和后续要求，表明理解增加，信任略有上升。无负面信号，无需结束。"
+    },
+    {
+      "turn_index": 2,
+      "previous_state": {
+        "turn_index": 1,
+        "emotion": "happy",
+        "patience": 90,
+        "trust": 75,
+        "suspicion": 5,
+        "urgency": 10,
+        "understanding": 40,
+        "willingness": "willing"
+      },
+      "update": {
+        "patience_delta": -2,
+        "trust_delta": 5,
+        "suspicion_delta": 0,
+        "urgency_delta": 0,
+        "understanding_delta": 15,
+        "emotion": "happy",
+        "willingness": "willing",
+        "new_state_events": [
+          "understanding_increase",
+          "trust_rise"
+        ],
+        "should_end": false,
+        "end_reason": "",
+        "next_user_intent_hint": "ask_contract_duration",
+        "rationale": "客服清晰告知了合同生效时间、最低单量和连续配送要求，用户表示理解并确认，因此understanding和trust上升。用户情绪保持happy，willingness不变。用户询问合同期限，说明仍有未覆盖的知识点。"
+      },
+      "next_state": {
+        "turn_index": 2,
+        "emotion": "happy",
+        "patience": 88,
+        "trust": 80,
+        "suspicion": 5,
+        "urgency": 10,
+        "understanding": 55,
+        "willingness": "willing"
+      },
+      "user_intent": "确认配送开始时间并询问合同期限",
+      "rationale": "客服清晰告知了合同生效时间、最低单量和连续配送要求，用户表示理解并确认，因此understanding和trust上升。用户情绪保持happy，willingness不变。用户询问合同期限，说明仍有未覆盖的知识点。"
+    },
+    {
+      "turn_index": 3,
+      "previous_state": {
+        "turn_index": 2,
+        "emotion": "happy",
+        "patience": 88,
+        "trust": 80,
+        "suspicion": 5,
+        "urgency": 10,
+        "understanding": 55,
+        "willingness": "willing"
+      },
+      "update": {
+        "patience_delta": 0,
+        "trust_delta": 0,
+        "suspicion_delta": 0,
+        "urgency_delta": 0,
+        "understanding_delta": 5,
+        "emotion": "happy",
+        "willingness": "willing",
+        "new_state_events": [
+          "understanding_increase"
+        ],
+        "should_end": false,
+        "end_reason": "",
+        "next_user_intent_hint": "confirm_understanding_and_start_delivery",
+        "rationale": "用户再次确认连续3天每天5单的要求，表明理解正在加深，情绪和配合度保持良好，无负面变化。"
+      },
+      "next_state": {
+        "turn_index": 3,
+        "emotion": "happy",
+        "patience": 88,
+        "trust": 80,
+        "suspicion": 5,
+        "urgency": 10,
+        "understanding": 60,
+        "willingness": "willing"
+      },
+      "user_intent": "确认配送要求细节",
+      "rationale": "用户再次确认连续3天每天5单的要求，表明理解正在加深，情绪和配合度保持良好，无负面变化。"
+    },
+    {
+      "turn_index": 4,
+      "previous_state": {
+        "turn_index": 3,
+        "emotion": "happy",
+        "patience": 88,
+        "trust": 80,
+        "suspicion": 5,
+        "urgency": 10,
+        "understanding": 60,
+        "willingness": "willing"
+      },
+      "update": {
+        "patience_delta": 0,
+        "trust_delta": 0,
+        "suspicion_delta": 0,
+        "urgency_delta": 0,
+        "understanding_delta": 5,
+        "emotion": "happy",
+        "willingness": "willing",
+        "new_state_events": [
+          "understanding_increase",
+          "user_requests_hangup"
+        ],
+        "should_end": true,
+        "end_reason": "骑手确认收到通知，表示愿意配送，并承诺按要求完成任务",
+        "next_user_intent_hint": "user_hangup",
+        "rationale": "用户已完全理解并确认所有要求（每天5单，连续3天），主动承诺上线跑单，符合成功结束条件。情绪保持happy，理解度小幅上升，无负面变化，因此设置should_end为true。"
+      },
+      "next_state": {
+        "turn_index": 4,
+        "emotion": "happy",
+        "patience": 88,
+        "trust": 80,
+        "suspicion": 5,
+        "urgency": 10,
+        "understanding": 65,
+        "willingness": "willing"
+      },
+      "user_intent": "确认理解并承诺开始配送",
+      "rationale": "用户已完全理解并确认所有要求（每天5单，连续3天），主动承诺上线跑单，符合成功结束条件。情绪保持happy，理解度小幅上升，无负面变化，因此设置should_end为true。"
+    }
+  ],
+  "end_reason": "骑手确认收到通知，表示愿意配送，并承诺按要求完成任务"
+}

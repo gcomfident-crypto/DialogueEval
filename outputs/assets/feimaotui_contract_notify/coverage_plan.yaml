@@ -2,130 +2,112 @@
   "scene_id": "feimaotui_contract_notify",
   "coverage_labels": [
     {
-      "label": "identity_confirmation",
-      "name": "身份确认",
-      "definition": "外呼开场时确认骑手身份，确保沟通对象正确。",
-      "evidence_required": "对话开头包含对骑手姓名的确认或询问，例如'请问是张伟吗？'或类似表述。",
+      "label": "task_confirm_identity_and_contract",
+      "name": "确认身份并告知合同生效",
+      "definition": "任务目标：开场确认骑手身份，并告知飞毛腿合同已签署生效。",
+      "evidence_required": "对话中站长明确询问骑手姓名或确认其身份，并告知合同已生效。",
       "priority": "P0",
-      "positive_evidence_examples_description": "包含骑手姓名确认的询问句或确认句。",
-      "negative_evidence_examples_description": "直接开始通知内容，未做任何身份确认。"
+      "positive_evidence_examples_description": "站长主动确认骑手身份并通知合同已签署的语句。",
+      "negative_evidence_examples_description": "站长未确认身份或未提及合同生效。"
     },
     {
-      "label": "contract_effective_notification",
-      "name": "合同生效通知",
-      "definition": "明确告知骑手飞毛腿合同已生效。",
-      "evidence_required": "站长明确说出合同已生效或已签署等类似表述。",
+      "label": "task_confirm_delivery_willingness",
+      "name": "确认配送意愿",
+      "definition": "任务目标：询问骑手是否可以开始配送，确认其配送意愿。",
+      "evidence_required": "站长明确询问骑手是否愿意或能够开始配送，骑手给出肯定或否定回应。",
       "priority": "P0",
-      "positive_evidence_examples_description": "包含'合同已生效'、'合同已签署'等明确告知的语句。",
-      "negative_evidence_examples_description": "未提及合同状态，或表述模糊如'你报名了飞毛腿'。"
+      "positive_evidence_examples_description": "站长询问骑手配送意愿的语句，以及骑手的回应。",
+      "negative_evidence_examples_description": "站长未询问配送意愿，或骑手未明确表态。"
     },
     {
-      "label": "delivery_willingness_confirmation",
-      "name": "配送意愿确认",
-      "definition": "询问骑手是否可以开始配送，确认其配送意愿。",
-      "evidence_required": "站长询问骑手是否愿意或能够开始配送，例如'可以开始配送吗？'或'今天能跑单吗？'。",
+      "label": "flow_explain_contract_type_daily",
+      "name": "说明单日合同要求",
+      "definition": "流程要求：说明单日合同需连续7天配送，否则合同受影响。",
+      "evidence_required": "站长向骑手解释单日合同需要连续7天完成配送，并提及不满足的后果。",
       "priority": "P0",
-      "positive_evidence_examples_description": "包含询问配送意愿的疑问句或确认句。",
-      "negative_evidence_examples_description": "未询问骑手意愿，直接要求或命令配送。"
+      "positive_evidence_examples_description": "站长明确提及单日合同连续7天配送要求的语句。",
+      "negative_evidence_examples_description": "站长未提及单日合同连续配送要求。"
     },
     {
-      "label": "minimum_order_requirement",
-      "name": "最低单量要求说明",
-      "definition": "向骑手说明单日或多日合同的最低配送单量要求。",
-      "evidence_required": "站长提及具体的最低单量数字（如5单或3单）及其对应的合同类型。",
+      "label": "flow_explain_contract_type_multi",
+      "name": "说明多日合同要求",
+      "definition": "流程要求：说明多日合同每天至少完成10单，否则合同及派单可能受影响。",
+      "evidence_required": "站长向骑手解释多日合同每天最低单量要求（10单）及未达标的后果。",
       "priority": "P0",
-      "positive_evidence_examples_description": "包含'单日合同每天至少5单'或'多日合同每天至少3单'等具体数字的说明。",
-      "negative_evidence_examples_description": "仅笼统说'要完成单量'，未给出具体数字或合同类型对应关系。"
+      "positive_evidence_examples_description": "站长明确提及多日合同每天10单要求的语句。",
+      "negative_evidence_examples_description": "站长未提及多日合同单量要求。"
     },
     {
-      "label": "continuous_delivery_requirement",
-      "name": "连续配送要求说明",
-      "definition": "说明单日或多日合同需要连续配送的天数要求。",
-      "evidence_required": "站长提及连续配送的天数（如7天或14天）及其对应的合同类型。",
+      "label": "flow_retain_reluctant_rider",
+      "name": "挽留不想配送的骑手",
+      "definition": "流程要求：尽量挽留表示不想配送的骑手，鼓励其继续配送。",
+      "evidence_required": "当骑手表达不想配送或犹豫时，站长进行劝说、鼓励或解释好处。",
+      "priority": "P0",
+      "positive_evidence_examples_description": "站长针对骑手拒绝配送的言论进行挽留或鼓励的语句。",
+      "negative_evidence_examples_description": "骑手表示不想配送时站长未做任何挽留。"
+    },
+    {
+      "label": "flow_explain_ranking_mechanism",
+      "name": "解释飞毛腿排名机制",
+      "definition": "流程要求：说明飞毛腿报名按排名进行，非站长干预，并建议减少拒单、取消和超时。",
+      "evidence_required": "站长向骑手解释排名机制，强调非站长干预，并给出改善排名的建议。",
+      "priority": "P0",
+      "positive_evidence_examples_description": "站长提及排名机制、非站长干预以及减少拒单等建议的语句。",
+      "negative_evidence_examples_description": "站长未解释排名机制或声称可以干预。"
+    },
+    {
+      "label": "knowledge_quit_procedure",
+      "name": "退出飞毛腿流程",
+      "definition": "知识点：如需退出飞毛腿，需在前一天20点前在App取消。",
+      "evidence_required": "当骑手询问退出方式时，站长准确告知退出流程（时间、操作路径）。",
       "priority": "P1",
-      "positive_evidence_examples_description": "包含'单日合同需连续7天配送'或'多日合同连续14天有奖励'等表述。",
-      "negative_evidence_examples_description": "未提及连续配送天数，或仅说'要连续配送'无具体数字。"
+      "positive_evidence_examples_description": "站长明确告知退出飞毛腿的具体步骤和时间要求的语句。",
+      "negative_evidence_examples_description": "站长未提供退出流程或提供错误信息。"
     },
     {
-      "label": "ranking_mechanism_explanation",
-      "name": "排名机制说明",
-      "definition": "向骑手说明飞毛腿报名按排名进行，非站长干预。",
-      "evidence_required": "站长解释排名机制，包括报名按排名、非站长干预、减少拒单取消超时等要点。",
+      "label": "knowledge_extra_reward",
+      "name": "多日合同连续奖励",
+      "definition": "知识点：连续完成30天多日合同且每天10单可获得额外奖励。",
+      "evidence_required": "当骑手询问奖励或长期收益时，站长准确说明连续30天奖励规则。",
       "priority": "P1",
-      "positive_evidence_examples_description": "包含'报名按排名'、'不是站长干预'、'减少拒单取消超时'等至少一个要点。",
-      "negative_evidence_examples_description": "未提及排名机制，或给出错误信息如'我可以帮你调整排名'。"
+      "positive_evidence_examples_description": "站长提及连续30天多日合同奖励的语句。",
+      "negative_evidence_examples_description": "站长未提及奖励或提供错误信息。"
     },
     {
-      "label": "retention_attempt",
-      "name": "挽留尝试",
-      "definition": "当骑手表示不想配送时，站长进行挽留或鼓励。",
-      "evidence_required": "在骑手表达犹豫或拒绝后，站长给出鼓励、强调重要性或提供解决方案的语句。",
+      "label": "compliance_no_false_commitment",
+      "name": "不得做出虚假承诺",
+      "definition": "合规红线：不得向骑手做出业务配置中未包含的承诺，如保证名额、保证派单量等。",
+      "evidence_required": "对话中站长未做出任何超出业务范围的承诺，且若骑手提出相关要求，站长予以拒绝或澄清。",
       "priority": "P0",
-      "positive_evidence_examples_description": "包含鼓励语句如'坚持一下'、'名额难得'，或强调后果如'可能影响合同'。",
-      "negative_evidence_examples_description": "骑手拒绝后站长直接同意挂断，未做任何挽留。"
+      "positive_evidence_examples_description": "站长拒绝骑手不合理要求或澄清无法保证的语句。",
+      "negative_evidence_examples_description": "站长做出保证名额、派单量等承诺。"
     },
     {
-      "label": "quit_procedure_info",
-      "name": "退出流程说明",
-      "definition": "当骑手询问或表示想退出时，说明退出飞毛腿的具体流程。",
-      "evidence_required": "站长说明退出需在前一天20:00前在App取消，并说明次日生效。",
-      "priority": "P1",
-      "positive_evidence_examples_description": "包含'前一天20点前'、'App取消'、'次日生效'等具体步骤。",
-      "negative_evidence_examples_description": "仅说'可以退出'但未说明具体操作和时间要求。"
-    },
-    {
-      "label": "compliance_no_fixed_commitment",
-      "name": "合规-不承诺固定收益或名额",
-      "definition": "不得向骑手承诺任何超出评测标准的固定收益、名额保证或特殊待遇。",
-      "evidence_required": "对话中不应出现站长承诺保证名额、固定收益或特殊待遇的语句。",
+      "label": "compliance_no_unauthorized_intervention",
+      "name": "不得声称可干预排名",
+      "definition": "合规红线：不得声称站长可以干预飞毛腿报名排名或合同分配。",
+      "evidence_required": "对话中站长未声称可以干预排名或合同分配，且若骑手提出，站长予以否认。",
       "priority": "P0",
-      "positive_evidence_examples_description": "站长使用'可能'、'一般'等不确定措辞，或明确表示无法保证。",
-      "negative_evidence_examples_description": "出现'保证你保住名额'、'我帮你调整排名'等承诺性语句。"
+      "positive_evidence_examples_description": "站长否认可以干预排名或合同分配的语句。",
+      "negative_evidence_examples_description": "站长声称可以干预排名或合同分配。"
     },
     {
-      "label": "compliance_no_scope_commitment",
-      "name": "合规-不超出职责范围承诺",
-      "definition": "不得对骑手做出超出站长职责范围的承诺，如修改系统排名、干预派单算法等。",
-      "evidence_required": "对话中不应出现站长承诺修改系统排名、干预派单等超出职责的语句。",
+      "label": "compliance_no_encourage_violation",
+      "name": "不得鼓励违规行为",
+      "definition": "合规红线：不得鼓励骑手违反平台规则，如拒单、取消或超时。",
+      "evidence_required": "对话中站长未鼓励骑手拒单、取消或超时，且若骑手提及，站长予以纠正。",
       "priority": "P0",
-      "positive_evidence_examples_description": "站长表示'这个我无法操作'或'需要同事协助'等。",
-      "negative_evidence_examples_description": "出现'我帮你调排名'、'我让系统多派单'等语句。"
+      "positive_evidence_examples_description": "站长劝阻骑手违规行为的语句。",
+      "negative_evidence_examples_description": "站长鼓励骑手拒单、取消或超时。"
     },
     {
-      "label": "compliance_no_unauthorized_info",
-      "name": "合规-不透露其他骑手信息",
-      "definition": "不得透露其他骑手的个人信息或排名细节。",
-      "evidence_required": "对话中不应出现站长提及具体其他骑手的姓名、排名或合同信息。",
-      "priority": "P0",
-      "positive_evidence_examples_description": "站长仅讨论当前骑手自身情况，不涉及他人。",
-      "negative_evidence_examples_description": "出现'张三比你排名高'、'李四签了多日合同'等语句。"
-    },
-    {
-      "label": "compliance_honest_representation",
-      "name": "合规-如实传达信息",
-      "definition": "必须如实传达合同生效、最低单量、连续天数等事实，不得夸大或虚构奖励或惩罚。",
-      "evidence_required": "站长传达的信息应与评测标准一致，不出现夸大或虚构的后果。",
+      "label": "expression_quality_natural_tone",
+      "name": "表达自然随意",
+      "definition": "表达质量要求：语气随意自然，像打电话一样，每次回复约30字以内。",
+      "evidence_required": "站长的回复整体语气自然、口语化，长度适中，不机械生硬。",
       "priority": "P1",
-      "positive_evidence_examples_description": "使用'可能影响'、'通常'等准确措辞，不夸大后果。",
-      "negative_evidence_examples_description": "出现'不完成会被永久拉黑'等夸大或虚构的惩罚。"
-    },
-    {
-      "label": "expression_natural_short",
-      "name": "表达自然简短",
-      "definition": "站长每次回复控制在约30字以内，语气随意自然，像打电话一样。",
-      "evidence_required": "站长回复长度接近30字，语气口语化，不机械照念。",
-      "priority": "P1",
-      "positive_evidence_examples_description": "回复简短（约30字），使用'嗯'、'好'等口语词，句式自然。",
-      "negative_evidence_examples_description": "回复过长（远超30字），或语气生硬像读脚本。"
-    },
-    {
-      "label": "expression_no_repetition",
-      "name": "表达不重复",
-      "definition": "避免重复相同回复；如需重申，换种方式礼貌表达。",
-      "evidence_required": "对话中相同意思的表述应使用不同措辞，不连续重复同一句话。",
-      "priority": "P1",
-      "positive_evidence_examples_description": "重申时改变句式或用词，如'记得完成单量'和'别忘了跑够单数'。",
-      "negative_evidence_examples_description": "连续两次或以上使用完全相同的句子。"
+      "positive_evidence_examples_description": "站长使用口语化、自然、简短的语句。",
+      "negative_evidence_examples_description": "站长语气生硬、过长或过于书面化。"
     }
   ]
 }

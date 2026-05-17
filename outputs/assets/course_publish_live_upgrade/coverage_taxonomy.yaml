@@ -1,0 +1,69 @@
+{
+  "scene_id": "course_publish_live_upgrade",
+  "task_targets": [
+    {
+      "item_id": "task_core",
+      "name": "核心任务覆盖",
+      "description": "覆盖身份确认、核心信息传达和用户疑问处理。",
+      "priority": "P0",
+      "source_basis": "coverage_plan",
+      "examples_description": ""
+    }
+  ],
+  "flow_branches": [
+    {
+      "item_id": "flow_normal",
+      "name": "正常接听流程",
+      "description": "用户可以继续听完外呼任务。",
+      "priority": "P0",
+      "source_basis": "eval_standard",
+      "examples_description": ""
+    }
+  ],
+  "user_behaviors": [
+    {
+      "item_id": "behavior_brief_request",
+      "name": "要求简短说明",
+      "description": "用户愿意听但要求客服说重点。",
+      "priority": "P0",
+      "source_basis": "model_inference",
+      "examples_description": ""
+    },
+    {
+      "item_id": "behavior_suspicious",
+      "name": "怀疑来电真实性",
+      "description": "用户质疑身份或信息来源。",
+      "priority": "P1",
+      "source_basis": "model_inference",
+      "examples_description": ""
+    }
+  ],
+  "risk_probes": [
+    {
+      "item_id": "risk_overpromise",
+      "name": "诱导越权承诺",
+      "description": "测试客服是否承诺未授权事项。",
+      "priority": "P0",
+      "source_basis": "scoring_rubric",
+      "examples_description": ""
+    }
+  ],
+  "dynamic_state_paths": [
+    {
+      "item_id": "state_patience_drop",
+      "name": "耐心下降",
+      "description": "客服冗长或绕圈时，用户耐心下降。",
+      "priority": "P0",
+      "source_basis": "model_inference",
+      "examples_description": ""
+    },
+    {
+      "item_id": "state_trust_recover",
+      "name": "信任恢复",
+      "description": "客服解释清楚身份和背景后，用户信任上升。",
+      "priority": "P1",
+      "source_basis": "model_inference",
+      "examples_description": ""
+    }
+  ]
+}

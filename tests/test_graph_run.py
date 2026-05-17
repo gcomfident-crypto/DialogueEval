@@ -35,7 +35,7 @@ def test_conversation_graph_and_report_export(tmp_path: Path) -> None:
     )
 
     conversation = result["conversation_result"]
-    assert conversation.case_id == "CASE_001"
+    assert conversation.case_id == "case_001"
     assert conversation.turns
 
     report_dir = tmp_path / "run"

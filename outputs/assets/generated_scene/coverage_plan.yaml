@@ -1,0 +1,77 @@
+{
+  "scene_id": "generated_scene",
+  "coverage_labels": [
+    {
+      "label": "C001",
+      "name": "身份确认",
+      "definition": "需要在对话中完成：身份确认",
+      "evidence_required": "对话中出现满足“身份确认”语义的表达。",
+      "priority": "P0",
+      "positive_evidence_examples_description": "可由客服或用户的语义确认构成证据。",
+      "negative_evidence_examples_description": "只提到无关内容或证据不足。"
+    },
+    {
+      "label": "C002",
+      "name": "核心信息传达",
+      "definition": "需要在对话中完成：核心信息传达",
+      "evidence_required": "对话中出现满足“核心信息传达”语义的表达。",
+      "priority": "P0",
+      "positive_evidence_examples_description": "可由客服或用户的语义确认构成证据。",
+      "negative_evidence_examples_description": "只提到无关内容或证据不足。"
+    },
+    {
+      "label": "C003",
+      "name": "用户疑问处理",
+      "definition": "需要在对话中完成：用户疑问处理",
+      "evidence_required": "对话中出现满足“用户疑问处理”语义的表达。",
+      "priority": "P0",
+      "positive_evidence_examples_description": "可由客服或用户的语义确认构成证据。",
+      "negative_evidence_examples_description": "只提到无关内容或证据不足。"
+    },
+    {
+      "label": "C004",
+      "name": "合规边界遵守",
+      "definition": "需要在对话中完成：合规边界遵守",
+      "evidence_required": "对话中出现满足“合规边界遵守”语义的表达。",
+      "priority": "P1",
+      "positive_evidence_examples_description": "可由客服或用户的语义确认构成证据。",
+      "negative_evidence_examples_description": "只提到无关内容或证据不足。"
+    },
+    {
+      "label": "C005",
+      "name": "异常分支处理",
+      "definition": "需要在对话中完成：异常分支处理",
+      "evidence_required": "对话中出现满足“异常分支处理”语义的表达。",
+      "priority": "P1",
+      "positive_evidence_examples_description": "可由客服或用户的语义确认构成证据。",
+      "negative_evidence_examples_description": "只提到无关内容或证据不足。"
+    },
+    {
+      "label": "C006",
+      "name": "表达简洁自然",
+      "definition": "需要在对话中完成：表达简洁自然",
+      "evidence_required": "对话中出现满足“表达简洁自然”语义的表达。",
+      "priority": "P1",
+      "positive_evidence_examples_description": "可由客服或用户的语义确认构成证据。",
+      "negative_evidence_examples_description": "只提到无关内容或证据不足。"
+    },
+    {
+      "label": "C007",
+      "name": "结束确认",
+      "definition": "需要在对话中完成：结束确认",
+      "evidence_required": "对话中出现满足“结束确认”语义的表达。",
+      "priority": "P1",
+      "positive_evidence_examples_description": "可由客服或用户的语义确认构成证据。",
+      "negative_evidence_examples_description": "只提到无关内容或证据不足。"
+    },
+    {
+      "label": "C008",
+      "name": "业务知识准确",
+      "definition": "需要在对话中完成：业务知识准确",
+      "evidence_required": "对话中出现满足“业务知识准确”语义的表达。",
+      "priority": "P1",
+      "positive_evidence_examples_description": "可由客服或用户的语义确认构成证据。",
+      "negative_evidence_examples_description": "只提到无关内容或证据不足。"
+    }
+  ]
+}

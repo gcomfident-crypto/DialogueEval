@@ -7,13 +7,18 @@ from pydantic import BaseModel
 
 from dialogue_simulator.prompt_registry import (
     AGENT_TURN_PROMPT,
+    CASE_CARD_BATCH_PROMPT,
     CASE_CARDS_PROMPT,
     CASE_EVALUATION_PROMPT,
+    CASE_GENERATION_PLAN_PROMPT,
+    COVERAGE_MATRIX_PROMPT,
     COVERAGE_JUDGE_PROMPT,
     COVERAGE_PLAN_PROMPT,
+    COVERAGE_TAXONOMY_PROMPT,
     MATERIALIZE_EVAL_STANDARD_PROMPT,
     SCENE_ASSET_PROMPT,
     SCORING_RUBRIC_PROMPT,
+    STATE_UPDATE_PROMPT,
     SYSTEM_JSON_ONLY,
     SYSTEM_JSON_ONLY_PROMPT,
     USER_PROFILES_PROMPT,
@@ -112,6 +117,73 @@ def user_profiles_prompt(
     )
 
 
+def coverage_taxonomy_prompt(
+    eval_standard_text: str,
+    scene_asset: BaseModel,
+    coverage_plan: BaseModel,
+    scoring_rubric: BaseModel,
+    generation_policy: BaseModel,
+    output_schema: str,
+) -> str:
+    return render_prompt_text(
+        COVERAGE_TAXONOMY_PROMPT,
+        {
+            "scene_asset": json_text(scene_asset),
+            "coverage_plan": json_text(coverage_plan),
+            "scoring_rubric": json_text(scoring_rubric),
+            "generation_policy": json_text(generation_policy),
+            "eval_standard_text": eval_standard_text,
+            "output_schema": output_schema,
+        },
+    )
+
+
+def coverage_matrix_prompt(
+    eval_standard_text: str,
+    scene_asset: BaseModel,
+    coverage_plan: BaseModel,
+    coverage_taxonomy: BaseModel,
+    scoring_rubric: BaseModel,
+    generation_policy: BaseModel,
+    output_schema: str,
+) -> str:
+    return render_prompt_text(
+        COVERAGE_MATRIX_PROMPT,
+        {
+            "scene_asset": json_text(scene_asset),
+            "coverage_plan": json_text(coverage_plan),
+            "coverage_taxonomy": json_text(coverage_taxonomy),
+            "scoring_rubric": json_text(scoring_rubric),
+            "generation_policy": json_text(generation_policy),
+            "eval_standard_text": eval_standard_text,
+            "output_schema": output_schema,
+        },
+    )
+
+
+def case_generation_plan_prompt(
+    eval_standard_text: str,
+    scene_asset: BaseModel,
+    coverage_plan: BaseModel,
+    coverage_taxonomy: BaseModel,
+    coverage_matrix: BaseModel,
+    generation_policy: BaseModel,
+    output_schema: str,
+) -> str:
+    return render_prompt_text(
+        CASE_GENERATION_PLAN_PROMPT,
+        {
+            "scene_asset": json_text(scene_asset),
+            "coverage_plan": json_text(coverage_plan),
+            "coverage_taxonomy": json_text(coverage_taxonomy),
+            "coverage_matrix": json_text(coverage_matrix),
+            "generation_policy": json_text(generation_policy),
+            "eval_standard_text": eval_standard_text,
+            "output_schema": output_schema,
+        },
+    )
+
+
 def case_cards_prompt(
     eval_standard_text: str,
     scene_asset: BaseModel,
@@ -125,6 +197,33 @@ def case_cards_prompt(
         {
             "scene_asset": json_text(scene_asset),
             "coverage_plan": json_text(coverage_plan),
+            "user_profiles": json_text(user_profiles),
+            "generation_policy": json_text(generation_policy),
+            "eval_standard_text": eval_standard_text,
+            "output_schema": output_schema,
+        },
+    )
+
+
+def case_card_batch_prompt(
+    eval_standard_text: str,
+    scene_asset: BaseModel,
+    coverage_plan: BaseModel,
+    coverage_taxonomy: BaseModel,
+    coverage_matrix_row: BaseModel,
+    case_count: int,
+    user_profiles: BaseModel,
+    generation_policy: BaseModel,
+    output_schema: str,
+) -> str:
+    return render_prompt_text(
+        CASE_CARD_BATCH_PROMPT,
+        {
+            "scene_asset": json_text(scene_asset),
+            "coverage_plan": json_text(coverage_plan),
+            "coverage_taxonomy": json_text(coverage_taxonomy),
+            "coverage_matrix_row": json_text(coverage_matrix_row),
+            "case_count": str(case_count),
             "user_profiles": json_text(user_profiles),
             "generation_policy": json_text(generation_policy),
             "eval_standard_text": eval_standard_text,
@@ -238,6 +337,36 @@ def user_turn_prompt(
             "case_card": json_text(case_card),
             "conversation_state": json_text(conversation_state),
             "history": json_text(history),
+            "output_schema": output_schema,
+        },
+    )
+
+
+def state_update_prompt(
+    scene_asset: BaseModel,
+    user_profile: BaseModel,
+    case_card: BaseModel,
+    conversation_state: BaseModel,
+    agent_output: BaseModel,
+    user_output: BaseModel,
+    coverage_output: BaseModel,
+    history: list[dict[str, Any]],
+    output_schema: str,
+) -> str:
+    runtime_context = {
+        "scene": json.loads(json_text(scene_asset)),
+        "user_profile": json.loads(json_text(user_profile)),
+        "case_card": json.loads(json_text(case_card)),
+        "previous_conversation_state": json.loads(json_text(conversation_state)),
+        "agent_output": json.loads(json_text(agent_output)),
+        "user_output": json.loads(json_text(user_output)),
+        "coverage_output": json.loads(json_text(coverage_output)),
+        "history": history,
+    }
+    return render_prompt_text(
+        STATE_UPDATE_PROMPT,
+        {
+            "runtime_context": json_text(runtime_context),
             "output_schema": output_schema,
         },
     )

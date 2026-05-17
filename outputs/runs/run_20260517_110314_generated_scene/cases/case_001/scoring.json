@@ -1,0 +1,71 @@
+{
+  "run_id": "run_20260517_110314_generated_scene",
+  "case_id": "case_001",
+  "scene_id": "generated_scene",
+  "priority": "P0",
+  "raw_score": 85.0,
+  "risk_deduction_total": 0.0,
+  "total_score": 85.0,
+  "pass_threshold": 80.0,
+  "passed": true,
+  "veto_triggered": false,
+  "veto_items": [],
+  "dimension_scores": [
+    {
+      "dimension_id": "task_completion",
+      "name": "任务完成度",
+      "weight": 40.0,
+      "score": 30.0,
+      "reason": "客服触达了主要任务，但仍有细节可补。",
+      "evidence": [
+        {
+          "turn_index": 0,
+          "speaker": "agent",
+          "quote": "您好，我简短说明这次外呼的核心事项。",
+          "explanation": "客服开始推进任务。"
+        }
+      ],
+      "missing_points": [
+        "部分细节不足"
+      ]
+    },
+    {
+      "dimension_id": "compliance",
+      "name": "合规性",
+      "weight": 30.0,
+      "score": 30.0,
+      "reason": "未发现明显合规风险。",
+      "evidence": [],
+      "missing_points": []
+    },
+    {
+      "dimension_id": "expression",
+      "name": "表达质量",
+      "weight": 30.0,
+      "score": 25.0,
+      "reason": "表达简洁，但对话推进仍可更充分。",
+      "evidence": [],
+      "missing_points": []
+    }
+  ],
+  "risk_deductions": [
+    {
+      "rule_id": "generic_expression_gap",
+      "description": "表达或推进存在轻微不足。",
+      "severity": "low",
+      "deduction": 0.0,
+      "evidence": []
+    }
+  ],
+  "coverage_success": false,
+  "missing_targets": [
+    "C002",
+    "C003",
+    "C004",
+    "C005",
+    "C006",
+    "C007",
+    "C008"
+  ],
+  "final_comment": "fake evaluation for graph validation"
+}

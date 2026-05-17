@@ -39,7 +39,8 @@ class ModelConfig(StrictModel):
 
 class CaseGenerationPolicy(StrictModel):
     min_cases: int = 12
-    max_cases: int = 40
+    target_cases: int = 40
+    max_cases: int = 200
     p0_ratio: float = 0.45
     coverage_per_case_min: int = 2
     coverage_per_case_max: int = 6
@@ -152,6 +153,82 @@ class CoveragePlan(StrictModel):
         return labels
 
 
+class CoverageTaxonomyItem(StrictModel):
+    item_id: str
+    name: str
+    description: str
+    priority: Priority = "P1"
+    source_basis: str = ""
+    examples_description: str = ""
+
+
+class CoverageTaxonomy(StrictModel):
+    scene_id: str
+    task_targets: list[CoverageTaxonomyItem] = Field(default_factory=list)
+    flow_branches: list[CoverageTaxonomyItem] = Field(default_factory=list)
+    user_behaviors: list[CoverageTaxonomyItem] = Field(default_factory=list)
+    risk_probes: list[CoverageTaxonomyItem] = Field(default_factory=list)
+    dynamic_state_paths: list[CoverageTaxonomyItem] = Field(default_factory=list)
+
+
+class CoverageMatrixRow(StrictModel):
+    matrix_id: str
+    priority: Priority = "P1"
+    task_targets: list[str] = Field(default_factory=list)
+    flow_branches: list[str] = Field(default_factory=list)
+    user_behaviors: list[str] = Field(default_factory=list)
+    risk_probes: list[str] = Field(default_factory=list)
+    dynamic_state_paths: list[str] = Field(default_factory=list)
+    expected_agent_capabilities: list[str] = Field(default_factory=list)
+    forbidden_failures: list[str] = Field(default_factory=list)
+    case_count: int = 1
+    rationale: str = ""
+
+    @field_validator("case_count")
+    @classmethod
+    def positive_case_count(cls, value: int) -> int:
+        return max(1, value)
+
+
+class CoverageMatrix(StrictModel):
+    scene_id: str
+    rows: list[CoverageMatrixRow]
+
+    @field_validator("rows")
+    @classmethod
+    def unique_matrix_rows(cls, rows: list[CoverageMatrixRow]) -> list[CoverageMatrixRow]:
+        seen: set[str] = set()
+        for item in rows:
+            if item.matrix_id in seen:
+                raise ValueError(f"duplicate matrix_id: {item.matrix_id}")
+            seen.add(item.matrix_id)
+        return rows
+
+
+class CasePlanAllocation(StrictModel):
+    matrix_id: str
+    case_count: int
+    rationale: str = ""
+
+    @field_validator("case_count")
+    @classmethod
+    def positive_case_count(cls, value: int) -> int:
+        return max(1, value)
+
+
+class CaseGenerationPlan(StrictModel):
+    scene_id: str
+    target_case_count: int
+    allocations: list[CasePlanAllocation]
+    coverage_thresholds: list[str] = Field(default_factory=list)
+    validation_notes: list[str] = Field(default_factory=list)
+
+    @field_validator("target_case_count")
+    @classmethod
+    def positive_target_count(cls, value: int) -> int:
+        return max(1, value)
+
+
 class UserProfile(StrictModel):
     profile_id: str
     identity: str
@@ -191,13 +268,17 @@ class HiddenUserContext(StrictModel):
 class InitialState(StrictModel):
     emotion: str = "neutral"
     patience: int = 70
+    trust: int = 50
+    suspicion: int = 30
+    urgency: int = 20
+    understanding: int = 30
     busy_level: str = ""
     environment: str = ""
     willingness: str = "unknown"
 
-    @field_validator("patience")
+    @field_validator("patience", "trust", "suspicion", "urgency", "understanding")
     @classmethod
-    def patience_range(cls, value: int) -> int:
+    def state_value_range(cls, value: int) -> int:
         return max(0, min(100, value))
 
 
@@ -208,6 +289,9 @@ class BehaviorPolicy(StrictModel):
     if_agent_too_long: str = ""
     if_agent_pushy: str = ""
     if_agent_violates_rule: str = ""
+    if_user_suspicious: str = ""
+    if_user_busy: str = ""
+    if_patience_low: str = ""
 
 
 class StopPolicy(StrictModel):
@@ -226,8 +310,13 @@ class CaseCard(StrictModel):
     scene_id: str
     case_name: str
     priority: Priority = "P1"
+    matrix_id: str = ""
     profile_id: str
     coverage_targets: list[str]
+    flow_branch_tags: list[str] = Field(default_factory=list)
+    user_behavior_tags: list[str] = Field(default_factory=list)
+    risk_probe_tags: list[str] = Field(default_factory=list)
+    dynamic_state_path_tags: list[str] = Field(default_factory=list)
     hidden_user_context: HiddenUserContext = Field(default_factory=HiddenUserContext)
     initial_state: InitialState = Field(default_factory=InitialState)
     behavior_policy: BehaviorPolicy = Field(default_factory=BehaviorPolicy)
@@ -362,6 +451,41 @@ class UserTurnOutput(StrictModel):
         return max(0, min(100, value))
 
 
+class StateUpdateOutput(StrictModel):
+    patience_delta: int = 0
+    trust_delta: int = 0
+    suspicion_delta: int = 0
+    urgency_delta: int = 0
+    understanding_delta: int = 0
+    emotion: str = ""
+    willingness: str = ""
+    new_state_events: list[str] = Field(default_factory=list)
+    should_end: bool = False
+    end_reason: str = ""
+    next_user_intent_hint: str = ""
+    rationale: str = ""
+
+
+class StateSnapshot(StrictModel):
+    turn_index: int = 0
+    emotion: str = "neutral"
+    patience: int = 70
+    trust: int = 50
+    suspicion: int = 30
+    urgency: int = 20
+    understanding: int = 30
+    willingness: str = "unknown"
+
+
+class StateTransitionRecord(StrictModel):
+    turn_index: int
+    previous_state: StateSnapshot
+    update: StateUpdateOutput
+    next_state: StateSnapshot
+    user_intent: str = ""
+    rationale: str = ""
+
+
 class CoverageEvidence(StrictModel):
     label: str
     confidence: float = 0.0
@@ -390,10 +514,15 @@ class ConversationState(StrictModel):
     turn_index: int = 0
     emotion: str = "neutral"
     patience: int = 70
+    trust: int = 50
+    suspicion: int = 30
+    urgency: int = 20
+    understanding: int = 30
     understood_facts: list[str] = Field(default_factory=list)
     active_objections: list[str] = Field(default_factory=list)
     triggered_targets: list[str] = Field(default_factory=list)
     risk_flags: list[RiskFlag] = Field(default_factory=list)
+    state_events: list[str] = Field(default_factory=list)
     willingness: str = "unknown"
     should_end: bool = False
     end_reason: str = ""
@@ -411,6 +540,7 @@ class ConversationResult(StrictModel):
     turns: list[TurnRecord]
     coverage_evidence: list[CoverageEvidence] = Field(default_factory=list)
     risk_flags: list[RiskFlag] = Field(default_factory=list)
+    state_trace: list[StateTransitionRecord] = Field(default_factory=list)
     end_reason: str
 
 
@@ -490,6 +620,9 @@ class CaseEvaluationResult(StrictModel):
 class GeneratedAssets(StrictModel):
     scene_asset: SceneAsset
     coverage_plan: CoveragePlan
+    coverage_taxonomy: Optional[CoverageTaxonomy] = None
+    coverage_matrix: Optional[CoverageMatrix] = None
+    case_generation_plan: Optional[CaseGenerationPlan] = None
     user_profiles: UserProfileCollection
     case_cards: CaseCardCollection
     scoring_rubric: ScoringRubric
@@ -510,6 +643,9 @@ class AssetGenerationState(TypedDict, total=False):
     generation_policy: GenerationPolicy
     scene_asset: SceneAsset
     coverage_plan: CoveragePlan
+    coverage_taxonomy: CoverageTaxonomy
+    coverage_matrix: CoverageMatrix
+    case_generation_plan: CaseGenerationPlan
     user_profiles: UserProfileCollection
     case_cards: CaseCardCollection
     scoring_rubric: ScoringRubric
@@ -526,9 +662,11 @@ class ConversationGraphState(TypedDict, total=False):
     case_card: CaseCard
     business_config: BusinessConfig
     conversation_state: ConversationState
+    state_trace: list[StateTransitionRecord]
     history: list[TurnRecord]
     agent_output: AgentTurnOutput
     user_output: UserTurnOutput
+    state_update_output: StateUpdateOutput
     coverage_output: CoverageJudgeOutput
     conversation_result: ConversationResult
 

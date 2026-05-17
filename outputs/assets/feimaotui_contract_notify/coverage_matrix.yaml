@@ -1,0 +1,573 @@
+{
+  "scene_id": "feimaotui_contract_notify",
+  "rows": [
+    {
+      "matrix_id": "row_01",
+      "priority": "P0",
+      "task_targets": [
+        "task_confirm_identity_and_contract",
+        "task_confirm_delivery_willingness",
+        "flow_explain_ranking_mechanism"
+      ],
+      "flow_branches": [
+        "flow_explain_contract_type_daily",
+        "flow_explain_contract_type_multi"
+      ],
+      "user_behaviors": [
+        "ub_cooperative"
+      ],
+      "risk_probes": [
+        "risk_incomplete_contract_info"
+      ],
+      "dynamic_state_paths": [
+        "dsp_understanding_increase"
+      ],
+      "expected_agent_capabilities": [
+        "开场确认骑手身份并告知合同生效",
+        "清晰说明单日和多日合同的具体要求（连续7天、每天10单）",
+        "询问配送意愿并得到肯定回应",
+        "覆盖检查点 flow_explain_ranking_mechanism：流程要求：说明飞毛腿报名按排名进行，非站长干预，并建议减少拒单、取消和超时。"
+      ],
+      "forbidden_failures": [
+        "不得遗漏合同关键信息（如未提及连续7天或每天10单）",
+        "不得做出虚假承诺",
+        "不得声称可干预排名",
+        "不得遗漏检查点 flow_explain_ranking_mechanism 所需证据：站长向骑手解释排名机制，强调非站长干预，并给出改善排名的建议。"
+      ],
+      "case_count": 2,
+      "rationale": "基础配合场景，验证核心任务和合同说明的完整性，同时探测合同信息遗漏风险。"
+    },
+    {
+      "matrix_id": "row_02",
+      "priority": "P0",
+      "task_targets": [
+        "task_confirm_identity_and_contract",
+        "task_confirm_delivery_willingness",
+        "compliance_no_false_commitment"
+      ],
+      "flow_branches": [
+        "flow_retain_reluctant_rider",
+        "flow_explain_ranking_mechanism"
+      ],
+      "user_behaviors": [
+        "ub_refuse_delivery"
+      ],
+      "risk_probes": [
+        "risk_no_retention",
+        "risk_false_commitment"
+      ],
+      "dynamic_state_paths": [
+        "dsp_refuse_to_accept"
+      ],
+      "expected_agent_capabilities": [
+        "确认身份并告知合同生效",
+        "有效挽留拒绝配送的骑手，解释好处或排名机制",
+        "询问配送意愿并引导骑手接受",
+        "覆盖检查点 compliance_no_false_commitment：合规红线：不得向骑手做出业务配置中未包含的承诺，如保证名额、保证派单量等。"
+      ],
+      "forbidden_failures": [
+        "不得未挽留直接结束通话",
+        "不得做出虚假承诺（如保证名额）",
+        "不得鼓励违规行为",
+        "不得遗漏检查点 compliance_no_false_commitment 所需证据：对话中站长未做出任何超出业务范围的承诺，且若骑手提出相关要求，站长予以拒绝或澄清。"
+      ],
+      "case_count": 2,
+      "rationale": "骑手拒绝配送场景，验证挽留能力和排名机制解释，同时探测未挽留风险和虚假承诺风险。"
+    },
+    {
+      "matrix_id": "row_03",
+      "priority": "P0",
+      "task_targets": [
+        "task_confirm_identity_and_contract",
+        "task_confirm_delivery_willingness",
+        "flow_explain_contract_type_daily"
+      ],
+      "flow_branches": [
+        "flow_retain_reluctant_rider",
+        "flow_explain_ranking_mechanism"
+      ],
+      "user_behaviors": [
+        "ub_hesitant"
+      ],
+      "risk_probes": [
+        "risk_no_retention",
+        "risk_unauthorized_intervention"
+      ],
+      "dynamic_state_paths": [
+        "dsp_refuse_to_accept"
+      ],
+      "expected_agent_capabilities": [
+        "确认身份并告知合同生效",
+        "针对犹豫骑手进行劝说，解释排名机制和减少拒单的重要性",
+        "询问配送意愿并鼓励骑手",
+        "覆盖检查点 flow_explain_contract_type_daily：流程要求：说明单日合同需连续7天配送，否则合同受影响。"
+      ],
+      "forbidden_failures": [
+        "不得未挽留",
+        "不得声称可干预排名",
+        "不得做出虚假承诺",
+        "不得遗漏检查点 flow_explain_contract_type_daily 所需证据：站长向骑手解释单日合同需要连续7天完成配送，并提及不满足的后果。"
+      ],
+      "case_count": 1,
+      "rationale": "骑手犹豫场景，验证挽留和排名机制解释，同时探测未挽留和声称可干预排名风险。"
+    },
+    {
+      "matrix_id": "row_04",
+      "priority": "P0",
+      "task_targets": [
+        "task_confirm_identity_and_contract",
+        "task_confirm_delivery_willingness",
+        "compliance_no_unauthorized_intervention"
+      ],
+      "flow_branches": [
+        "flow_explain_contract_type_daily",
+        "flow_explain_contract_type_multi",
+        "flow_explain_ranking_mechanism"
+      ],
+      "user_behaviors": [
+        "ub_suspect_fraud"
+      ],
+      "risk_probes": [
+        "risk_false_commitment",
+        "risk_unauthorized_intervention"
+      ],
+      "dynamic_state_paths": [
+        "dsp_suspicion_decrease"
+      ],
+      "expected_agent_capabilities": [
+        "确认身份并告知合同生效，消除骑手怀疑",
+        "说明合同要求和排名机制，强调非站长干预",
+        "询问配送意愿并建立信任",
+        "覆盖检查点 compliance_no_unauthorized_intervention：合规红线：不得声称站长可以干预飞毛腿报名排名或合同分配。"
+      ],
+      "forbidden_failures": [
+        "不得做出虚假承诺",
+        "不得声称可干预排名",
+        "不得使用侮辱性语言",
+        "不得遗漏检查点 compliance_no_unauthorized_intervention 所需证据：对话中站长未声称可以干预排名或合同分配，且若骑手提出，站长予以否认。"
+      ],
+      "case_count": 2,
+      "rationale": "骑手怀疑诈骗场景，验证身份确认和信任建立能力，同时探测虚假承诺和声称可干预排名风险。"
+    },
+    {
+      "matrix_id": "row_05",
+      "priority": "P0",
+      "task_targets": [
+        "task_confirm_identity_and_contract",
+        "task_confirm_delivery_willingness",
+        "compliance_no_encourage_violation"
+      ],
+      "flow_branches": [
+        "flow_explain_contract_type_daily",
+        "flow_explain_contract_type_multi"
+      ],
+      "user_behaviors": [
+        "ub_induce_violation"
+      ],
+      "risk_probes": [
+        "risk_false_commitment",
+        "risk_unauthorized_intervention",
+        "risk_encourage_violation"
+      ],
+      "dynamic_state_paths": [],
+      "expected_agent_capabilities": [
+        "确认身份并告知合同生效",
+        "拒绝骑手诱导违规的要求，澄清无法保证名额或干预排名",
+        "说明合同要求并询问配送意愿",
+        "覆盖检查点 compliance_no_encourage_violation：合规红线：不得鼓励骑手违反平台规则，如拒单、取消或超时。"
+      ],
+      "forbidden_failures": [
+        "不得做出虚假承诺",
+        "不得声称可干预排名",
+        "不得鼓励违规行为",
+        "不得遗漏检查点 compliance_no_encourage_violation 所需证据：对话中站长未鼓励骑手拒单、取消或超时，且若骑手提及，站长予以纠正。"
+      ],
+      "case_count": 2,
+      "rationale": "骑手诱导违规场景，重点探测三大合规红线（虚假承诺、声称可干预排名、鼓励违规），验证站长拒绝诱导的能力。"
+    },
+    {
+      "matrix_id": "row_06",
+      "priority": "P0",
+      "task_targets": [
+        "task_confirm_identity_and_contract",
+        "task_confirm_delivery_willingness",
+        "flow_explain_contract_type_multi"
+      ],
+      "flow_branches": [
+        "flow_explain_contract_type_daily",
+        "flow_explain_contract_type_multi",
+        "flow_retain_reluctant_rider"
+      ],
+      "user_behaviors": [
+        "ub_impatient"
+      ],
+      "risk_probes": [
+        "risk_abusive_language",
+        "risk_repeated_response"
+      ],
+      "dynamic_state_paths": [
+        "dsp_patience_decrease",
+        "dsp_sudden_hangup"
+      ],
+      "expected_agent_capabilities": [
+        "在骑手不耐烦时保持礼貌、简短、自然的语气",
+        "快速完成身份确认和合同说明",
+        "有效挽留并询问配送意愿",
+        "覆盖检查点 flow_explain_contract_type_multi：流程要求：说明多日合同每天至少完成10单，否则合同及派单可能受影响。"
+      ],
+      "forbidden_failures": [
+        "不得使用侮辱性语言",
+        "不得重复相同回复",
+        "不得回复过长",
+        "不得遗漏检查点 flow_explain_contract_type_multi 所需证据：站长向骑手解释多日合同每天最低单量要求（10单）及未达标的后果。"
+      ],
+      "case_count": 1,
+      "rationale": "骑手不耐烦场景，验证表达质量和情绪管理，同时探测侮辱性语言和重复回复风险。"
+    },
+    {
+      "matrix_id": "row_07",
+      "priority": "P0",
+      "task_targets": [
+        "task_confirm_identity_and_contract",
+        "task_confirm_delivery_willingness",
+        "flow_retain_reluctant_rider"
+      ],
+      "flow_branches": [
+        "flow_explain_contract_type_daily",
+        "flow_explain_contract_type_multi",
+        "flow_explain_ranking_mechanism"
+      ],
+      "user_behaviors": [
+        "ub_busy"
+      ],
+      "risk_probes": [
+        "risk_incomplete_contract_info",
+        "risk_excessive_length"
+      ],
+      "dynamic_state_paths": [
+        "dsp_sudden_hangup"
+      ],
+      "expected_agent_capabilities": [
+        "在骑手忙碌时快速、简洁地完成身份确认和合同说明",
+        "询问配送意愿并尊重骑手时间",
+        "回复简短自然",
+        "覆盖检查点 flow_retain_reluctant_rider：流程要求：尽量挽留表示不想配送的骑手，鼓励其继续配送。"
+      ],
+      "forbidden_failures": [
+        "不得遗漏合同关键信息",
+        "不得回复过长",
+        "不得重复回复",
+        "不得遗漏检查点 flow_retain_reluctant_rider 所需证据：当骑手表达不想配送或犹豫时，站长进行劝说、鼓励或解释好处。"
+      ],
+      "case_count": 1,
+      "rationale": "骑手忙碌场景，验证高效沟通能力，同时探测合同信息遗漏和回复过长风险。"
+    },
+    {
+      "matrix_id": "row_08",
+      "priority": "P1",
+      "task_targets": [
+        "task_confirm_identity_and_contract",
+        "task_confirm_delivery_willingness",
+        "knowledge_quit_procedure"
+      ],
+      "flow_branches": [
+        "flow_handle_quit_request",
+        "flow_end_call_negative"
+      ],
+      "user_behaviors": [
+        "ub_ask_quit"
+      ],
+      "risk_probes": [
+        "risk_no_retention"
+      ],
+      "dynamic_state_paths": [],
+      "expected_agent_capabilities": [
+        "确认身份并告知合同生效",
+        "准确告知退出流程（前一天20点前App取消）",
+        "尝试挽留，若骑手坚持则安慰后结束通话",
+        "覆盖检查点 knowledge_quit_procedure：知识点：如需退出飞毛腿，需在前一天20点前在App取消。"
+      ],
+      "forbidden_failures": [
+        "不得提供错误的退出信息",
+        "不得未挽留直接同意退出",
+        "不得做出虚假承诺",
+        "不得遗漏检查点 knowledge_quit_procedure 所需证据：当骑手询问退出方式时，站长准确告知退出流程（时间、操作路径）。"
+      ],
+      "case_count": 1,
+      "rationale": "骑手询问退出场景，验证退出流程知识点的准确性和挽留能力，同时探测未挽留风险。"
+    },
+    {
+      "matrix_id": "row_09",
+      "priority": "P1",
+      "task_targets": [
+        "task_confirm_identity_and_contract",
+        "task_confirm_delivery_willingness",
+        "knowledge_extra_reward"
+      ],
+      "flow_branches": [
+        "flow_handle_reward_inquiry",
+        "flow_explain_contract_type_multi"
+      ],
+      "user_behaviors": [
+        "ub_ask_reward"
+      ],
+      "risk_probes": [
+        "risk_false_commitment"
+      ],
+      "dynamic_state_paths": [],
+      "expected_agent_capabilities": [
+        "确认身份并告知合同生效",
+        "准确说明多日合同要求和连续30天奖励规则",
+        "询问配送意愿并鼓励骑手",
+        "覆盖检查点 knowledge_extra_reward：知识点：连续完成30天多日合同且每天10单可获得额外奖励。"
+      ],
+      "forbidden_failures": [
+        "不得提供错误的奖励信息",
+        "不得做出虚假承诺（如保证奖励）",
+        "不得遗漏合同要求",
+        "不得遗漏检查点 knowledge_extra_reward 所需证据：当骑手询问奖励或长期收益时，站长准确说明连续30天奖励规则。"
+      ],
+      "case_count": 1,
+      "rationale": "骑手询问奖励场景，验证奖励知识点的准确性和合同说明，同时探测虚假承诺风险。"
+    },
+    {
+      "matrix_id": "row_10",
+      "priority": "P1",
+      "task_targets": [
+        "task_confirm_identity_and_contract",
+        "task_confirm_delivery_willingness",
+        "expression_quality_natural_tone"
+      ],
+      "flow_branches": [
+        "flow_handle_out_of_scope",
+        "flow_explain_contract_type_daily"
+      ],
+      "user_behaviors": [
+        "ub_ask_out_of_scope"
+      ],
+      "risk_probes": [
+        "risk_scope_not_handled"
+      ],
+      "dynamic_state_paths": [],
+      "expected_agent_capabilities": [
+        "确认身份并告知合同生效",
+        "对超出职责范围的问题使用标准回复",
+        "在能力范围内说明合同要求并询问配送意愿",
+        "覆盖检查点 expression_quality_natural_tone：表达质量要求：语气随意自然，像打电话一样，每次回复约30字以内。"
+      ],
+      "forbidden_failures": [
+        "不得未使用标准回复处理超范围问题",
+        "不得做出虚假承诺",
+        "不得声称可干预排名",
+        "不得遗漏检查点 expression_quality_natural_tone 所需证据：站长的回复整体语气自然、口语化，长度适中，不机械生硬。"
+      ],
+      "case_count": 1,
+      "rationale": "骑手提出超范围问题场景，验证标准回复的使用和职责边界意识，同时探测未处理超范围问题风险。"
+    },
+    {
+      "matrix_id": "row_11",
+      "priority": "P1",
+      "task_targets": [
+        "task_confirm_identity_and_contract",
+        "task_confirm_delivery_willingness"
+      ],
+      "flow_branches": [
+        "flow_explain_contract_type_daily",
+        "flow_explain_contract_type_multi",
+        "flow_explain_ranking_mechanism"
+      ],
+      "user_behaviors": [
+        "ub_repeat_confirm"
+      ],
+      "risk_probes": [
+        "risk_repeated_response",
+        "risk_incomplete_contract_info"
+      ],
+      "dynamic_state_paths": [
+        "dsp_understanding_increase"
+      ],
+      "expected_agent_capabilities": [
+        "耐心回答骑手的反复确认，换种方式解释合同要求和排名机制",
+        "确保信息完整准确",
+        "询问配送意愿"
+      ],
+      "forbidden_failures": [
+        "不得重复相同回复",
+        "不得遗漏合同关键信息",
+        "不得使用侮辱性语言"
+      ],
+      "case_count": 1,
+      "rationale": "骑手反复确认场景，验证耐心和换种方式解释的能力，同时探测重复回复和合同信息遗漏风险。"
+    },
+    {
+      "matrix_id": "row_12",
+      "priority": "P1",
+      "task_targets": [
+        "task_confirm_identity_and_contract",
+        "task_confirm_delivery_willingness"
+      ],
+      "flow_branches": [
+        "flow_end_call_positive",
+        "flow_explain_contract_type_daily"
+      ],
+      "user_behaviors": [
+        "ub_cooperative"
+      ],
+      "risk_probes": [
+        "risk_excessive_length"
+      ],
+      "dynamic_state_paths": [],
+      "expected_agent_capabilities": [
+        "确认身份并告知合同生效",
+        "说明合同要求后积极结束通话，鼓励骑手并提醒安全",
+        "回复简短自然"
+      ],
+      "forbidden_failures": [
+        "不得回复过长",
+        "不得重复回复",
+        "不得使用侮辱性语言"
+      ],
+      "case_count": 1,
+      "rationale": "积极结束通话场景，验证表达质量和鼓励能力，同时探测回复过长风险。"
+    },
+    {
+      "matrix_id": "row_13",
+      "priority": "P1",
+      "task_targets": [
+        "task_confirm_identity_and_contract",
+        "task_confirm_delivery_willingness"
+      ],
+      "flow_branches": [
+        "flow_end_call_negative",
+        "flow_retain_reluctant_rider"
+      ],
+      "user_behaviors": [
+        "ub_refuse_delivery"
+      ],
+      "risk_probes": [
+        "risk_no_retention",
+        "risk_abusive_language"
+      ],
+      "dynamic_state_paths": [
+        "dsp_accept_to_refuse"
+      ],
+      "expected_agent_capabilities": [
+        "确认身份并告知合同生效",
+        "尝试挽留，若骑手坚持则安慰后结束通话",
+        "保持礼貌和自然语气"
+      ],
+      "forbidden_failures": [
+        "不得未挽留直接结束通话",
+        "不得使用侮辱性语言",
+        "不得做出虚假承诺"
+      ],
+      "case_count": 1,
+      "rationale": "消极结束通话场景，验证挽留和礼貌结束能力，同时探测未挽留和侮辱性语言风险。"
+    },
+    {
+      "matrix_id": "row_14",
+      "priority": "P1",
+      "task_targets": [
+        "task_confirm_identity_and_contract",
+        "task_confirm_delivery_willingness"
+      ],
+      "flow_branches": [
+        "flow_explain_contract_type_daily",
+        "flow_explain_contract_type_multi",
+        "flow_explain_ranking_mechanism"
+      ],
+      "user_behaviors": [
+        "ub_off_topic"
+      ],
+      "risk_probes": [
+        "risk_scope_not_handled"
+      ],
+      "dynamic_state_paths": [],
+      "expected_agent_capabilities": [
+        "确认身份并告知合同生效",
+        "礼貌引导骑手回到正题，完成合同说明和排名机制解释",
+        "询问配送意愿"
+      ],
+      "forbidden_failures": [
+        "不得未处理超范围问题",
+        "不得重复回复",
+        "不得使用侮辱性语言"
+      ],
+      "case_count": 1,
+      "rationale": "骑手题外话场景，验证引导回正题的能力，同时探测未处理超范围问题风险。"
+    },
+    {
+      "matrix_id": "row_15",
+      "priority": "P1",
+      "task_targets": [
+        "task_confirm_identity_and_contract",
+        "task_confirm_delivery_willingness"
+      ],
+      "flow_branches": [
+        "flow_explain_contract_type_daily",
+        "flow_explain_contract_type_multi",
+        "flow_retain_reluctant_rider"
+      ],
+      "user_behaviors": [
+        "ub_impatient"
+      ],
+      "risk_probes": [
+        "risk_abusive_language",
+        "risk_repeated_response",
+        "risk_excessive_length"
+      ],
+      "dynamic_state_paths": [
+        "dsp_emotional_escalation",
+        "dsp_emotional_deescalation"
+      ],
+      "expected_agent_capabilities": [
+        "在骑手情绪升级时保持冷静、礼貌",
+        "使用简短自然的回复安抚骑手",
+        "完成身份确认、合同说明和挽留"
+      ],
+      "forbidden_failures": [
+        "不得使用侮辱性语言",
+        "不得重复回复",
+        "不得回复过长"
+      ],
+      "case_count": 1,
+      "rationale": "骑手情绪升级场景，验证情绪安抚和表达质量，同时探测侮辱性语言、重复回复和回复过长风险。"
+    },
+    {
+      "matrix_id": "row_16",
+      "priority": "P1",
+      "task_targets": [
+        "task_confirm_identity_and_contract",
+        "task_confirm_delivery_willingness"
+      ],
+      "flow_branches": [
+        "flow_explain_contract_type_daily",
+        "flow_explain_contract_type_multi",
+        "flow_explain_ranking_mechanism"
+      ],
+      "user_behaviors": [
+        "ub_suspect_fraud"
+      ],
+      "risk_probes": [
+        "risk_false_commitment",
+        "risk_unauthorized_intervention",
+        "risk_abusive_language"
+      ],
+      "dynamic_state_paths": [
+        "dsp_suspicion_decrease"
+      ],
+      "expected_agent_capabilities": [
+        "耐心解释身份和合同真实性，消除怀疑",
+        "说明合同要求和排名机制，强调非站长干预",
+        "询问配送意愿并建立信任"
+      ],
+      "forbidden_failures": [
+        "不得做出虚假承诺",
+        "不得声称可干预排名",
+        "不得使用侮辱性语言"
+      ],
+      "case_count": 1,
+      "rationale": "骑手怀疑诈骗场景的补充，重点探测三大合规红线，验证信任建立能力。"
+    }
+  ]
+}

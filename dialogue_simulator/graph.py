@@ -6,12 +6,16 @@ from typing import Any, Callable
 from dialogue_simulator.agent_model import generate_agent_turn
 from dialogue_simulator.asset_generator import (
     generate_case_cards,
+    generate_case_generation_plan,
+    generate_coverage_matrix,
     generate_coverage_plan,
+    generate_coverage_taxonomy,
     generate_scene_asset,
     generate_scoring_rubric,
     generate_user_profiles,
     materialize_eval_standard,
     write_asset_generation_report,
+    write_coverage_gap_report,
 )
 from dialogue_simulator.coverage_judge import judge_coverage
 from dialogue_simulator.llm_client import LLMClient
@@ -19,11 +23,14 @@ from dialogue_simulator.schemas import (
     AssetGenerationState,
     BusinessConfig,
     CaseCardCollection,
+    CaseGenerationPlan,
     ConversationGraphState,
     ConversationResult,
     ConversationState,
+    CoverageMatrix,
     CoverageJudgeOutput,
     CoveragePlan,
+    CoverageTaxonomy,
     GenerationPolicy,
     GeneratedAssets,
     SceneAsset,
@@ -32,7 +39,7 @@ from dialogue_simulator.schemas import (
     UserProfile,
     UserProfileCollection,
 )
-from dialogue_simulator.state_updater import update_conversation_state
+from dialogue_simulator.state_updater import generate_state_update, update_conversation_state
 from dialogue_simulator.storage import (
     file_sha256,
     load_model,
@@ -241,6 +248,95 @@ def build_asset_generation_graph(
             )
             return {"scoring_rubric": scoring_rubric}
 
+    def generate_taxonomy(state: AssetGenerationState) -> dict[str, Any]:
+        with trace_span(
+            "asset.generate_coverage_taxonomy",
+            attributes={
+                "dialogue_eval.graph": "asset_generation",
+                "dialogue_eval.node": "generate_coverage_taxonomy",
+                "dialogue_eval.scene_id": state["scene_asset"].scene_id,
+            },
+        ) as span:
+            policy = state["generation_policy"]
+            taxonomy = generate_coverage_taxonomy(
+                llm,
+                eval_standard_text=state["eval_standard_text"],
+                scene_asset=state["scene_asset"],
+                coverage_plan=state["coverage_plan"],
+                scoring_rubric=state["scoring_rubric"],
+                generation_policy=policy,
+                retry_count=policy.validation.retry_on_schema_error,
+            )
+            span.set_output(
+                {
+                    "scene_id": taxonomy.scene_id,
+                    "task_target_count": len(taxonomy.task_targets),
+                    "flow_branch_count": len(taxonomy.flow_branches),
+                    "user_behavior_count": len(taxonomy.user_behaviors),
+                    "risk_probe_count": len(taxonomy.risk_probes),
+                    "dynamic_state_path_count": len(taxonomy.dynamic_state_paths),
+                }
+            )
+            return {"coverage_taxonomy": taxonomy}
+
+    def generate_matrix(state: AssetGenerationState) -> dict[str, Any]:
+        with trace_span(
+            "asset.generate_coverage_matrix",
+            attributes={
+                "dialogue_eval.graph": "asset_generation",
+                "dialogue_eval.node": "generate_coverage_matrix",
+                "dialogue_eval.scene_id": state["scene_asset"].scene_id,
+            },
+        ) as span:
+            policy = state["generation_policy"]
+            matrix = generate_coverage_matrix(
+                llm,
+                eval_standard_text=state["eval_standard_text"],
+                scene_asset=state["scene_asset"],
+                coverage_plan=state["coverage_plan"],
+                coverage_taxonomy=state["coverage_taxonomy"],
+                scoring_rubric=state["scoring_rubric"],
+                generation_policy=policy,
+                retry_count=policy.validation.retry_on_schema_error,
+            )
+            span.set_output(
+                {
+                    "scene_id": matrix.scene_id,
+                    "row_count": len(matrix.rows),
+                    "planned_case_count": sum(row.case_count for row in matrix.rows),
+                }
+            )
+            return {"coverage_matrix": matrix}
+
+    def generate_case_plan(state: AssetGenerationState) -> dict[str, Any]:
+        with trace_span(
+            "asset.generate_case_generation_plan",
+            attributes={
+                "dialogue_eval.graph": "asset_generation",
+                "dialogue_eval.node": "generate_case_generation_plan",
+                "dialogue_eval.scene_id": state["scene_asset"].scene_id,
+            },
+        ) as span:
+            policy = state["generation_policy"]
+            plan = generate_case_generation_plan(
+                llm,
+                eval_standard_text=state["eval_standard_text"],
+                scene_asset=state["scene_asset"],
+                coverage_plan=state["coverage_plan"],
+                coverage_taxonomy=state["coverage_taxonomy"],
+                coverage_matrix=state["coverage_matrix"],
+                generation_policy=policy,
+                retry_count=policy.validation.retry_on_schema_error,
+            )
+            span.set_output(
+                {
+                    "scene_id": plan.scene_id,
+                    "target_case_count": plan.target_case_count,
+                    "allocated_case_count": sum(item.case_count for item in plan.allocations),
+                }
+            )
+            return {"case_generation_plan": plan}
+
     def generate_cases(state: AssetGenerationState) -> dict[str, Any]:
         with trace_span(
             "asset.generate_case_cards",
@@ -259,6 +355,9 @@ def build_asset_generation_graph(
                 user_profiles=state["user_profiles"],
                 generation_policy=policy,
                 retry_count=policy.validation.retry_on_schema_error,
+                coverage_taxonomy=state.get("coverage_taxonomy"),
+                coverage_matrix=state.get("coverage_matrix"),
+                case_generation_plan=state.get("case_generation_plan"),
             )
             span.set_output(
                 {
@@ -280,6 +379,9 @@ def build_asset_generation_graph(
             GeneratedAssets(
                 scene_asset=state["scene_asset"],
                 coverage_plan=state["coverage_plan"],
+                coverage_taxonomy=state.get("coverage_taxonomy"),
+                coverage_matrix=state.get("coverage_matrix"),
+                case_generation_plan=state.get("case_generation_plan"),
                 user_profiles=state["user_profiles"],
                 case_cards=state["case_cards"],
                 scoring_rubric=state["scoring_rubric"],
@@ -310,9 +412,23 @@ def build_asset_generation_graph(
             asset_dir.mkdir(parents=True, exist_ok=True)
             write_model(asset_dir / "scene_asset.yaml", state["scene_asset"])
             write_model(asset_dir / "coverage_plan.yaml", state["coverage_plan"])
+            if state.get("coverage_taxonomy") is not None:
+                write_model(asset_dir / "coverage_taxonomy.yaml", state["coverage_taxonomy"])
+            if state.get("coverage_matrix") is not None:
+                write_model(asset_dir / "coverage_matrix.yaml", state["coverage_matrix"])
+            if state.get("case_generation_plan") is not None:
+                write_model(asset_dir / "case_generation_plan.yaml", state["case_generation_plan"])
             write_model(asset_dir / "user_profiles.yaml", state["user_profiles"])
             write_model(asset_dir / "case_cards.yaml", state["case_cards"])
             write_model(asset_dir / "scoring_rubric.yaml", state["scoring_rubric"])
+            write_coverage_gap_report(
+                asset_dir,
+                coverage_plan=state["coverage_plan"],
+                coverage_taxonomy=state.get("coverage_taxonomy"),
+                coverage_matrix=state.get("coverage_matrix"),
+                case_generation_plan=state.get("case_generation_plan"),
+                case_cards=state["case_cards"],
+            )
             materialized_eval_standard = state.get("materialized_eval_standard")
             if materialized_eval_standard is not None:
                 (asset_dir / "materialized_eval_standard.md").write_text(
@@ -335,7 +451,10 @@ def build_asset_generation_graph(
         ("generate_scene_brief", generate_scene_brief),
         ("generate_coverage_plan", generate_coverage),
         ("generate_scoring_rubric", generate_rubric),
+        ("generate_coverage_taxonomy", generate_taxonomy),
         ("generate_user_profiles", generate_profiles),
+        ("generate_coverage_matrix", generate_matrix),
+        ("generate_case_generation_plan", generate_case_plan),
         ("generate_case_cards", generate_cases),
         ("validate_assets", validate_assets),
         ("persist_assets", persist_assets),
@@ -348,8 +467,10 @@ def build_conversation_graph(
     agent_llm: LLMClient,
     user_llm: LLMClient,
     judge_llm: LLMClient,
+    state_llm: LLMClient | None = None,
 ):
     retry_count = 1
+    state_model = state_llm or user_llm
 
     def initialize_case(state: ConversationGraphState) -> dict[str, Any]:
         case_card = state["case_card"]
@@ -372,9 +493,14 @@ def build_conversation_graph(
                 "conversation_state": ConversationState(
                     emotion=initial.emotion,
                     patience=initial.patience,
+                    trust=initial.trust,
+                    suspicion=initial.suspicion,
+                    urgency=initial.urgency,
+                    understanding=initial.understanding,
                     willingness=initial.willingness,
                 ),
                 "history": [],
+                "state_trace": [],
             }
             span.set_output(result["conversation_state"])
             return result
@@ -532,18 +658,45 @@ def build_conversation_graph(
                 "conversation_state": state["conversation_state"],
                 "user_output": state["user_output"],
                 "coverage_output": state["coverage_output"],
+                "history": state["history"],
             },
             session_id=state["run_id"],
             metadata=_conversation_trace_metadata(state, case_card),
         ) as span:
-            updated = update_conversation_state(
+            profile = _profile_for_case(state)
+            state_update_output = generate_state_update(
+                state_model,
+                scene_asset=state["scene_asset"],
+                user_profile=profile,
+                case_card=case_card,
+                conversation_state=state["conversation_state"],
+                agent_output=state["agent_output"],
+                user_output=state["user_output"],
+                coverage_output=state["coverage_output"],
+                history=state["history"],
+                retry_count=retry_count,
+            )
+            updated, transition = update_conversation_state(
                 state["conversation_state"],
                 case_card=case_card,
                 user_output=state["user_output"],
                 coverage_output=state["coverage_output"],
+                state_update=state_update_output,
             )
-            span.set_output(updated)
-            return {"conversation_state": updated}
+            state_trace = list(state.get("state_trace") or [])
+            state_trace.append(transition)
+            span.set_output(
+                {
+                    "conversation_state": updated,
+                    "state_update": state_update_output,
+                    "transition": transition,
+                }
+            )
+            return {
+                "conversation_state": updated,
+                "state_update_output": state_update_output,
+                "state_trace": state_trace,
+            }
 
     def finalize_case(state: ConversationGraphState) -> dict[str, Any]:
         case_card = state["case_card"]
@@ -580,6 +733,7 @@ def build_conversation_graph(
                 turns=state["history"],
                 coverage_evidence=coverage_output.triggered_targets,
                 risk_flags=conversation_state.risk_flags,
+                state_trace=state.get("state_trace") or [],
                 end_reason=conversation_state.end_reason or "finished",
             )
             span.set_output(
@@ -707,6 +861,12 @@ def _load_existing_scene_id(asset_dir: Path | None) -> str:
 def _normalize_scene_ids(state: AssetGenerationState, scene_id: str) -> None:
     state["scene_asset"] = state["scene_asset"].model_copy(update={"scene_id": scene_id})
     state["coverage_plan"] = state["coverage_plan"].model_copy(update={"scene_id": scene_id})
+    if state.get("coverage_taxonomy") is not None:
+        state["coverage_taxonomy"] = state["coverage_taxonomy"].model_copy(update={"scene_id": scene_id})
+    if state.get("coverage_matrix") is not None:
+        state["coverage_matrix"] = state["coverage_matrix"].model_copy(update={"scene_id": scene_id})
+    if state.get("case_generation_plan") is not None:
+        state["case_generation_plan"] = state["case_generation_plan"].model_copy(update={"scene_id": scene_id})
     state["user_profiles"] = state["user_profiles"].model_copy(update={"scene_id": scene_id})
     state["case_cards"] = state["case_cards"].model_copy(
         update={
@@ -748,9 +908,27 @@ def _conversation_trace_metadata(
 
 def load_generated_assets(asset_dir: str | Path) -> GeneratedAssets:
     path = Path(asset_dir)
+    coverage_taxonomy = (
+        load_model(path / "coverage_taxonomy.yaml", CoverageTaxonomy)
+        if (path / "coverage_taxonomy.yaml").is_file()
+        else None
+    )
+    coverage_matrix = (
+        load_model(path / "coverage_matrix.yaml", CoverageMatrix)
+        if (path / "coverage_matrix.yaml").is_file()
+        else None
+    )
+    case_generation_plan = (
+        load_model(path / "case_generation_plan.yaml", CaseGenerationPlan)
+        if (path / "case_generation_plan.yaml").is_file()
+        else None
+    )
     return GeneratedAssets(
         scene_asset=load_model(path / "scene_asset.yaml", SceneAsset),
         coverage_plan=load_model(path / "coverage_plan.yaml", CoveragePlan),
+        coverage_taxonomy=coverage_taxonomy,
+        coverage_matrix=coverage_matrix,
+        case_generation_plan=case_generation_plan,
         user_profiles=load_model(
             path / "user_profiles.yaml",
             UserProfileCollection,

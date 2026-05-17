@@ -1,0 +1,54 @@
+{
+  "scene_id": "course_publish_live_upgrade",
+  "rows": [
+    {
+      "matrix_id": "M001",
+      "priority": "P0",
+      "task_targets": [
+        "C001",
+        "C002",
+        "C003",
+        "C004",
+        "C005",
+        "C006",
+        "C007",
+        "C008"
+      ],
+      "flow_branches": [
+        "flow_normal"
+      ],
+      "user_behaviors": [
+        "behavior_brief_request",
+        "behavior_suspicious"
+      ],
+      "risk_probes": [
+        "risk_overpromise"
+      ],
+      "dynamic_state_paths": [
+        "state_patience_drop",
+        "state_trust_recover"
+      ],
+      "expected_agent_capabilities": [
+        "说明身份",
+        "简短传达核心事项",
+        "拒绝越权承诺",
+        "覆盖检查点 C004：需要在对话中完成：合规边界遵守",
+        "覆盖检查点 C005：需要在对话中完成：异常分支处理",
+        "覆盖检查点 C006：需要在对话中完成：表达简洁自然",
+        "覆盖检查点 C007：需要在对话中完成：结束确认",
+        "覆盖检查点 C008：需要在对话中完成：业务知识准确"
+      ],
+      "forbidden_failures": [
+        "长篇解释",
+        "编造承诺",
+        "不得遗漏检查点 C004 所需证据：对话中出现满足“合规边界遵守”语义的表达。",
+        "不得遗漏检查点 C005 所需证据：对话中出现满足“异常分支处理”语义的表达。",
+        "不得遗漏检查点 C006 所需证据：对话中出现满足“表达简洁自然”语义的表达。",
+        "不得遗漏检查点 C007 所需证据：对话中出现满足“结束确认”语义的表达。",
+        "不得遗漏检查点 C008 所需证据：对话中出现满足“业务知识准确”语义的表达。"
+      ],
+      "case_count": 40,
+      "rationale": "fake matrix for graph validation"
+    }
+  ]
+}

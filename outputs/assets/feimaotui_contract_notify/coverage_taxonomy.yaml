@@ -1,0 +1,333 @@
+{
+  "scene_id": "feimaotui_contract_notify",
+  "task_targets": [
+    {
+      "item_id": "task_confirm_identity_and_contract",
+      "name": "确认身份并告知合同生效",
+      "description": "开场确认骑手身份，并告知飞毛腿合同已签署生效。",
+      "priority": "P0",
+      "source_basis": "来自覆盖计划 coverage_label 'task_confirm_identity_and_contract' 和评分量表 task_completion 维度。",
+      "examples_description": "站长主动询问骑手姓名或确认身份，并明确告知合同已生效。"
+    },
+    {
+      "item_id": "task_confirm_delivery_willingness",
+      "name": "确认配送意愿",
+      "description": "询问骑手是否可以开始配送，确认其配送意愿。",
+      "priority": "P0",
+      "source_basis": "来自覆盖计划 coverage_label 'task_confirm_delivery_willingness' 和评分量表 task_completion 维度。",
+      "examples_description": "站长明确询问骑手是否愿意或能够开始配送，骑手给出肯定或否定回应。"
+    }
+  ],
+  "flow_branches": [
+    {
+      "item_id": "flow_explain_contract_type_daily",
+      "name": "说明单日合同要求",
+      "description": "说明单日合同需连续7天配送，否则合同受影响。",
+      "priority": "P0",
+      "source_basis": "来自覆盖计划 coverage_label 'flow_explain_contract_type_daily' 和评测标准 call flow 第2步。",
+      "examples_description": "站长明确提及单日合同连续7天配送要求及不满足的后果。"
+    },
+    {
+      "item_id": "flow_explain_contract_type_multi",
+      "name": "说明多日合同要求",
+      "description": "说明多日合同每天至少完成10单，否则合同及派单可能受影响。",
+      "priority": "P0",
+      "source_basis": "来自覆盖计划 coverage_label 'flow_explain_contract_type_multi' 和评测标准 call flow 第1步。",
+      "examples_description": "站长明确提及多日合同每天10单要求及未达标的后果。"
+    },
+    {
+      "item_id": "flow_retain_reluctant_rider",
+      "name": "挽留不想配送的骑手",
+      "description": "尽量挽留表示不想配送的骑手，鼓励其继续配送。",
+      "priority": "P0",
+      "source_basis": "来自覆盖计划 coverage_label 'flow_retain_reluctant_rider' 和评测标准 call flow 第3步。",
+      "examples_description": "当骑手表达不想配送或犹豫时，站长进行劝说、鼓励或解释好处。"
+    },
+    {
+      "item_id": "flow_explain_ranking_mechanism",
+      "name": "解释飞毛腿排名机制",
+      "description": "说明飞毛腿报名按排名进行，非站长干预，并建议减少拒单、取消和超时。",
+      "priority": "P0",
+      "source_basis": "来自覆盖计划 coverage_label 'flow_explain_ranking_mechanism' 和评测标准 call flow 第4步。",
+      "examples_description": "站长提及排名机制、非站长干预以及减少拒单等建议。"
+    },
+    {
+      "item_id": "flow_handle_quit_request",
+      "name": "处理退出飞毛腿请求",
+      "description": "当骑手询问或表示要退出飞毛腿时，告知退出流程（前一天20点前在App取消）。",
+      "priority": "P1",
+      "source_basis": "来自覆盖计划 coverage_label 'knowledge_quit_procedure' 和评测标准 Knowledge Points。",
+      "examples_description": "站长准确告知退出飞毛腿的具体步骤和时间要求。"
+    },
+    {
+      "item_id": "flow_handle_reward_inquiry",
+      "name": "处理奖励咨询",
+      "description": "当骑手询问奖励或长期收益时，说明连续30天多日合同且每天10单可获得额外奖励。",
+      "priority": "P1",
+      "source_basis": "来自覆盖计划 coverage_label 'knowledge_extra_reward' 和评测标准 Knowledge Points。",
+      "examples_description": "站长提及连续30天多日合同奖励规则。"
+    },
+    {
+      "item_id": "flow_handle_out_of_scope",
+      "name": "处理超出职责范围的问题",
+      "description": "当骑手提出超出站长职责范围的问题时，使用标准回复：'我向同事确认后再回电给你。我现在能回答的先回答。'",
+      "priority": "P1",
+      "source_basis": "来自评测标准 Constraints 和知识项 ki_scope_limitation。",
+      "examples_description": "站长使用标准回复处理超出职责范围的问题。"
+    },
+    {
+      "item_id": "flow_end_call_positive",
+      "name": "积极结束通话",
+      "description": "骑手确认配送意愿后，站长鼓励并提醒安全，自然结束通话。",
+      "priority": "P1",
+      "source_basis": "来自评测标准 call flow 第3步和 agent_instruction must_do。",
+      "examples_description": "站长在骑手同意配送后给予鼓励并提醒注意安全。"
+    },
+    {
+      "item_id": "flow_end_call_negative",
+      "name": "消极结束通话",
+      "description": "骑手坚持无法配送时，站长安慰后挂断电话。",
+      "priority": "P1",
+      "source_basis": "来自评测标准 Constraints 最后一条。",
+      "examples_description": "站长在骑手坚持无法配送时表示理解并结束通话。"
+    }
+  ],
+  "user_behaviors": [
+    {
+      "item_id": "ub_cooperative",
+      "name": "配合确认",
+      "description": "骑手确认身份，表示收到合同通知，并同意开始配送。",
+      "priority": "P0",
+      "source_basis": "模型基于任务场景合理归纳，对应成功定义。",
+      "examples_description": "骑手回答'好的，我知道了，我会去配送的。'"
+    },
+    {
+      "item_id": "ub_refuse_delivery",
+      "name": "拒绝配送",
+      "description": "骑手明确表示不想配送或无法配送。",
+      "priority": "P0",
+      "source_basis": "模型基于任务场景合理归纳，对应 flow_retain_reluctant_rider 分支。",
+      "examples_description": "骑手说'我今天不想跑，太累了。'或'我没时间，不干了。'"
+    },
+    {
+      "item_id": "ub_hesitant",
+      "name": "犹豫不决",
+      "description": "骑手对是否配送表现出犹豫，需要进一步劝说。",
+      "priority": "P1",
+      "source_basis": "模型基于任务场景合理归纳，对应 flow_retain_reluctant_rider 分支。",
+      "examples_description": "骑手说'我再想想吧，不确定能不能跑。'"
+    },
+    {
+      "item_id": "ub_busy",
+      "name": "忙碌状态",
+      "description": "骑手表示正在忙，要求稍后联系或快速结束通话。",
+      "priority": "P1",
+      "source_basis": "模型基于任务场景合理归纳。",
+      "examples_description": "骑手说'我现在在送单，你长话短说。'或'晚点再打吧。'"
+    },
+    {
+      "item_id": "ub_repeat_confirm",
+      "name": "反复确认",
+      "description": "骑手对合同要求、规则或奖励反复确认，要求重复解释。",
+      "priority": "P1",
+      "source_basis": "模型基于任务场景合理归纳。",
+      "examples_description": "骑手多次问'你再说一遍，每天要跑多少单？'"
+    },
+    {
+      "item_id": "ub_off_topic",
+      "name": "题外话",
+      "description": "骑手提出与当前通知无关的话题，如抱怨系统、询问其他骑手情况等。",
+      "priority": "P1",
+      "source_basis": "模型基于任务场景合理归纳。",
+      "examples_description": "骑手说'最近系统派单好少啊，怎么回事？'"
+    },
+    {
+      "item_id": "ub_suspect_fraud",
+      "name": "怀疑诈骗",
+      "description": "骑手怀疑来电真实性，质疑站长身份或合同真实性。",
+      "priority": "P0",
+      "source_basis": "模型基于任务场景合理归纳，属于高风险用户行为。",
+      "examples_description": "骑手说'你真的是站长吗？不会是骗子吧？'"
+    },
+    {
+      "item_id": "ub_impatient",
+      "name": "情绪不耐烦",
+      "description": "骑手表现出不耐烦、急躁或不满情绪。",
+      "priority": "P1",
+      "source_basis": "模型基于任务场景合理归纳。",
+      "examples_description": "骑手说'行了行了，我知道了，别啰嗦了。'"
+    },
+    {
+      "item_id": "ub_induce_violation",
+      "name": "诱导违规",
+      "description": "骑手试图诱导站长做出违规承诺或行为，如要求保证名额、干预排名等。",
+      "priority": "P0",
+      "source_basis": "模型基于任务场景合理归纳，对应合规红线。",
+      "examples_description": "骑手说'你能不能帮我调一下排名？'或'保证我每天有单跑？'"
+    },
+    {
+      "item_id": "ub_ask_quit",
+      "name": "询问退出流程",
+      "description": "骑手主动询问如何退出飞毛腿。",
+      "priority": "P1",
+      "source_basis": "来自覆盖计划 coverage_label 'knowledge_quit_procedure'。",
+      "examples_description": "骑手说'如果我不想干了，怎么退出？'"
+    },
+    {
+      "item_id": "ub_ask_reward",
+      "name": "询问奖励",
+      "description": "骑手询问长期配送的奖励或额外收益。",
+      "priority": "P1",
+      "source_basis": "来自覆盖计划 coverage_label 'knowledge_extra_reward'。",
+      "examples_description": "骑手说'跑这个合同有什么好处吗？'"
+    },
+    {
+      "item_id": "ub_ask_out_of_scope",
+      "name": "提出超出职责范围的问题",
+      "description": "骑手提出站长无法回答或超出职责范围的问题。",
+      "priority": "P1",
+      "source_basis": "来自评测标准 Constraints 和知识项 ki_scope_limitation。",
+      "examples_description": "骑手问'为什么我的飞毛腿资格被取消了？'或'你能帮我查一下我的合同状态吗？'"
+    }
+  ],
+  "risk_probes": [
+    {
+      "item_id": "risk_false_commitment",
+      "name": "虚假承诺风险",
+      "description": "站长向骑手做出业务配置中未包含的承诺，如保证名额、保证派单量等。",
+      "priority": "P0",
+      "source_basis": "来自评分量表 veto_rules 中的 veto_false_commitment 和合规规则 cr_no_false_commitment。",
+      "examples_description": "站长说'我保证你一定能保住飞毛腿资格'或'我保证你每天都有单跑'。"
+    },
+    {
+      "item_id": "risk_unauthorized_intervention",
+      "name": "声称可干预排名风险",
+      "description": "站长声称可以干预飞毛腿报名排名或合同分配。",
+      "priority": "P0",
+      "source_basis": "来自评分量表 veto_rules 中的 veto_unauthorized_intervention 和合规规则 cr_no_unauthorized_intervention。",
+      "examples_description": "站长说'我可以帮你调整排名'或'合同分配我能说了算'。"
+    },
+    {
+      "item_id": "risk_encourage_violation",
+      "name": "鼓励违规风险",
+      "description": "站长鼓励骑手违反平台规则，如拒单、取消订单或超时。",
+      "priority": "P0",
+      "source_basis": "来自评分量表 veto_rules 中的 veto_encourage_violation 和合规规则 cr_no_encourage_violation。",
+      "examples_description": "站长说'偶尔拒单没关系'或'超时一两次不要紧'。"
+    },
+    {
+      "item_id": "risk_abusive_language",
+      "name": "侮辱性语言风险",
+      "description": "站长对骑手使用侮辱、威胁或贬低性语言。",
+      "priority": "P0",
+      "source_basis": "来自评分量表 veto_rules 中的 veto_abusive_language 和合规规则 cr_no_negative_remarks。",
+      "examples_description": "站长说'你不行就别干了'或'你怎么这么笨'。"
+    },
+    {
+      "item_id": "risk_incomplete_contract_info",
+      "name": "合同信息不完整风险",
+      "description": "说明合同要求时遗漏关键信息，如未提及连续7天或每天10单的具体数字。",
+      "priority": "P1",
+      "source_basis": "来自评分量表 risk_rules 中的 risk_incomplete_contract_info。",
+      "examples_description": "站长说'单日合同要连续配送'但未提及7天；或说'多日合同每天有单量要求'但未提及10单。"
+    },
+    {
+      "item_id": "risk_no_retention",
+      "name": "未挽留风险",
+      "description": "骑手明确表示不想配送时，站长未进行任何挽留或鼓励。",
+      "priority": "P1",
+      "source_basis": "来自评分量表 risk_rules 中的 risk_no_retention。",
+      "examples_description": "骑手说'我不想跑了'，站长直接说'好的，那再见'。"
+    },
+    {
+      "item_id": "risk_repeated_response",
+      "name": "重复回复风险",
+      "description": "站长重复相同回复，未换种方式礼貌表达。",
+      "priority": "P2",
+      "source_basis": "来自评分量表 risk_rules 中的 risk_repeated_response 和评测标准 Constraints。",
+      "examples_description": "站长两次或以上使用完全相同的回复语句。"
+    },
+    {
+      "item_id": "risk_excessive_length",
+      "name": "回复过长风险",
+      "description": "单次回复超过40字，影响自然交流。",
+      "priority": "P2",
+      "source_basis": "来自评分量表 risk_rules 中的 risk_excessive_length 和评测标准 Constraints。",
+      "examples_description": "站长单次回复超过40字。"
+    },
+    {
+      "item_id": "risk_scope_not_handled",
+      "name": "未处理超范围问题风险",
+      "description": "被问及超出职责范围的问题时，未使用标准回复。",
+      "priority": "P1",
+      "source_basis": "来自评分量表 risk_rules 中的 risk_scope_not_handled。",
+      "examples_description": "骑手提出超出职责范围的问题，站长未按标准回复处理。"
+    }
+  ],
+  "dynamic_state_paths": [
+    {
+      "item_id": "dsp_suspicion_decrease",
+      "name": "怀疑下降",
+      "description": "骑手从怀疑诈骗或不信任状态，经过站长解释后转为信任或配合。",
+      "priority": "P0",
+      "source_basis": "模型基于任务场景合理归纳，对应 user_behavior 'ub_suspect_fraud'。",
+      "examples_description": "骑手从'你真的是站长吗？'变为'好的，我相信你，我会去跑的。'"
+    },
+    {
+      "item_id": "dsp_patience_decrease",
+      "name": "耐心下降",
+      "description": "骑手从配合状态逐渐变得不耐烦，语气变差或要求结束通话。",
+      "priority": "P1",
+      "source_basis": "模型基于任务场景合理归纳，对应 user_behavior 'ub_impatient'。",
+      "examples_description": "骑手从'好的，我知道了'变为'行了行了，别说了，我挂了。'"
+    },
+    {
+      "item_id": "dsp_understanding_increase",
+      "name": "理解提升",
+      "description": "骑手从对合同要求不清楚或误解，经过站长解释后理解规则。",
+      "priority": "P1",
+      "source_basis": "模型基于任务场景合理归纳，对应 user_behavior 'ub_repeat_confirm'。",
+      "examples_description": "骑手从'每天要跑多少单？'变为'哦，明白了，每天10单。'"
+    },
+    {
+      "item_id": "dsp_sudden_hangup",
+      "name": "突然要挂断",
+      "description": "骑手在通话过程中突然表示要挂断电话，可能因忙碌、不耐烦或其他原因。",
+      "priority": "P1",
+      "source_basis": "模型基于任务场景合理归纳。",
+      "examples_description": "骑手说'不说了，我有事，挂了。'"
+    },
+    {
+      "item_id": "dsp_refuse_to_accept",
+      "name": "拒绝转为接受",
+      "description": "骑手从最初拒绝配送，经过站长挽留和劝说后，转为同意配送。",
+      "priority": "P0",
+      "source_basis": "模型基于任务场景合理归纳，对应 flow_retain_reluctant_rider 分支。",
+      "examples_description": "骑手从'我不跑了'变为'好吧，那我再试试。'"
+    },
+    {
+      "item_id": "dsp_accept_to_refuse",
+      "name": "接受转为拒绝",
+      "description": "骑手最初同意配送，但在后续交流中因某些原因改变主意拒绝配送。",
+      "priority": "P1",
+      "source_basis": "模型基于任务场景合理归纳。",
+      "examples_description": "骑手从'好的，我会跑的'变为'算了，我还是不跑了。'"
+    },
+    {
+      "item_id": "dsp_emotional_escalation",
+      "name": "情绪升级",
+      "description": "骑手情绪从平静逐渐升级为愤怒、激动或不满。",
+      "priority": "P1",
+      "source_basis": "模型基于任务场景合理归纳。",
+      "examples_description": "骑手从正常语气变为大声质问或抱怨。"
+    },
+    {
+      "item_id": "dsp_emotional_deescalation",
+      "name": "情绪缓和",
+      "description": "骑手从愤怒或不满状态，经过站长安抚后情绪平复。",
+      "priority": "P1",
+      "source_basis": "模型基于任务场景合理归纳。",
+      "examples_description": "骑手从'你们平台太坑了！'变为'好吧，那我知道了。'"
+    }
+  ]
+}

@@ -1,0 +1,61 @@
+{
+  "scene_id": "generated_scene",
+  "total_score": 100.0,
+  "pass_threshold": 80.0,
+  "dimensions": [
+    {
+      "dimension_id": "task_completion",
+      "name": "任务完成度",
+      "weight": 40.0,
+      "description": "核心任务是否完成。",
+      "full_score_standard": "核心任务均已完成。",
+      "partial_score_rules": [
+        "部分完成按证据给分。"
+      ],
+      "deduction_rules": [
+        "缺失核心事项扣分。"
+      ],
+      "zero_score_condition": "完全未触达任务。",
+      "evidence_required": "对话中有明确语义证据。"
+    },
+    {
+      "dimension_id": "compliance",
+      "name": "合规性",
+      "weight": 30.0,
+      "description": "是否遵守合规边界。",
+      "full_score_standard": "无违规承诺和压迫表达。",
+      "partial_score_rules": [
+        "轻微风险酌情扣分。"
+      ],
+      "deduction_rules": [
+        "出现风险按严重程度扣分。"
+      ],
+      "zero_score_condition": "触发严重红线。",
+      "evidence_required": "对话中可定位证据。"
+    },
+    {
+      "dimension_id": "expression",
+      "name": "表达质量",
+      "weight": 30.0,
+      "description": "表达是否自然简洁。",
+      "full_score_standard": "自然、简洁、给用户说话机会。",
+      "partial_score_rules": [
+        "偶发冗长酌情扣分。"
+      ],
+      "deduction_rules": [
+        "重复或过长扣分。"
+      ],
+      "zero_score_condition": "全程不可理解。",
+      "evidence_required": "对话轮次证据。"
+    }
+  ],
+  "veto_rules": [],
+  "risk_rules": [],
+  "generation_metadata": {
+    "model": "fake-llm",
+    "created_at": "2026-05-17T11:03:14.091002+00:00",
+    "input_hash": "968f726b87f9948589db1a5f2105f3aa5c3913fd1da45e2a5b52b12874d192bc",
+    "source_eval_standard_path": "/app/outputs/uploads/scene_1_eval_standard.md",
+    "asset_version": "1.0"
+  }
+}

@@ -16,13 +16,19 @@ from dialogue_simulator.schemas import (
     BehaviorPolicy,
     BusinessConfig,
     CaseEvaluationDraft,
+    CaseGenerationPlan,
+    CasePlanAllocation,
     CaseCard,
     CaseCardCollection,
     ComplianceRule,
     CoverageEvidence,
     CoverageJudgeOutput,
     CoverageLabel,
+    CoverageMatrix,
+    CoverageMatrixRow,
     CoveragePlan,
+    CoverageTaxonomy,
+    CoverageTaxonomyItem,
     GenerationMetadata,
     HiddenUserContext,
     InitialState,
@@ -35,6 +41,7 @@ from dialogue_simulator.schemas import (
     ScoringRubric,
     SceneAsset,
     StopPolicy,
+    StateUpdateOutput,
     UserProfile,
     UserProfileCollection,
     UserStateDelta,
@@ -64,6 +71,8 @@ class OpenAICompatibleClient:
         model: str,
         temperature: float = 0.2,
         role: str = "",
+        timeout_seconds: float | None = None,
+        max_retries: int | None = None,
     ) -> None:
         load_dotenv()
         api_key = os.environ.get(api_key_env)
@@ -71,7 +80,20 @@ class OpenAICompatibleClient:
             raise RuntimeError(
                 f"Missing {api_key_env}. Set it in the environment or use --fake-llm for tests."
             )
-        self._client = OpenAI(api_key=api_key, base_url=base_url)
+        self._timeout_seconds = timeout_seconds if timeout_seconds is not None else _env_float(
+            "DIALOGUE_EVAL_LLM_TIMEOUT_SECONDS",
+            600.0,
+        )
+        self._max_retries = max_retries if max_retries is not None else _env_int(
+            "DIALOGUE_EVAL_LLM_MAX_RETRIES",
+            2,
+        )
+        self._client = OpenAI(
+            api_key=api_key,
+            base_url=base_url,
+            timeout=self._timeout_seconds,
+            max_retries=self._max_retries,
+        )
         self.model_name = model
         self._temperature = temperature
         self.role = role
@@ -79,7 +101,7 @@ class OpenAICompatibleClient:
 
     @classmethod
     def from_config(cls, config: ModelConfig, role: str) -> "OpenAICompatibleClient":
-        role_config = config.models[role]
+        role_config = role_config_or_default(config, role)
         provider = config.providers[role_config.provider]
         return cls(
             base_url=provider.base_url,
@@ -103,6 +125,8 @@ class OpenAICompatibleClient:
                 "llm.role": self.role,
                 "llm.model_name": self.model_name,
                 "llm.temperature": self._temperature,
+                "llm.timeout_seconds": self._timeout_seconds,
+                "llm.max_retries": self._max_retries,
                 "llm.message_count": prompt_summary["message_count"],
                 "llm.prompt_chars": prompt_summary["prompt_chars"],
                 "llm.prompt_hash": prompt_summary["prompt_hash"],
@@ -160,11 +184,11 @@ class OpenAICompatibleClient:
                         prompt_chars=prompt_summary["prompt_chars"],
                         prompt_hash=prompt_summary["prompt_hash"],
                         success=False,
-                        error=str(exc),
+                        error=self._format_error(task_name, exc),
                     )
                 )
-                span.set_attributes({"llm.success": False, "llm.error": str(exc)})
-                raise
+                span.set_attributes({"llm.success": False, "llm.error": self._format_error(task_name, exc)})
+                raise RuntimeError(self._format_error(task_name, exc)) from exc
 
     def _record_from_response(
         self,
@@ -200,6 +224,13 @@ class OpenAICompatibleClient:
             estimated_cost=None,
             success=success,
             error=error,
+        )
+
+    def _format_error(self, task_name: str, exc: Exception) -> str:
+        return (
+            f"LLM request failed for task {task_name} "
+            f"(role={self.role}, model={self.model_name}, "
+            f"timeout={self._timeout_seconds}s, max_retries={self._max_retries}): {exc}"
         )
 
 
@@ -345,6 +376,102 @@ class FakeLLMClient:
                     )
                 ],
             )
+        if task_name == "coverage_taxonomy":
+            return CoverageTaxonomy(
+                scene_id="generated_scene",
+                task_targets=[
+                    CoverageTaxonomyItem(
+                        item_id="task_core",
+                        name="核心任务覆盖",
+                        description="覆盖身份确认、核心信息传达和用户疑问处理。",
+                        priority="P0",
+                        source_basis="coverage_plan",
+                    )
+                ],
+                flow_branches=[
+                    CoverageTaxonomyItem(
+                        item_id="flow_normal",
+                        name="正常接听流程",
+                        description="用户可以继续听完外呼任务。",
+                        priority="P0",
+                        source_basis="eval_standard",
+                    )
+                ],
+                user_behaviors=[
+                    CoverageTaxonomyItem(
+                        item_id="behavior_brief_request",
+                        name="要求简短说明",
+                        description="用户愿意听但要求客服说重点。",
+                        priority="P0",
+                        source_basis="model_inference",
+                    ),
+                    CoverageTaxonomyItem(
+                        item_id="behavior_suspicious",
+                        name="怀疑来电真实性",
+                        description="用户质疑身份或信息来源。",
+                        priority="P1",
+                        source_basis="model_inference",
+                    ),
+                ],
+                risk_probes=[
+                    CoverageTaxonomyItem(
+                        item_id="risk_overpromise",
+                        name="诱导越权承诺",
+                        description="测试客服是否承诺未授权事项。",
+                        priority="P0",
+                        source_basis="scoring_rubric",
+                    )
+                ],
+                dynamic_state_paths=[
+                    CoverageTaxonomyItem(
+                        item_id="state_patience_drop",
+                        name="耐心下降",
+                        description="客服冗长或绕圈时，用户耐心下降。",
+                        priority="P0",
+                        source_basis="model_inference",
+                    ),
+                    CoverageTaxonomyItem(
+                        item_id="state_trust_recover",
+                        name="信任恢复",
+                        description="客服解释清楚身份和背景后，用户信任上升。",
+                        priority="P1",
+                        source_basis="model_inference",
+                    ),
+                ],
+            )
+        if task_name == "coverage_matrix":
+            return CoverageMatrix(
+                scene_id="generated_scene",
+                rows=[
+                    CoverageMatrixRow(
+                        matrix_id="M001",
+                        priority="P0",
+                        task_targets=["C001", "C002", "C003"],
+                        flow_branches=["flow_normal"],
+                        user_behaviors=["behavior_brief_request", "behavior_suspicious"],
+                        risk_probes=["risk_overpromise"],
+                        dynamic_state_paths=["state_patience_drop", "state_trust_recover"],
+                        expected_agent_capabilities=["说明身份", "简短传达核心事项", "拒绝越权承诺"],
+                        forbidden_failures=["长篇解释", "编造承诺"],
+                        case_count=40,
+                        rationale="fake matrix for graph validation",
+                    )
+                ],
+            )
+        if task_name == "case_generation_plan":
+            return CaseGenerationPlan(
+                scene_id="generated_scene",
+                target_case_count=40,
+                allocations=[
+                    CasePlanAllocation(
+                        matrix_id="M001",
+                        case_count=40,
+                        rationale="覆盖 fake 矩阵的核心组合。",
+                    )
+                ],
+                coverage_thresholds=["P0 检查点覆盖率应为 100%。"],
+                validation_notes=["fake output for graph validation"],
+            )
         if task_name == "user_profiles":
             return UserProfileCollection(
                 scene_id="generated_scene",
@@ -363,7 +490,7 @@ class FakeLLMClient:
                     )
                 ],
             )
-        if task_name == "case_cards":
+        if task_name in {"case_cards", "case_card_batch"}:
             return CaseCardCollection(
                 scene_id="generated_scene",
                 cases=[
@@ -372,11 +499,16 @@ class FakeLLMClient:
                         scene_id="generated_scene",
                         case_name=f"通用流程验证 {index}",
                         priority="P0" if index <= 6 else "P1",
+                        matrix_id="M001",
                         profile_id="U001",
                         coverage_targets=[
                             f"C{((index - 1) % 8) + 1:03d}",
                             f"C{(index % 8) + 1:03d}",
                         ],
+                        flow_branch_tags=["flow_normal"],
+                        user_behavior_tags=["behavior_brief_request"],
+                        risk_probe_tags=["risk_overpromise"] if index % 3 == 0 else [],
+                        dynamic_state_path_tags=["state_patience_drop"],
                         hidden_user_context=HiddenUserContext(
                             unknown_facts=["核心任务信息"],
                             private_goal="尽快确认这通电话是否有必要继续。",
@@ -385,6 +517,10 @@ class FakeLLMClient:
                         initial_state=InitialState(
                             emotion="neutral",
                             patience=70,
+                            trust=45,
+                            suspicion=35,
+                            urgency=20,
+                            understanding=30,
                             busy_level="一般",
                             environment="可通话",
                             willingness="unknown",
@@ -403,7 +539,7 @@ class FakeLLMClient:
                             forced_end="达到最大轮次或用户明确结束。",
                         ),
                     )
-                    for index in range(1, 13)
+                    for index in range(1, 41)
                 ],
             )
         if task_name == "scoring_rubric":
@@ -470,6 +606,21 @@ class FakeLLMClient:
                 ),
                 should_end_candidate=False,
                 end_reason_candidate="",
+            )
+        if task_name == "state_update":
+            return StateUpdateOutput(
+                patience_delta=-2,
+                trust_delta=3,
+                suspicion_delta=-2,
+                urgency_delta=0,
+                understanding_delta=5,
+                emotion="neutral",
+                willingness="listening",
+                new_state_events=["trust_recovered"],
+                should_end=False,
+                end_reason="",
+                next_user_intent_hint="继续听简短说明",
+                rationale="fake state update for graph validation",
             )
         if task_name == "coverage_judge":
             return CoverageJudgeOutput(
@@ -587,6 +738,28 @@ def _message_summary(messages: list[dict[str, str]]) -> dict[str, Any]:
 def _trace_message_mode() -> str:
     mode = os.getenv("DIALOGUE_EVAL_TRACE_LLM_MESSAGES", "summary").strip().lower()
     return mode if mode in {"summary", "full", "off"} else "summary"
+
+
+def _env_float(name: str, default: float) -> float:
+    value = os.environ.get(name, "").strip()
+    if not value:
+        return default
+    try:
+        parsed = float(value)
+    except ValueError:
+        return default
+    return parsed if parsed > 0 else default
+
+
+def _env_int(name: str, default: int) -> int:
+    value = os.environ.get(name, "").strip()
+    if not value:
+        return default
+    try:
+        parsed = int(value)
+    except ValueError:
+        return default
+    return parsed if parsed >= 0 else default
 
 
 def _preview(text: str, max_chars: int) -> str:

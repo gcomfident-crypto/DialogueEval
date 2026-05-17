@@ -1,0 +1,18 @@
+{
+  "scene_id": "generated_scene",
+  "target_case_count": 20,
+  "allocations": [
+    {
+      "matrix_id": "M001",
+      "case_count": 20,
+      "rationale": "覆盖 fake 矩阵的核心组合。"
+    }
+  ],
+  "coverage_thresholds": [
+    "P0 检查点覆盖率应为 100%。"
+  ],
+  "validation_notes": [
+    "fake output for graph validation",
+    "程序已将模型生成的 case 分配从 target=40, total=40 归一化为 target=20, total=20。"
+  ]
+}

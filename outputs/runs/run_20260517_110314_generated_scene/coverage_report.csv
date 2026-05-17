@@ -1,0 +1,2 @@
+run_id,case_id,scene_id,priority,planned_targets,triggered_targets,missing_targets,coverage_success,turns_count,end_reason,state_events
+run_20260517_110314_generated_scene,case_001,generated_scene,P0,C001;C002;C003;C004;C005;C006;C007;C008,C001,C002;C003;C004;C005;C006;C007;C008,false,8,max_turns,trust_recovered;trust_recovered;trust_recovered;trust_recovered

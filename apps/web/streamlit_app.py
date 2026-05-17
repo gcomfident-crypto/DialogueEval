@@ -451,6 +451,7 @@ def render_reports() -> None:
             "文件",
             [
                 "conversation_log.jsonl",
+                "simulation_state_trace.jsonl",
                 "case_evaluation.jsonl",
                 "coverage_report.csv",
                 "evaluation_report.csv",
@@ -631,12 +632,16 @@ def render_asset_viewer() -> None:
         [
             "scene_asset.yaml",
             "coverage_plan.yaml",
+            "coverage_taxonomy.yaml",
+            "coverage_matrix.yaml",
+            "case_generation_plan.yaml",
             "user_profiles.yaml",
             "case_cards.yaml",
             "scoring_rubric.yaml",
             "materialized_eval_standard.md",
             "variable_assignments.yaml",
             "asset_generation_report.md",
+            "coverage_gap_report.md",
         ],
     )
     text = safe_get_text(f"/assets/{scene_id}/files/{file_name}")

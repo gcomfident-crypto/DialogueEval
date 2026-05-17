@@ -12,6 +12,8 @@ from apps.api.service import (
     ExtractEvalStandardsRequest,
     GenerateAssetsRequest,
     RunEvaluationRequest,
+    SaveAnnotationRequest,
+    StartEvaluationRequest,
     SyncPromptsRequest,
 )
 from dialogue_simulator.tracing import setup_tracing, shutdown_tracing
@@ -145,6 +147,30 @@ def generate_assets(request: GenerateAssetsRequest):
         raise _http_error(exc) from exc
 
 
+@app.post("/evaluations")
+def start_evaluation(request: StartEvaluationRequest):
+    try:
+        return service.start_evaluation(request)
+    except Exception as exc:
+        raise _http_error(exc) from exc
+
+
+@app.post("/evaluations/jobs")
+def start_evaluation_job(request: StartEvaluationRequest):
+    try:
+        return service.start_evaluation_job(request)
+    except Exception as exc:
+        raise _http_error(exc) from exc
+
+
+@app.get("/evaluations/jobs/{job_id}")
+def get_evaluation_job(job_id: str):
+    try:
+        return service.get_evaluation_job(job_id)
+    except Exception as exc:
+        raise _http_error(exc) from exc
+
+
 @app.get("/runs")
 def list_runs():
     try:
@@ -198,6 +224,26 @@ def list_case_reports(run_id: str):
 def get_case_report(run_id: str, case_id: str):
     try:
         return service.read_case_report(run_id, case_id)
+    except Exception as exc:
+        raise _http_error(exc) from exc
+
+
+@app.get("/annotations/runs/{run_id}")
+def get_annotation_run(run_id: str):
+    try:
+        return service.get_annotation_run(run_id)
+    except Exception as exc:
+        raise _http_error(exc) from exc
+
+
+@app.post("/annotations/runs/{run_id}/cases/{case_id}")
+def save_case_annotation(run_id: str, case_id: str, request: SaveAnnotationRequest):
+    try:
+        return service.save_case_annotation(
+            run_id=run_id,
+            case_id=case_id,
+            request=request,
+        )
     except Exception as exc:
         raise _http_error(exc) from exc
 

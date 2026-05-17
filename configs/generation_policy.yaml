@@ -2,7 +2,8 @@
   "asset_version": "1.0",
   "case_generation": {
     "min_cases": 12,
-    "max_cases": 40,
+    "target_cases": 20,
+    "max_cases": 200,
     "p0_ratio": 0.45,
     "coverage_per_case_min": 2,
     "coverage_per_case_max": 6,

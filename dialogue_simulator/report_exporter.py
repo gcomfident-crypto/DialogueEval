@@ -4,6 +4,9 @@ import csv
 import json
 from collections import defaultdict
 from pathlib import Path
+from typing import Any
+
+from pydantic import BaseModel
 
 from dialogue_simulator.schemas import CaseEvaluationResult, ConversationResult, LLMCallRecord
 
@@ -12,6 +15,7 @@ def export_run_reports(results: list[ConversationResult], output_dir: str | Path
     path = Path(output_dir)
     path.mkdir(parents=True, exist_ok=True)
     write_jsonl(results, path / "conversation_log.jsonl")
+    write_state_trace_jsonl(results, path / "simulation_state_trace.jsonl")
     write_csv(results, path / "coverage_report.csv")
     write_summary(results, path / "summary_report.md")
 
@@ -50,10 +54,50 @@ def export_llm_call_records(
             file.write(record.model_dump_json() + "\n")
 
 
+def export_case_artifact_bundles(
+    *,
+    conversations: list[ConversationResult],
+    output_dir: str | Path,
+    case_cards: list[Any] | None = None,
+    evaluations: list[CaseEvaluationResult] | None = None,
+) -> None:
+    path = Path(output_dir)
+    case_root = path / "cases"
+    case_root.mkdir(parents=True, exist_ok=True)
+    case_card_map = {_case_id(item): item for item in case_cards or []}
+    evaluation_map = {item.case_id: item for item in evaluations or []}
+    for conversation in conversations:
+        case_dir = case_root / conversation.case_id
+        case_dir.mkdir(parents=True, exist_ok=True)
+        case_card = case_card_map.get(conversation.case_id)
+        evaluation = evaluation_map.get(conversation.case_id)
+        if case_card is not None:
+            _write_json(case_dir / "case_card.json", _model_dump(case_card))
+        _write_json(case_dir / "conversation.json", conversation.model_dump(mode="json"))
+        _write_conversation_markdown(conversation, case_dir / "conversation.md")
+        _write_state_trace(conversation, case_dir / "state_trace.jsonl")
+        if evaluation is not None:
+            _write_json(case_dir / "scoring.json", evaluation.model_dump(mode="json"))
+            write_case_report(evaluation, case_dir / "case_report.md", conversation)
+
+
 def write_jsonl(results: list[ConversationResult], path: Path) -> None:
     with path.open("w", encoding="utf-8") as file:
         for result in results:
             file.write(result.model_dump_json() + "\n")
+
+
+def write_state_trace_jsonl(results: list[ConversationResult], path: Path) -> None:
+    with path.open("w", encoding="utf-8") as file:
+        for result in results:
+            for transition in result.state_trace:
+                payload = {
+                    "run_id": result.run_id,
+                    "case_id": result.case_id,
+                    "scene_id": result.scene_id,
+                    **transition.model_dump(mode="json"),
+                }
+                file.write(json.dumps(payload, ensure_ascii=False) + "\n")
 
 
 def write_case_evaluation_jsonl(
@@ -77,6 +121,7 @@ def write_csv(results: list[ConversationResult], path: Path) -> None:
         "coverage_success",
         "turns_count",
         "end_reason",
+        "state_events",
     ]
     with path.open("w", encoding="utf-8", newline="") as file:
         writer = csv.DictWriter(file, fieldnames=fieldnames)
@@ -94,6 +139,11 @@ def write_csv(results: list[ConversationResult], path: Path) -> None:
                     "coverage_success": str(result.coverage_success).lower(),
                     "turns_count": len(result.turns),
                     "end_reason": result.end_reason,
+                    "state_events": ";".join(
+                        event
+                        for transition in result.state_trace
+                        for event in transition.update.new_state_events
+                    ),
                 }
             )
 
@@ -160,6 +210,15 @@ def write_summary(results: list[ConversationResult], path: Path) -> None:
     p0_success = sum(1 for result in p0_results if result.coverage_success)
     missing = [result for result in results if result.missing_targets]
     risk_results = [result for result in results if result.risk_flags]
+    state_event_counts: dict[str, int] = defaultdict(int)
+    for result in results:
+        seen_in_case = {
+            event
+            for transition in result.state_trace
+            for event in transition.update.new_state_events
+        }
+        for event in seen_in_case:
+            state_event_counts[event] += 1
 
     lines = [
         "# 对话仿真汇总报告",
@@ -195,6 +254,14 @@ def write_summary(results: list[ConversationResult], path: Path) -> None:
         for result in risk_results:
             flags = [f"{flag.rule_id}:{flag.severity}" for flag in result.risk_flags]
             lines.append(f"| {result.case_id} | {', '.join(flags)} |")
+    else:
+        lines.append("- 无")
+
+    lines.extend(["", "## 动态用户状态事件", ""])
+    if state_event_counts:
+        lines.extend(["| state_event | case_count |", "|---|---:|"])
+        for event, count in sorted(state_event_counts.items()):
+            lines.append(f"| {event} | {count} |")
     else:
         lines.append("- 无")
 
@@ -436,6 +503,74 @@ def write_case_report(
 
     lines.extend(["", "## 7. 总评", "", evaluation.final_comment or "无"])
     path.write_text("\n".join(lines) + "\n", encoding="utf-8")
+
+
+def _case_id(item: Any) -> str:
+    if isinstance(item, dict):
+        return str(item.get("case_id") or "")
+    return str(getattr(item, "case_id", "") or "")
+
+
+def _model_dump(item: Any) -> Any:
+    if isinstance(item, BaseModel):
+        return item.model_dump(mode="json")
+    return item
+
+
+def _write_json(path: Path, payload: Any) -> None:
+    path.write_text(
+        json.dumps(payload, ensure_ascii=False, indent=2) + "\n",
+        encoding="utf-8",
+    )
+
+
+def _write_conversation_markdown(conversation: ConversationResult, path: Path) -> None:
+    lines = [
+        f"# 对话记录：{conversation.case_id}",
+        "",
+        f"- run_id：{conversation.run_id}",
+        f"- scene_id：{conversation.scene_id}",
+        f"- priority：{conversation.priority}",
+        f"- 覆盖是否成功：{_yes_no(conversation.coverage_success)}",
+        f"- 缺失覆盖项：{', '.join(conversation.missing_targets) or '无'}",
+        f"- 结束原因：{conversation.end_reason}",
+        "",
+        "## 对话",
+        "",
+    ]
+    if not conversation.turns:
+        lines.append("- 无对话")
+    for index, turn in enumerate(conversation.turns, start=1):
+        role = "客服" if turn.role == "agent" else "用户"
+        lines.append(f"**{index}. {role}**")
+        lines.append("")
+        lines.append(turn.text)
+        meta_parts = []
+        if turn.intent:
+            meta_parts.append(f"intent={turn.intent}")
+        if turn.emotion:
+            meta_parts.append(f"emotion={turn.emotion}")
+        if turn.patience is not None:
+            meta_parts.append(f"patience={turn.patience}")
+        if turn.risk_flags:
+            meta_parts.append(f"risk={', '.join(turn.risk_flags)}")
+        if meta_parts:
+            lines.append("")
+            lines.append(f"> {'; '.join(meta_parts)}")
+        lines.append("")
+    path.write_text("\n".join(lines), encoding="utf-8")
+
+
+def _write_state_trace(conversation: ConversationResult, path: Path) -> None:
+    with path.open("w", encoding="utf-8") as file:
+        for transition in conversation.state_trace:
+            payload = {
+                "run_id": conversation.run_id,
+                "case_id": conversation.case_id,
+                "scene_id": conversation.scene_id,
+                **transition.model_dump(mode="json"),
+            }
+            file.write(json.dumps(payload, ensure_ascii=False) + "\n")
 
 
 def _ratio(numerator: int, denominator: int) -> str:

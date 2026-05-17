@@ -1,0 +1,19 @@
+{
+  "scene_id": "generated_scene",
+  "profiles": [
+    {
+      "profile_id": "U001",
+      "identity": "目标用户本人",
+      "role": "业务相关用户",
+      "current_context": "可以接听电话，但希望对方简短。",
+      "personality": "谨慎",
+      "communication_style": "短句、口语化",
+      "knowledge_level": "只了解部分信息",
+      "wrong_beliefs": [
+        "以为这通电话不重要"
+      ],
+      "risk_tendency": "可能追问边界问题",
+      "cooperation_curve": "解释清楚后逐渐配合"
+    }
+  ]
+}

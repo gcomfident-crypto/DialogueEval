@@ -1,0 +1,81 @@
+{
+  "case_id": "case_002",
+  "scene_id": "feimaotui_contract_notify",
+  "case_name": "配合骑手-理解提升-多日合同",
+  "priority": "P0",
+  "matrix_id": "feimaotui_contract_notify_001",
+  "profile_id": "profile_020",
+  "coverage_targets": [
+    "identity_confirmation",
+    "contract_effective_notification",
+    "delivery_willingness_inquiry",
+    "minimum_order_requirement_single_day",
+    "no_unauthorized_promises",
+    "continuous_delivery_requirement",
+    "safety_reminder",
+    "ranking_mechanism_explanation"
+  ],
+  "flow_branch_tags": [
+    "fb_identity_confirmation",
+    "fb_continuous_delivery_explanation",
+    "fb_safety_reminder",
+    "fb_ranking_mechanism_explanation"
+  ],
+  "user_behavior_tags": [
+    "ub_cooperative"
+  ],
+  "risk_probe_tags": [
+    "rp_no_identity_confirmation",
+    "rp_no_contract_notification",
+    "rp_no_willingness_inquiry",
+    "rp_no_minimum_order_reminder",
+    "rp_no_continuous_delivery",
+    "rp_no_safety_reminder",
+    "rp_no_ranking_explanation"
+  ],
+  "dynamic_state_path_tags": [
+    "dsp_understanding_increase"
+  ],
+  "hidden_user_context": {
+    "known_facts": [
+      "知道自己是飞毛腿骑手",
+      "知道有多日合同"
+    ],
+    "unknown_facts": [
+      "合同生效具体时间",
+      "多日合同每天最低5单要求",
+      "连续配送3天要求",
+      "排名机制"
+    ],
+    "wrong_beliefs": [],
+    "private_goal": "确认合同细节，了解所有要求，承诺完成配送",
+    "main_objection": ""
+  },
+  "initial_state": {
+    "emotion": "happy",
+    "patience": 90,
+    "trust": 70,
+    "suspicion": 5,
+    "urgency": 10,
+    "understanding": 30,
+    "busy_level": "刚吃完饭，有空聊天",
+    "environment": "安静室内",
+    "willingness": "willing"
+  },
+  "behavior_policy": {
+    "disclosure_policy": "不主动透露内部信息，只回答业务相关问题",
+    "if_agent_clear": "热情回应，表示明白",
+    "if_agent_wrong": "礼貌指出错误",
+    "if_agent_too_long": "耐心听完，并给予积极反馈",
+    "if_agent_pushy": "表示理解，但会坚持自己的节奏",
+    "if_agent_violates_rule": "不主动指出，但会疑惑",
+    "if_user_suspicious": "不适用",
+    "if_user_busy": "不适用",
+    "if_patience_low": "不适用"
+  },
+  "stop_policy": {
+    "max_turns": 12,
+    "success_end": "骑手确认收到通知，表示愿意配送，并承诺按要求完成任务",
+    "forced_end": ""
+  }
+}

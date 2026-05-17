@@ -230,11 +230,13 @@ def run_command(args: argparse.Namespace) -> None:
     agent_llm = build_llm(args, "agent")
     user_llm = build_llm(args, "user")
     judge_llm = build_llm(args, "judge")
+    state_llm = build_llm(args, "state_updater")
     evaluator_llm = None if args.skip_evaluation else build_llm(args, "evaluator")
     graph = build_conversation_graph(
         agent_llm=agent_llm,
         user_llm=user_llm,
         judge_llm=judge_llm,
+        state_llm=state_llm,
     )
 
     run_id = make_run_id(assets.scene_asset.scene_id, Path(args.output))
@@ -304,7 +306,7 @@ def run_command(args: argparse.Namespace) -> None:
             evaluation_count = len(evaluations)
             export_evaluation_reports(evaluations, output_dir, conversations=results)
         export_llm_call_records(
-            get_call_records([agent_llm, user_llm, judge_llm, evaluator_llm]),
+            get_call_records([agent_llm, user_llm, judge_llm, state_llm, evaluator_llm]),
             output_dir,
         )
         run_span.set_output(

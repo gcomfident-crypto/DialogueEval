@@ -1,0 +1,46 @@
+{
+  "scene_id": "generated_scene",
+  "scene_name": "模型生成场景",
+  "source_eval_standard_path": "/app/outputs/uploads/scene_1_eval_standard.md",
+  "business_goal": "根据评测标准完成一次外呼任务。",
+  "agent_role": "外呼客服",
+  "user_role": "被外呼用户",
+  "success_definition": "用户理解关键事项，对话自然结束。",
+  "knowledge_items": [
+    {
+      "id": "K001",
+      "name": "核心信息",
+      "content": "客服需要根据评测标准传达核心信息。",
+      "when_to_use": "任务推进时使用。",
+      "business_variables": []
+    }
+  ],
+  "compliance_rules": [
+    {
+      "id": "R001",
+      "rule": "不得承诺评测标准或业务配置中没有的事项。",
+      "severity": "critical",
+      "negative_examples_description": "未经授权的优惠、补偿或权限承诺。"
+    }
+  ],
+  "agent_instruction": {
+    "goal": "完成外呼任务并保持合规。",
+    "must_do": [
+      "确认身份",
+      "传达核心事项",
+      "处理用户疑问"
+    ],
+    "must_not_do": [
+      "不得编造承诺",
+      "不得长篇压迫式表达"
+    ],
+    "style": "简短、自然、电话口吻。"
+  },
+  "generation_metadata": {
+    "model": "fake-llm",
+    "created_at": "2026-05-17T11:03:14.067979+00:00",
+    "input_hash": "968f726b87f9948589db1a5f2105f3aa5c3913fd1da45e2a5b52b12874d192bc",
+    "source_eval_standard_path": "/app/outputs/uploads/scene_1_eval_standard.md",
+    "asset_version": "1.0"
+  }
+}

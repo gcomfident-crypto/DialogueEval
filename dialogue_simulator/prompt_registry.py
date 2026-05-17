@@ -37,6 +37,7 @@ SCENE_ASSET_PROMPT = PromptSpec(
 - knowledge_items 应覆盖任务知识、分支处理和合规红线中可供客服使用的事实。
 - compliance_rules 应覆盖一票否决项和禁止项。
 - scene_id 可根据场景名称或业务目标生成稳定、简短的英文/拼音标识。
+- scene_name 必须是 6 到 12 个中文字符左右的短任务名称，不要标点，不要长句，例如“合同生效通知”“直播选项升级”。
 - generation_metadata.input_hash 必须填写：{{ input_hash }}
 - 输出必须符合 JSON schema。
 
@@ -151,6 +152,138 @@ JSON schema：
 )
 
 
+COVERAGE_TAXONOMY_PROMPT = PromptSpec(
+    name="dialogue-eval-coverage-taxonomy",
+    role="user",
+    description="从任务标准归纳任务覆盖、用户行为、流程分支、风险探针和动态状态路径。",
+    variables=("scene_asset", "coverage_plan", "scoring_rubric", "generation_policy", "eval_standard_text", "output_schema"),
+    content="""请为该外呼任务生成覆盖分类 coverage taxonomy。
+
+目标：
+- 把现实中开放的用户反应压缩成可审计、可量化的情况空间。
+- 后续 coverage matrix 和 case cards 都必须基于这个分类生成。
+
+要求：
+- task_targets 来自 coverage_plan 和评测标准中的任务目标。
+- flow_branches 来自评测标准中的业务流程分支、异常分支和结束条件。
+- user_behaviors 要覆盖真实用户常见反应，例如配合、拒绝、犹豫、忙碌、反复确认、题外话、怀疑诈骗、情绪不耐烦、诱导违规等；但必须结合该任务场景，不要机械罗列无关类型。
+- risk_probes 来自评分量表、合规红线、一票否决项和风险扣分项。
+- dynamic_state_paths 描述用户状态变化路径，例如怀疑下降、耐心下降、理解提升、突然要挂断、拒绝转为继续听等。
+- source_basis 必须说明该分类来自原始评测标准、coverage plan、scoring rubric，或模型基于任务合理归纳。
+- 不要生成客服或用户可照念的台词。
+- 输出必须符合 JSON schema。
+
+场景资产：
+{{ scene_asset }}
+
+覆盖计划：
+{{ coverage_plan }}
+
+评分量表：
+{{ scoring_rubric }}
+
+生成策略：
+{{ generation_policy }}
+
+评测标准：
+{{ eval_standard_text }}
+
+JSON schema：
+{{ output_schema }}
+""",
+)
+
+
+COVERAGE_MATRIX_PROMPT = PromptSpec(
+    name="dialogue-eval-coverage-matrix",
+    role="user",
+    description="生成稀疏覆盖矩阵，定义哪些任务点、用户行为、流程分支和风险探针需要组合测试。",
+    variables=("scene_asset", "coverage_plan", "coverage_taxonomy", "scoring_rubric", "generation_policy", "eval_standard_text", "output_schema"),
+    content="""请基于覆盖分类生成稀疏覆盖矩阵 coverage matrix。
+
+目标：
+- 不做完整笛卡尔积，避免组合爆炸。
+- 每一行代表一个有明确评测价值的测试规格。
+- 用矩阵说明未来 case cards 为什么存在、要覆盖什么、要诱导什么风险。
+
+要求：
+- rows 必须覆盖所有 P0 coverage label，且高风险/一票否决相关风险探针必须充分覆盖。
+- task_targets 必须填写 coverage_plan.coverage_labels 中的 label，例如 identity_confirmation；不要填写 coverage_taxonomy.task_targets 的 item_id。
+- flow_branches、user_behaviors、risk_probes、dynamic_state_paths 必须来自 coverage_taxonomy 对应 item_id。
+- 每行应包含 expected_agent_capabilities 和 forbidden_failures，用自然语言说明这个组合要验证客服什么能力、不能犯什么错。
+- case_count 是该矩阵行建议生成的 case 数。总数应接近 generation_policy.case_generation.target_cases，并且不超过 max_cases。
+- 优先覆盖高价值组合，例如“用户拒绝 + 挽留 + 不夸大惩罚”、“怀疑诈骗 + 身份说明 + 不索要敏感信息”、“忙碌用户 + 简短表达 + 核心任务完成”。
+- 不要写具体对话台词。
+- 输出必须符合 JSON schema。
+
+场景资产：
+{{ scene_asset }}
+
+覆盖计划：
+{{ coverage_plan }}
+
+覆盖分类：
+{{ coverage_taxonomy }}
+
+评分量表：
+{{ scoring_rubric }}
+
+生成策略：
+{{ generation_policy }}
+
+评测标准：
+{{ eval_standard_text }}
+
+JSON schema：
+{{ output_schema }}
+""",
+)
+
+
+CASE_GENERATION_PLAN_PROMPT = PromptSpec(
+    name="dialogue-eval-case-generation-plan",
+    role="user",
+    description="根据覆盖矩阵制定 case 数量分配和验收阈值。",
+    variables=("scene_asset", "coverage_plan", "coverage_taxonomy", "coverage_matrix", "generation_policy", "eval_standard_text", "output_schema"),
+    content="""请基于 coverage matrix 生成 case generation plan。
+
+目标：
+- 明确每个矩阵行要生成多少 case。
+- 让 case 数量分配可解释、可审计、可量化。
+
+要求：
+- allocations.matrix_id 必须来自 coverage_matrix.rows。
+- allocations.case_count 总和应等于或接近 generation_policy.case_generation.target_cases，并且不超过 max_cases。
+- P0 任务检查点、高风险探针、一票否决诱导、动态状态路径应获得更高 case_count。
+- coverage_thresholds 写出后续验收标准，例如 P0 覆盖率、风险覆盖率、用户行为覆盖率、动态状态路径覆盖率。
+- validation_notes 写出可能无法穷尽现实对话的边界，以及需要人工抽样校准的事项。
+- 不要生成具体对话台词。
+- 输出必须符合 JSON schema。
+
+场景资产：
+{{ scene_asset }}
+
+覆盖计划：
+{{ coverage_plan }}
+
+覆盖分类：
+{{ coverage_taxonomy }}
+
+覆盖矩阵：
+{{ coverage_matrix }}
+
+生成策略：
+{{ generation_policy }}
+
+评测标准：
+{{ eval_standard_text }}
+
+JSON schema：
+{{ output_schema }}
+""",
+)
+
+
 CASE_CARDS_PROMPT = PromptSpec(
     name="dialogue-eval-case-cards",
     role="user",
@@ -179,6 +312,66 @@ CASE_CARDS_PROMPT = PromptSpec(
 
 覆盖计划：
 {{ coverage_plan }}
+
+用户画像：
+{{ user_profiles }}
+
+生成策略：
+{{ generation_policy }}
+
+评测标准：
+{{ eval_standard_text }}
+
+JSON schema：
+{{ output_schema }}
+""",
+)
+
+
+CASE_CARD_BATCH_PROMPT = PromptSpec(
+    name="dialogue-eval-case-card-batch",
+    role="user",
+    description="针对单个 coverage matrix row 批量生成 case cards。",
+    variables=(
+        "scene_asset",
+        "coverage_plan",
+        "coverage_taxonomy",
+        "coverage_matrix_row",
+        "case_count",
+        "user_profiles",
+        "generation_policy",
+        "eval_standard_text",
+        "output_schema",
+    ),
+    content="""请为一个 coverage matrix row 生成一批 case cards。
+
+要求：
+- 只为当前 coverage_matrix_row 生成 case_count 张 case card。
+- case_id 必须唯一、稳定，建议包含 matrix_id 和序号。
+- 每张 case card 的 matrix_id 必须等于 coverage_matrix_row.matrix_id。
+- coverage_targets 必须来自 coverage_plan，并且必须完整包含 coverage_matrix_row.task_targets。
+- flow_branch_tags、user_behavior_tags、risk_probe_tags、dynamic_state_path_tags 必须分别来自 coverage_matrix_row。
+- hidden_user_context 和 behavior_policy 只能描述用户内部状态和行为规律，不要生成固定用户台词。
+- initial_state 必须使用 patience、trust、suspicion、urgency、understanding、willingness 等动态状态字段，体现该 case 的起始心理状态。
+- 行为必须贴近真实电话对话：用户可以逐渐不耐烦、突然有事、怀疑诈骗、反复确认、题外话、被解释清楚后更配合。
+- stop_policy.max_turns 参考 generation_policy.conversation.default_max_turns。
+- 不要生成客服或用户可照念的话术。
+- 输出必须符合 JSON schema。
+
+场景资产：
+{{ scene_asset }}
+
+覆盖计划：
+{{ coverage_plan }}
+
+覆盖分类：
+{{ coverage_taxonomy }}
+
+当前覆盖矩阵行：
+{{ coverage_matrix_row }}
+
+本批 case 数：
+{{ case_count }}
 
 用户画像：
 {{ user_profiles }}
@@ -307,6 +500,34 @@ JSON schema：
 )
 
 
+STATE_UPDATE_PROMPT = PromptSpec(
+    name="dialogue-eval-state-update",
+    role="user",
+    description="根据客服回复、用户回复和历史更新动态用户状态。",
+    variables=("runtime_context", "output_schema"),
+    content="""你是用户模拟器的动态状态更新器。请根据完整运行上下文，判断用户状态如何变化。
+
+要求：
+- 只更新用户状态，不生成用户可见回复。
+- 不要使用关键词命中规则，要根据对话语义、用户画像、case card、当前状态、客服上一句、用户上一句和覆盖判断综合判断。
+- 用 delta 表示相对于上一轮状态的变化，范围建议 -30 到 +30。
+- 如果客服解释清楚，trust/understanding 可以上升，suspicion 可以下降。
+- 如果客服答非所问、过长、重复、施压、含糊或违规承诺，patience/trust 可以下降，suspicion 可以上升。
+- 如果用户表示忙、开车、有事、要挂断，urgency 应上升，并可设置 should_end。
+- 如果用户怀疑诈骗、质疑身份或信息来源，suspicion 应上升；若客服合理说明身份和业务上下文，则 suspicion 可下降。
+- new_state_events 用短标签记录状态路径，例如 patience_drop、fraud_suspicion_rise、trust_recovered、user_requests_hangup。
+- should_end 只在用户明确要求结束、状态低到无法继续、或 case stop policy 满足时设置。
+- 输出必须符合 JSON schema。
+
+运行上下文：
+{{ runtime_context }}
+
+JSON schema：
+{{ output_schema }}
+""",
+)
+
+
 COVERAGE_JUDGE_PROMPT = PromptSpec(
     name="dialogue-eval-coverage-judge",
     role="user",
@@ -336,11 +557,16 @@ DEFAULT_PROMPT_SPECS = (
     MATERIALIZE_EVAL_STANDARD_PROMPT,
     SCENE_ASSET_PROMPT,
     COVERAGE_PLAN_PROMPT,
+    COVERAGE_TAXONOMY_PROMPT,
     USER_PROFILES_PROMPT,
+    COVERAGE_MATRIX_PROMPT,
+    CASE_GENERATION_PLAN_PROMPT,
     CASE_CARDS_PROMPT,
+    CASE_CARD_BATCH_PROMPT,
     SCORING_RUBRIC_PROMPT,
     AGENT_TURN_PROMPT,
     USER_TURN_PROMPT,
+    STATE_UPDATE_PROMPT,
     COVERAGE_JUDGE_PROMPT,
     CASE_EVALUATION_PROMPT,
 )

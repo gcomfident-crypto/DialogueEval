@@ -21,6 +21,9 @@ DEFAULT_REGISTRY_PATH = "outputs/dialogue_eval_registry.sqlite3"
 ASSET_HASH_FILES = (
     "scene_asset.yaml",
     "coverage_plan.yaml",
+    "coverage_taxonomy.yaml",
+    "coverage_matrix.yaml",
+    "case_generation_plan.yaml",
     "user_profiles.yaml",
     "case_cards.yaml",
     "scoring_rubric.yaml",

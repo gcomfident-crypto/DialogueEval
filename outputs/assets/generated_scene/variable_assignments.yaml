@@ -1,0 +1,15 @@
+{
+  "materialized_text": "# 场景评测标准\n\n- 核心目标：完成外呼任务。\n- 示例变量：单日 10 单，多日每天 8 单，连续 7 天。",
+  "assignments": [
+    {
+      "placeholder": "X",
+      "value": "10",
+      "usage": "单日合同最低单量",
+      "rationale": "fake LLM 用于结构测试的固定值。"
+    }
+  ],
+  "unresolved_placeholders": [],
+  "notes": [
+    "fake output for graph validation"
+  ]
+}

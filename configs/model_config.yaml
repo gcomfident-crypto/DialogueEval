@@ -27,6 +27,11 @@
       "model": "deepseek-chat",
       "temperature": 0.1
     },
+    "state_updater": {
+      "provider": "deepseek",
+      "model": "deepseek-chat",
+      "temperature": 0.1
+    },
     "evaluator": {
       "provider": "deepseek",
       "model": "deepseek-chat",
