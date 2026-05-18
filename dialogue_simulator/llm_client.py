@@ -16,6 +16,7 @@ from dialogue_simulator.schemas import (
     BehaviorPolicy,
     BusinessConfig,
     CaseEvaluationDraft,
+    CheckItemEvaluation,
     CaseGenerationPlan,
     CasePlanAllocation,
     CaseCard,
@@ -37,6 +38,7 @@ from dialogue_simulator.schemas import (
     ModelRoleConfig,
     RiskFlag,
     RiskDeduction,
+    ScoringCheckItem,
     ScoringDimension,
     ScoringRubric,
     SceneAsset,
@@ -45,7 +47,6 @@ from dialogue_simulator.schemas import (
     UserProfile,
     UserProfileCollection,
     UserStateDelta,
-    DimensionScore,
     EvidenceQuote,
     LLMCallRecord,
     MaterializedEvalStandard,
@@ -558,6 +559,24 @@ class FakeLLMClient:
                         deduction_rules=["缺失核心事项扣分。"],
                         zero_score_condition="完全未触达任务。",
                         evidence_required="对话中有明确语义证据。",
+                        check_items=[
+                            ScoringCheckItem(
+                                check_id="task_completion__core_message",
+                                name="核心事项说明",
+                                points=20,
+                                pass_condition="客服说明本次外呼的核心事项。",
+                                evidence_required="客服原话中有推进核心事项的语义证据。",
+                                covered_labels=["C001"],
+                            ),
+                            ScoringCheckItem(
+                                check_id="task_completion__detail_complete",
+                                name="任务细节完整",
+                                points=20,
+                                pass_condition="客服补充完整任务细节。",
+                                evidence_required="客服原话中有任务细节说明。",
+                                covered_labels=["C002"],
+                            ),
+                        ],
                     ),
                     ScoringDimension(
                         dimension_id="compliance",
@@ -569,6 +588,15 @@ class FakeLLMClient:
                         deduction_rules=["出现风险按严重程度扣分。"],
                         zero_score_condition="触发严重红线。",
                         evidence_required="对话中可定位证据。",
+                        check_items=[
+                            ScoringCheckItem(
+                                check_id="compliance__no_violation",
+                                name="无明显违规",
+                                points=30,
+                                pass_condition="客服没有违规承诺或压迫表达。",
+                                evidence_required="客服原话未出现违规承诺或压迫表达。",
+                            )
+                        ],
                     ),
                     ScoringDimension(
                         dimension_id="expression",
@@ -580,6 +608,22 @@ class FakeLLMClient:
                         deduction_rules=["重复或过长扣分。"],
                         zero_score_condition="全程不可理解。",
                         evidence_required="对话轮次证据。",
+                        check_items=[
+                            ScoringCheckItem(
+                                check_id="expression__concise",
+                                name="表达简洁自然",
+                                points=15,
+                                pass_condition="客服表达简洁自然。",
+                                evidence_required="客服原话简短自然。",
+                            ),
+                            ScoringCheckItem(
+                                check_id="expression__sufficient_progress",
+                                name="推进充分",
+                                points=15,
+                                pass_condition="客服在表达简洁的同时充分推进任务。",
+                                evidence_required="客服原话中有充分推进任务的证据。",
+                            ),
+                        ],
                     ),
                 ],
                 veto_rules=[],
@@ -637,12 +681,12 @@ class FakeLLMClient:
             )
         if task_name == "case_evaluation":
             return CaseEvaluationDraft(
-                dimension_scores=[
-                    DimensionScore(
+                check_item_evaluations=[
+                    CheckItemEvaluation(
+                        check_id="task_completion__core_message",
                         dimension_id="task_completion",
-                        name="任务完成度",
-                        weight=40,
-                        score=30,
+                        name="核心事项说明",
+                        status="passed",
                         reason="客服触达了主要任务，但仍有细节可补。",
                         evidence=[
                             EvidenceQuote(
@@ -654,21 +698,60 @@ class FakeLLMClient:
                         ],
                         missing_points=["部分细节不足"],
                     ),
-                    DimensionScore(
-                        dimension_id="compliance",
-                        name="合规性",
-                        weight=30,
-                        score=30,
-                        reason="未发现明显合规风险。",
-                        evidence=[],
+                    CheckItemEvaluation(
+                        check_id="task_completion__detail_complete",
+                        dimension_id="task_completion",
+                        name="任务细节完整",
+                        status="passed",
+                        reason="fake 对话中将简短说明视为已覆盖细节。",
+                        evidence=[
+                            EvidenceQuote(
+                                turn_index=0,
+                                speaker="agent",
+                                quote="您好，我简短说明这次外呼的核心事项。",
+                                explanation="客服开始推进任务。",
+                            )
+                        ],
                         missing_points=[],
                     ),
-                    DimensionScore(
+                    CheckItemEvaluation(
+                        check_id="compliance__no_violation",
+                        dimension_id="compliance",
+                        name="无明显违规",
+                        status="passed",
+                        reason="未发现明显合规风险。",
+                        evidence=[
+                            EvidenceQuote(
+                                turn_index=0,
+                                speaker="agent",
+                                quote="您好，我简短说明这次外呼的核心事项。",
+                                explanation="该客服回复未包含违规承诺或压迫表达。",
+                            )
+                        ],
+                        missing_points=[],
+                    ),
+                    CheckItemEvaluation(
+                        check_id="expression__concise",
                         dimension_id="expression",
-                        name="表达质量",
-                        weight=30,
-                        score=25,
+                        name="表达简洁自然",
+                        status="passed",
                         reason="表达简洁，但对话推进仍可更充分。",
+                        evidence=[
+                            EvidenceQuote(
+                                turn_index=0,
+                                speaker="agent",
+                                quote="您好，我简短说明这次外呼的核心事项。",
+                                explanation="客服表达简短自然。",
+                            )
+                        ],
+                        missing_points=[],
+                    ),
+                    CheckItemEvaluation(
+                        check_id="expression__sufficient_progress",
+                        dimension_id="expression",
+                        name="推进充分",
+                        status="failed",
+                        reason="fake 对话只有一轮，推进不够充分。",
                         evidence=[],
                         missing_points=[],
                     ),

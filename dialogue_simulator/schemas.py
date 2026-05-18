@@ -345,6 +345,21 @@ class CaseCardCollection(StrictModel):
         return cases
 
 
+class ScoringCheckItem(StrictModel):
+    check_id: str
+    name: str
+    points: float
+    pass_condition: str
+    applicability: str = ""
+    evidence_required: str = ""
+    covered_labels: list[str] = Field(default_factory=list)
+
+    @field_validator("points")
+    @classmethod
+    def non_negative_points(cls, value: float) -> float:
+        return max(0.0, value)
+
+
 class ScoringDimension(StrictModel):
     dimension_id: str
     name: str
@@ -355,6 +370,7 @@ class ScoringDimension(StrictModel):
     deduction_rules: list[str] = Field(default_factory=list)
     zero_score_condition: str = ""
     evidence_required: str = ""
+    check_items: list[ScoringCheckItem] = Field(default_factory=list)
 
     @field_validator("weight")
     @classmethod
@@ -556,6 +572,16 @@ class EvidenceQuote(StrictModel):
         return max(0, value)
 
 
+class CheckItemEvaluation(StrictModel):
+    check_id: str
+    dimension_id: str
+    name: str = ""
+    status: Literal["passed", "failed", "not_applicable"]
+    reason: str
+    evidence: list[EvidenceQuote] = Field(default_factory=list)
+    missing_points: list[str] = Field(default_factory=list)
+
+
 class DimensionScore(StrictModel):
     dimension_id: str
     name: str
@@ -592,7 +618,8 @@ class RiskDeduction(StrictModel):
 
 
 class CaseEvaluationDraft(StrictModel):
-    dimension_scores: list[DimensionScore]
+    check_item_evaluations: list[CheckItemEvaluation] = Field(default_factory=list)
+    dimension_scores: list[DimensionScore] = Field(default_factory=list)
     veto_items: list[VetoFinding] = Field(default_factory=list)
     risk_deductions: list[RiskDeduction] = Field(default_factory=list)
     final_comment: str = ""
@@ -610,6 +637,7 @@ class CaseEvaluationResult(StrictModel):
     passed: bool
     veto_triggered: bool
     veto_items: list[VetoFinding] = Field(default_factory=list)
+    check_item_evaluations: list[CheckItemEvaluation] = Field(default_factory=list)
     dimension_scores: list[DimensionScore]
     risk_deductions: list[RiskDeduction] = Field(default_factory=list)
     coverage_success: bool

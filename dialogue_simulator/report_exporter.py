@@ -162,6 +162,7 @@ def write_evaluation_csv(evaluations: list[CaseEvaluationResult], path: Path) ->
         "veto_triggered",
         "coverage_success",
         "missing_targets",
+        "check_item_evaluations",
         "dimension_scores",
         "risk_deductions",
         "final_comment",
@@ -184,6 +185,10 @@ def write_evaluation_csv(evaluations: list[CaseEvaluationResult], path: Path) ->
                     "veto_triggered": str(item.veto_triggered).lower(),
                     "coverage_success": str(item.coverage_success).lower(),
                     "missing_targets": ";".join(item.missing_targets),
+                    "check_item_evaluations": ";".join(
+                        f"{check.check_id}:{check.status}"
+                        for check in item.check_item_evaluations
+                    ),
                     "dimension_scores": ";".join(
                         f"{score.name}:{score.score}/{score.weight}"
                         for score in item.dimension_scores
@@ -435,7 +440,29 @@ def write_case_report(
             f"{_escape_table(score.reason)} | {', '.join(score.missing_points) or '无'} |"
         )
 
-    lines.extend(["", "## 3. 原始对话记录", ""])
+    lines.extend(["", "## 3. 原子评分项", ""])
+    if evaluation.check_item_evaluations:
+        lines.extend(
+            [
+                "| 维度 | 原子项 | 判定 | 原因 | 证据 | 缺失点 |",
+                "|---|---|---|---|---|---|",
+            ]
+        )
+        dimension_names = {
+            score.dimension_id: score.name
+            for score in evaluation.dimension_scores
+        }
+        for check in evaluation.check_item_evaluations:
+            lines.append(
+                f"| {_escape_table(dimension_names.get(check.dimension_id, check.dimension_id))} | "
+                f"{_escape_table(check.name or check.check_id)} | {_status_text(check.status)} | "
+                f"{_escape_table(check.reason)} | {_escape_table(_evidence_text(check.evidence) or '无')} | "
+                f"{_escape_table(', '.join(check.missing_points) or '无')} |"
+            )
+    else:
+        lines.append("- 当前评测结果未包含原子评分项，使用维度级评分兼容模式。")
+
+    lines.extend(["", "## 4. 原始对话记录", ""])
     if conversation and conversation.turns:
         lines.extend(
             [
@@ -461,7 +488,7 @@ def write_case_report(
     else:
         lines.append("- 未找到原始对话记录")
 
-    lines.extend(["", "## 4. 证据引用", ""])
+    lines.extend(["", "## 5. 证据引用", ""])
     wrote_evidence = False
     for score in evaluation.dimension_scores:
         if not score.evidence:
@@ -478,7 +505,7 @@ def write_case_report(
     if not wrote_evidence:
         lines.append("- 无明确证据引用")
 
-    lines.extend(["", "## 5. 一票否决", ""])
+    lines.extend(["", "## 6. 一票否决", ""])
     if evaluation.veto_items:
         for item in evaluation.veto_items:
             lines.append(f"- {item.rule_id}（{item.severity}）：{item.description}")
@@ -488,7 +515,7 @@ def write_case_report(
     else:
         lines.append("- 未触发")
 
-    lines.extend(["", "## 6. 风险扣分", ""])
+    lines.extend(["", "## 7. 风险扣分", ""])
     if evaluation.risk_deductions:
         for risk in evaluation.risk_deductions:
             lines.append(
@@ -501,7 +528,7 @@ def write_case_report(
     else:
         lines.append("- 无")
 
-    lines.extend(["", "## 7. 总评", "", evaluation.final_comment or "无"])
+    lines.extend(["", "## 8. 总评", "", evaluation.final_comment or "无"])
     path.write_text("\n".join(lines) + "\n", encoding="utf-8")
 
 
@@ -593,6 +620,14 @@ def _average(values: list[float]) -> float:
 
 def _yes_no(value: bool) -> str:
     return "是" if value else "否"
+
+
+def _status_text(value: str) -> str:
+    return {
+        "passed": "通过",
+        "failed": "未通过",
+        "not_applicable": "不适用",
+    }.get(value, value)
 
 
 def _escape_table(value: str) -> str:
