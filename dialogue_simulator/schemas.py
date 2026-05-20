@@ -578,8 +578,19 @@ class CheckItemEvaluation(StrictModel):
     name: str = ""
     status: Literal["passed", "failed", "not_applicable"]
     reason: str
+    points: float = 0.0
+    score_awarded: float = 0.0
+    score_delta: float = 0.0
+    pass_condition: str = ""
+    applicability: str = ""
+    evidence_required: str = ""
     evidence: list[EvidenceQuote] = Field(default_factory=list)
     missing_points: list[str] = Field(default_factory=list)
+
+    @field_validator("points", "score_awarded", "score_delta")
+    @classmethod
+    def non_negative_check_score_number(cls, value: float) -> float:
+        return max(0.0, value)
 
 
 class DimensionScore(StrictModel):
@@ -617,7 +628,14 @@ class RiskDeduction(StrictModel):
         return max(0.0, value)
 
 
+class CaseValidityAssessment(StrictModel):
+    status: Literal["valid", "partial", "invalid_user_simulation"] = "valid"
+    reason: str = ""
+    evidence: list[EvidenceQuote] = Field(default_factory=list)
+
+
 class CaseEvaluationDraft(StrictModel):
+    case_validity: CaseValidityAssessment = Field(default_factory=CaseValidityAssessment)
     check_item_evaluations: list[CheckItemEvaluation] = Field(default_factory=list)
     dimension_scores: list[DimensionScore] = Field(default_factory=list)
     veto_items: list[VetoFinding] = Field(default_factory=list)
@@ -637,6 +655,7 @@ class CaseEvaluationResult(StrictModel):
     passed: bool
     veto_triggered: bool
     veto_items: list[VetoFinding] = Field(default_factory=list)
+    case_validity: CaseValidityAssessment = Field(default_factory=CaseValidityAssessment)
     check_item_evaluations: list[CheckItemEvaluation] = Field(default_factory=list)
     dimension_scores: list[DimensionScore]
     risk_deductions: list[RiskDeduction] = Field(default_factory=list)
@@ -662,6 +681,7 @@ class AssetGenerationState(TypedDict, total=False):
     eval_standard_path: str
     business_config_path: Optional[str]
     generation_policy_path: Optional[str]
+    target_case_count: int
     output_root: str
     raw_eval_standard_text: str
     eval_standard_text: str

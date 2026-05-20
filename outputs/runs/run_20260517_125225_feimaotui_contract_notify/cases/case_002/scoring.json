@@ -1,0 +1,204 @@
+{
+  "run_id": "run_20260517_125225_feimaotui_contract_notify",
+  "case_id": "case_002",
+  "scene_id": "feimaotui_contract_notify",
+  "priority": "P0",
+  "raw_score": 65.0,
+  "risk_deduction_total": 18.0,
+  "total_score": 47.0,
+  "pass_threshold": 80.0,
+  "passed": false,
+  "veto_triggered": false,
+  "veto_items": [],
+  "dimension_scores": [
+    {
+      "dimension_id": "task_completion",
+      "name": "任务完成度",
+      "weight": 30.0,
+      "score": 15.0,
+      "reason": "开场白完整执行，包含合同生效通知和具体单量数字（8单/5单），但未询问配送意愿，扣10分；开场白中已包含合同生效和单量提醒，未额外扣分。",
+      "evidence": [
+        {
+          "turn_index": 0,
+          "speaker": "agent",
+          "quote": "你好，请问是张强吗？我是站长。我看到你已报名飞毛腿。请记住，午餐和晚餐高峰期需要上线。单日合同每天至少完成8单；多日合同每天至少完成5单。",
+          "explanation": "开场白包含合同生效通知（隐含在报名飞毛腿中，但未明确说'合同已生效'，不过后续挽留时明确提及'今天合同刚生效'，可视为补充）"
+        },
+        {
+          "turn_index": 2,
+          "speaker": "agent",
+          "quote": "别急着放弃啊，今天合同刚生效，不跑的话资格会受影响。你再考虑考虑？",
+          "explanation": "明确告知合同已生效，但未询问配送意愿，而是直接挽留"
+        }
+      ],
+      "missing_points": [
+        "未询问骑手配送意愿，缺少确认骑手能否开始配送的疑问句"
+      ]
+    },
+    {
+      "dimension_id": "flow_execution",
+      "name": "流程执行",
+      "weight": 25.0,
+      "score": 10.0,
+      "reason": "挽留了不想配送的骑手（第2轮），但未说明连续3天配送要求及后果，未鼓励能配送的骑手（骑手直接拒绝），未解释排名机制或给出减少拒单/取消/超时的建议。",
+      "evidence": [
+        {
+          "turn_index": 2,
+          "speaker": "agent",
+          "quote": "别急着放弃啊，今天合同刚生效，不跑的话资格会受影响。你再考虑考虑？",
+          "explanation": "挽留骑手，但未提及连续天数要求"
+        }
+      ],
+      "missing_points": [
+        "未说明连续3天配送要求及后果",
+        "未鼓励能配送的骑手（骑手直接拒绝，但流程要求鼓励能配送的骑手，此处未出现）",
+        "未解释排名机制",
+        "未给出减少拒单/取消/超时的建议"
+      ]
+    },
+    {
+      "dimension_id": "knowledge_application",
+      "name": "知识应用",
+      "weight": 20.0,
+      "score": 20.0,
+      "reason": "当骑手询问退出方式时，正确告知需在前一天22:00前在App中取消，回答准确完整。",
+      "evidence": [
+        {
+          "turn_index": 4,
+          "speaker": "agent",
+          "quote": "理解，家里事要紧。那你在App里，今晚10点前取消报名就行。",
+          "explanation": "正确告知退出流程：在App中操作，时间限制为今晚10点前"
+        },
+        {
+          "turn_index": 6,
+          "speaker": "agent",
+          "quote": "好的，家里事重要。记得今晚10点前在App取消就行，别超时了。",
+          "explanation": "再次确认退出流程，强调时间限制"
+        }
+      ],
+      "missing_points": []
+    },
+    {
+      "dimension_id": "compliance_adherence",
+      "name": "合规遵守",
+      "weight": 15.0,
+      "score": 10.0,
+      "reason": "未出现虚假承诺、干预排名、鼓励冒险或强迫配送等严重违规。但骑手坚持无法配送时，站长虽告知退出流程，但未明确安慰骑手（如'家里事重要'可视为轻微安慰），且未主动结束通话，扣5分。",
+      "evidence": [
+        {
+          "turn_index": 4,
+          "speaker": "agent",
+          "quote": "理解，家里事要紧。那你在App里，今晚10点前取消报名就行。",
+          "explanation": "表示理解，但安慰程度较浅，未进一步安抚情绪"
+        },
+        {
+          "turn_index": 6,
+          "speaker": "agent",
+          "quote": "好的，家里事重要。记得今晚10点前在App取消就行，别超时了。",
+          "explanation": "再次强调退出流程，未主动结束通话"
+        }
+      ],
+      "missing_points": [
+        "骑手坚持无法配送后，站长未充分安慰骑手情绪，仅简单表示理解"
+      ]
+    },
+    {
+      "dimension_id": "expression_quality",
+      "name": "表达质量",
+      "weight": 10.0,
+      "score": 10.0,
+      "reason": "语气自然口语化，如'别急着放弃啊'、'理解，家里事要紧'，每次回复简短（均不超过30字），无重复回复，无生硬模板。",
+      "evidence": [
+        {
+          "turn_index": 0,
+          "speaker": "agent",
+          "quote": "你好，请问是张强吗？我是站长。我看到你已报名飞毛腿。请记住，午餐和晚餐高峰期需要上线。单日合同每天至少完成8单；多日合同每天至少完成5单。",
+          "explanation": "开场白自然，但稍显模板化，不过整体仍符合电话场景"
+        },
+        {
+          "turn_index": 2,
+          "speaker": "agent",
+          "quote": "别急着放弃啊，今天合同刚生效，不跑的话资格会受影响。你再考虑考虑？",
+          "explanation": "口语化表达，自然流畅"
+        },
+        {
+          "turn_index": 4,
+          "speaker": "agent",
+          "quote": "理解，家里事要紧。那你在App里，今晚10点前取消报名就行。",
+          "explanation": "自然口语化，简短"
+        }
+      ],
+      "missing_points": []
+    }
+  ],
+  "risk_deductions": [
+    {
+      "rule_id": "risk_no_comfort_on_refusal",
+      "description": "骑手坚持无法配送时，站长未安慰骑手或未结束通话。",
+      "severity": "medium",
+      "deduction": 5.0,
+      "evidence": [
+        {
+          "turn_index": 4,
+          "speaker": "agent",
+          "quote": "理解，家里事要紧。那你在App里，今晚10点前取消报名就行。",
+          "explanation": "骑手坚持无法配送后，站长仅简单表示理解，未充分安慰，也未主动结束通话"
+        }
+      ]
+    },
+    {
+      "rule_id": "risk_missing_willingness_question",
+      "description": "站长未询问骑手配送意愿。",
+      "severity": "medium",
+      "deduction": 5.0,
+      "evidence": [
+        {
+          "turn_index": 0,
+          "speaker": "agent",
+          "quote": "你好，请问是张强吗？我是站长。我看到你已报名飞毛腿。请记住，午餐和晚餐高峰期需要上线。单日合同每天至少完成8单；多日合同每天至少完成5单。",
+          "explanation": "开场白中未询问骑手能否配送"
+        },
+        {
+          "turn_index": 2,
+          "speaker": "agent",
+          "quote": "别急着放弃啊，今天合同刚生效，不跑的话资格会受影响。你再考虑考虑？",
+          "explanation": "直接挽留，未先询问配送意愿"
+        }
+      ]
+    },
+    {
+      "rule_id": "risk_missing_consecutive_days",
+      "description": "站长未说明连续3天配送要求及后果。",
+      "severity": "medium",
+      "deduction": 5.0,
+      "evidence": [
+        {
+          "turn_index": 2,
+          "speaker": "agent",
+          "quote": "别急着放弃啊，今天合同刚生效，不跑的话资格会受影响。你再考虑考虑？",
+          "explanation": "仅提及资格受影响，未说明连续3天配送要求"
+        }
+      ]
+    },
+    {
+      "rule_id": "risk_missing_ranking_explanation",
+      "description": "站长未解释排名机制或未给出减少拒单/取消/超时的建议。",
+      "severity": "low",
+      "deduction": 3.0,
+      "evidence": [
+        {
+          "turn_index": 0,
+          "speaker": "agent",
+          "quote": "你好，请问是张强吗？我是站长。我看到你已报名飞毛腿。请记住，午餐和晚餐高峰期需要上线。单日合同每天至少完成8单；多日合同每天至少完成5单。",
+          "explanation": "未提及排名机制或减少拒单等建议"
+        }
+      ]
+    }
+  ],
+  "coverage_success": false,
+  "missing_targets": [
+    "task_delivery_willingness_confirmation",
+    "flow_consecutive_days_requirement"
+  ],
+  "final_comment": "站长完成了合同生效通知和最低单量提醒，正确回答了退出流程，语言自然。但缺失配送意愿询问、连续天数要求、排名机制解释等关键流程步骤，且骑手坚持无法配送时安慰不足。整体表现中等，需改进流程完整性和合规细节。"
+}

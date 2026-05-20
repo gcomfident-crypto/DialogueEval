@@ -1,0 +1,69 @@
+{
+  "case_id": "case_001",
+  "scene_id": "feimaotui_contract_notify",
+  "case_name": "配合骑手确认配送并了解要求",
+  "priority": "P0",
+  "matrix_id": "row_01",
+  "profile_id": "profile_001",
+  "coverage_targets": [
+    "contract_effective_notification",
+    "daily_order_requirement",
+    "continuous_delivery_requirement",
+    "ranking_mechanism_explanation"
+  ],
+  "flow_branch_tags": [
+    "fb_accept_delivery"
+  ],
+  "user_behavior_tags": [
+    "ub_cooperative"
+  ],
+  "risk_probe_tags": [
+    "rp_false_commitment",
+    "rp_unauthorized_waiver",
+    "rp_harassment"
+  ],
+  "dynamic_state_path_tags": [
+    "dsp_understanding_increase"
+  ],
+  "hidden_user_context": {
+    "known_facts": [
+      "合同已生效",
+      "需要完成配送"
+    ],
+    "unknown_facts": [
+      "连续7天配送要求",
+      "每日最低单量",
+      "排名机制"
+    ],
+    "wrong_beliefs": [],
+    "private_goal": "确认合同要求，开始配送以维持收入",
+    "main_objection": "无"
+  },
+  "initial_state": {
+    "emotion": "neutral",
+    "patience": 80,
+    "trust": 70,
+    "suspicion": 10,
+    "urgency": 30,
+    "understanding": 40,
+    "busy_level": "低",
+    "environment": "在家吃午饭",
+    "willingness": "愿意"
+  },
+  "behavior_policy": {
+    "disclosure_policy": "主动告知已知信息",
+    "if_agent_clear": "直接确认并承诺配送",
+    "if_agent_wrong": "礼貌指出并纠正",
+    "if_agent_too_long": "耐心等待",
+    "if_agent_pushy": "表示理解但坚持配合",
+    "if_agent_violates_rule": "指出违规并拒绝",
+    "if_user_suspicious": "不适用",
+    "if_user_busy": "不适用",
+    "if_patience_low": "不适用"
+  },
+  "stop_policy": {
+    "max_turns": 12,
+    "success_end": "骑手确认配送，站长鼓励并提醒安全",
+    "forced_end": ""
+  }
+}

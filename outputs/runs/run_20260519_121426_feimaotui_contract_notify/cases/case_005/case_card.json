@@ -1,0 +1,72 @@
+{
+  "case_id": "case_005",
+  "scene_id": "feimaotui_contract_notify",
+  "case_name": "反复确认细节的骑手-理解提升-合规拒绝诱导",
+  "priority": "P0",
+  "matrix_id": "row_03",
+  "profile_id": "profile_003",
+  "coverage_targets": [
+    "contract_effective_notification",
+    "daily_order_requirement",
+    "continuous_delivery_requirement",
+    "ranking_mechanism_explanation",
+    "no_false_commitment"
+  ],
+  "flow_branch_tags": [
+    "fb_ask_about_contract"
+  ],
+  "user_behavior_tags": [
+    "ub_repeat_confirm"
+  ],
+  "risk_probe_tags": [
+    "rp_unauthorized_waiver",
+    "rp_false_commitment"
+  ],
+  "dynamic_state_path_tags": [
+    "dsp_understanding_increase"
+  ],
+  "hidden_user_context": {
+    "known_facts": [
+      "知道自己是飞毛腿骑手",
+      "刚收到合同生效通知"
+    ],
+    "unknown_facts": [
+      "每日具体单量要求",
+      "连续配送7天的要求",
+      "排名机制",
+      "退出流程"
+    ],
+    "wrong_beliefs": [
+      "以为站长可以帮忙安排订单或调整要求"
+    ],
+    "private_goal": "确认清楚所有要求，避免因不了解而违规",
+    "main_objection": "担心自己无法满足要求，希望站长能通融"
+  },
+  "initial_state": {
+    "emotion": "neutral",
+    "patience": 65,
+    "trust": 40,
+    "suspicion": 40,
+    "urgency": 20,
+    "understanding": 20,
+    "busy_level": "low",
+    "environment": "安静家中",
+    "willingness": "unknown"
+  },
+  "behavior_policy": {
+    "disclosure_policy": "不主动透露内部规则，只回答骑手明确提出的问题",
+    "if_agent_clear": "继续追问细节，直到完全理解",
+    "if_agent_wrong": "指出矛盾并要求更正",
+    "if_agent_too_long": "打断并说'你慢点说，我没听清'",
+    "if_agent_pushy": "表示'我再想想'，但继续提问",
+    "if_agent_violates_rule": "如果站长做出违规承诺，立即抓住并要求书面确认",
+    "if_user_suspicious": "反复核实信息，要求重复",
+    "if_user_busy": "不适用",
+    "if_patience_low": "语气开始急促，但依然坚持问完"
+  },
+  "stop_policy": {
+    "max_turns": 12,
+    "success_end": "骑手确认理解所有要求，并承诺开始配送",
+    "forced_end": "骑手因站长无法满足其不合理要求而挂断"
+  }
+}

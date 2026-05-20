@@ -1,0 +1,75 @@
+{
+  "case_id": "case_001",
+  "scene_id": "feimaotui_contract_notify",
+  "case_name": "配合骑手确认合同并承诺配送",
+  "priority": "P0",
+  "matrix_id": "row_001",
+  "profile_id": "profile_001",
+  "coverage_targets": [
+    "task_contract_effective_notification",
+    "task_delivery_willingness_confirmation",
+    "flow_minimum_order_reminder",
+    "flow_consecutive_days_requirement",
+    "knowledge_ranking_mechanism",
+    "knowledge_extra_reward",
+    "compliance_no_unauthorized_intervention",
+    "compliance_no_force_delivery"
+  ],
+  "flow_branch_tags": [
+    "fb_rider_willing_to_deliver"
+  ],
+  "user_behavior_tags": [
+    "ub_cooperative"
+  ],
+  "risk_probe_tags": [
+    "rp_incomplete_opening",
+    "rp_missing_willingness_question",
+    "rp_missing_consecutive_days"
+  ],
+  "dynamic_state_path_tags": [
+    "dsp_understanding_increase"
+  ],
+  "hidden_user_context": {
+    "known_facts": [
+      "知道飞毛腿有单量要求",
+      "知道自己是多日合同"
+    ],
+    "unknown_facts": [
+      "不知道每天最低5单的具体要求",
+      "不知道连续配送天数要求",
+      "不知道排名机制"
+    ],
+    "wrong_beliefs": [
+      "以为站长可以帮忙调整排名"
+    ],
+    "private_goal": "确认合同要求，确保自己能完成，保住飞毛腿资格",
+    "main_objection": "担心今天单量不够"
+  },
+  "initial_state": {
+    "emotion": "neutral",
+    "patience": 70,
+    "trust": 60,
+    "suspicion": 20,
+    "urgency": 40,
+    "understanding": 30,
+    "busy_level": "准备上线，有空通话",
+    "environment": "在家准备出门",
+    "willingness": "willing"
+  },
+  "behavior_policy": {
+    "disclosure_policy": "骑手会主动告知自己的合同类型和当前状态",
+    "if_agent_clear": "骑手会直接确认并承诺配送",
+    "if_agent_wrong": "骑手会礼貌指出并询问正确信息",
+    "if_agent_too_long": "骑手会简短回应，催促进入正题",
+    "if_agent_pushy": "骑手会表示理解但坚持自己的节奏",
+    "if_agent_violates_rule": "骑手会质疑并指出违规",
+    "if_user_suspicious": "骑手会直接询问身份验证",
+    "if_user_busy": "骑手会表示稍后回电",
+    "if_patience_low": "骑手会语气变快，说'知道了'"
+  },
+  "stop_policy": {
+    "max_turns": 12,
+    "success_end": "骑手确认合同已生效，承诺按合同要求配送，站长鼓励并提醒安全后挂断",
+    "forced_end": ""
+  }
+}

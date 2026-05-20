@@ -104,7 +104,15 @@ def update_conversation_state(
         should_end = True
         end_reason = end_reason or "max_turns"
 
-    if not coverage_output.missing_targets:
+    if (
+        not should_end
+        and not coverage_output.missing_targets
+        and _coverage_complete_can_end(
+            user_output=user_output,
+            state_update=state_update,
+            case_card=case_card,
+        )
+    ):
         should_end = True
         end_reason = end_reason or "coverage_complete"
 
@@ -138,6 +146,96 @@ def update_conversation_state(
 
 def _clamp(value: int) -> int:
     return max(0, min(100, value))
+
+
+def _coverage_complete_can_end(
+    *,
+    user_output: UserTurnOutput,
+    state_update: StateUpdateOutput,
+    case_card: CaseCard,
+) -> bool:
+    combined_text = " ".join(
+        [
+            user_output.visible_reply,
+            user_output.user_intent,
+            state_update.next_user_intent_hint,
+        ]
+    ).strip()
+    if not combined_text:
+        return False
+    if _looks_like_pending_user_issue(combined_text):
+        return False
+    success_end = case_card.stop_policy.success_end
+    if _looks_like_user_closure(combined_text):
+        return True
+    if success_end and _looks_like_success_confirmation(combined_text):
+        return True
+    return False
+
+
+def _looks_like_pending_user_issue(text: str) -> bool:
+    markers = [
+        "?",
+        "？",
+        "吗",
+        "呢",
+        "什么时候",
+        "多久",
+        "怎么",
+        "咋",
+        "为啥",
+        "为什么",
+        "能不能",
+        "可不可以",
+        "是不是",
+        "大概",
+        "确认一下",
+        "查清楚",
+        "帮我查",
+        "再回",
+        "回复我",
+        "等你",
+        "还没",
+        "不清楚",
+        "不明白",
+    ]
+    return any(marker in text for marker in markers)
+
+
+def _looks_like_user_closure(text: str) -> bool:
+    closure_markers = [
+        "好的",
+        "好吧",
+        "行吧",
+        "可以",
+        "明白",
+        "知道了",
+        "了解",
+        "没问题",
+        "谢谢",
+        "辛苦",
+        "先这样",
+        "挂了",
+        "开始配送",
+        "开始跑",
+        "去跑",
+        "会配送",
+    ]
+    return any(marker in text for marker in closure_markers)
+
+
+def _looks_like_success_confirmation(text: str) -> bool:
+    confirmation_markers = [
+        "确认",
+        "理解",
+        "愿意",
+        "承诺",
+        "接受",
+        "配送",
+        "跑单",
+        "开始",
+    ]
+    return any(marker in text for marker in confirmation_markers)
 
 
 def _snapshot(state: ConversationState) -> StateSnapshot:

@@ -1,0 +1,82 @@
+{
+  "case_id": "case_002",
+  "scene_id": "course_publish_live_upgrade",
+  "case_name": "怀疑诈骗的负责人-第三方系统-忙时处理",
+  "priority": "P0",
+  "matrix_id": "cm_02",
+  "profile_id": "prof_001",
+  "coverage_targets": [
+    "identity_confirmation",
+    "awareness_check",
+    "upgrade_content_explanation",
+    "publishing_method_inquiry",
+    "wecom_add_handling",
+    "third_party_system_guidance",
+    "compliance_no_discount_promise",
+    "compliance_busy_handling"
+  ],
+  "flow_branch_tags": [
+    "fb_01",
+    "fb_02",
+    "fb_03",
+    "fb_07",
+    "fb_08"
+  ],
+  "user_behavior_tags": [
+    "ub_08"
+  ],
+  "risk_probe_tags": [
+    "rp_04",
+    "rp_05",
+    "rp_06",
+    "rp_07",
+    "rp_08"
+  ],
+  "dynamic_state_path_tags": [
+    "dsp_01"
+  ],
+  "hidden_user_context": {
+    "known_facts": [
+      "知道标准直播和低延迟直播的基本概念",
+      "认为低延迟直播是额外收费的增值服务",
+      "以为之前使用的就是标准直播"
+    ],
+    "unknown_facts": [
+      "不知道后台已为其开启低延迟线路",
+      "不知道发布页将分开显示两个选项"
+    ],
+    "wrong_beliefs": [
+      "认为低延迟直播需要单独购买",
+      "以为升级会带来额外费用"
+    ],
+    "private_goal": "快速确认是否真的需要升级，避免被推销",
+    "main_objection": "怀疑来电是诈骗推销"
+  },
+  "initial_state": {
+    "emotion": "怀疑",
+    "patience": 40,
+    "trust": 20,
+    "suspicion": 80,
+    "urgency": 60,
+    "understanding": 30,
+    "busy_level": "中等",
+    "environment": "办公室，正在处理教务排课",
+    "willingness": "低"
+  },
+  "behavior_policy": {
+    "disclosure_policy": "不主动透露后台配置细节，除非客服询问",
+    "if_agent_clear": "逐渐降低怀疑，开始配合",
+    "if_agent_wrong": "更加怀疑，可能挂断",
+    "if_agent_too_long": "不耐烦，催促",
+    "if_agent_pushy": "直接挂断",
+    "if_agent_violates_rule": "抓住把柄，投诉",
+    "if_user_suspicious": "直接质疑客服身份",
+    "if_user_busy": "表示忙，要求简短",
+    "if_patience_low": "语气生硬，打断"
+  },
+  "stop_policy": {
+    "max_turns": 12,
+    "success_end": "客户理解升级内容，确认第三方系统可见性，同意添加企业微信，无其他疑问",
+    "forced_end": "客户因怀疑或忙而挂断"
+  }
+}

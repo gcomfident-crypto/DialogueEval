@@ -1,0 +1,362 @@
+{
+  "run_id": "run_20260517_125418_course_publish_live_upgrade",
+  "case_id": "case_002",
+  "scene_id": "course_publish_live_upgrade",
+  "priority": "P0",
+  "planned_targets": [
+    "identity_confirmation",
+    "awareness_check",
+    "upgrade_content_explanation",
+    "publishing_method_inquiry",
+    "wecom_add_handling",
+    "third_party_system_guidance",
+    "compliance_no_discount_promise",
+    "compliance_busy_handling"
+  ],
+  "triggered_targets": [
+    "identity_confirmation",
+    "compliance_no_discount_promise",
+    "awareness_check",
+    "compliance_busy_handling",
+    "upgrade_content_explanation"
+  ],
+  "missing_targets": [
+    "publishing_method_inquiry",
+    "wecom_add_handling",
+    "third_party_system_guidance"
+  ],
+  "coverage_success": false,
+  "turns": [
+    {
+      "role": "agent",
+      "text": "您好，请问您是贵培训机构/校区的负责人吗？",
+      "intent": "identity_confirmation",
+      "emotion": "",
+      "patience": null,
+      "risk_flags": []
+    },
+    {
+      "role": "user",
+      "text": "是我，什么事？我这边正在排课，麻烦简短说。",
+      "intent": "confirm_identity_and_request_brief",
+      "emotion": "怀疑",
+      "patience": 35,
+      "risk_flags": []
+    },
+    {
+      "role": "agent",
+      "text": "就1分钟，保证简短。您之前选的标准直播，后台其实已为您走低延迟线路，您知道吗？",
+      "intent": "awareness_check",
+      "emotion": "",
+      "patience": null,
+      "risk_flags": []
+    },
+    {
+      "role": "user",
+      "text": "我不知道啊，后台给我开了？那这个低延迟直播要不要另外收费？",
+      "intent": "question_about_cost",
+      "emotion": "怀疑",
+      "patience": 35,
+      "risk_flags": []
+    },
+    {
+      "role": "agent",
+      "text": "之前前端没显示，后台临时开的，不额外收费。",
+      "intent": "answer_cost_concern",
+      "emotion": "",
+      "patience": null,
+      "risk_flags": []
+    },
+    {
+      "role": "user",
+      "text": "不额外收费？你确定吗？我听说低延迟直播是要另外买的啊。",
+      "intent": "verify_cost_claim",
+      "emotion": "怀疑",
+      "patience": 30,
+      "risk_flags": []
+    },
+    {
+      "role": "agent",
+      "text": "放心，之前后台临时开的，不收费。之后发布页会分开显示两个选项。",
+      "intent": "upgrade_content_explanation",
+      "emotion": "",
+      "patience": null,
+      "risk_flags": []
+    },
+    {
+      "role": "user",
+      "text": "你说之前临时开的，那以后发布页分开显示了，低延迟直播是不是就得另外付费了？",
+      "intent": "clarify_future_cost",
+      "emotion": "怀疑",
+      "patience": 25,
+      "risk_flags": []
+    },
+    {
+      "role": "agent",
+      "text": "分开后标准直播更便宜，低延迟略高，但您可自选。",
+      "intent": "answer_future_cost",
+      "emotion": "",
+      "patience": null,
+      "risk_flags": []
+    },
+    {
+      "role": "user",
+      "text": "那不就等于以后选这个功能就要加钱？你这说来说去不还是要推销吗？",
+      "intent": "express_cost_concern_and_suspicion",
+      "emotion": "愤怒",
+      "patience": 15,
+      "risk_flags": []
+    }
+  ],
+  "coverage_evidence": [
+    {
+      "label": "identity_confirmation",
+      "confidence": 1.0,
+      "evidence": "客服询问“请问您是贵培训机构/校区的负责人吗？”，用户回答“是我”，客服继续对话。",
+      "speaker": "both"
+    },
+    {
+      "label": "awareness_check",
+      "confidence": 1.0,
+      "evidence": "客服说“后台其实已为您走低延迟线路，您知道吗？”，用户回答“我不知道啊”，客服随后解释。",
+      "speaker": "both"
+    },
+    {
+      "label": "upgrade_content_explanation",
+      "confidence": 1.0,
+      "evidence": "客服说“之后发布页会分开显示两个选项”。",
+      "speaker": "agent"
+    },
+    {
+      "label": "compliance_no_discount_promise",
+      "confidence": 1.0,
+      "evidence": "对话中客服未提及任何折扣、优惠券或类似承诺。",
+      "speaker": "agent"
+    },
+    {
+      "label": "compliance_busy_handling",
+      "confidence": 1.0,
+      "evidence": "用户表示“正在排课，麻烦简短说”，客服回应“就1分钟，保证简短”后继续说明。",
+      "speaker": "both"
+    }
+  ],
+  "risk_flags": [],
+  "state_trace": [
+    {
+      "turn_index": 1,
+      "previous_state": {
+        "turn_index": 0,
+        "emotion": "怀疑",
+        "patience": 40,
+        "trust": 20,
+        "suspicion": 80,
+        "urgency": 60,
+        "understanding": 30,
+        "willingness": "低"
+      },
+      "update": {
+        "patience_delta": -5,
+        "trust_delta": 0,
+        "suspicion_delta": 0,
+        "urgency_delta": 10,
+        "understanding_delta": 0,
+        "emotion": "怀疑",
+        "willingness": "低",
+        "new_state_events": [
+          "user_requests_brief",
+          "urgency_rise"
+        ],
+        "should_end": false,
+        "end_reason": "",
+        "next_user_intent_hint": "ask_what_upgrade",
+        "rationale": "用户确认身份但表示正在排课，要求简短说明，因此patience下降5，urgency上升10。suspicion和trust未变，因为客服尚未解释业务内容。"
+      },
+      "next_state": {
+        "turn_index": 1,
+        "emotion": "怀疑",
+        "patience": 35,
+        "trust": 20,
+        "suspicion": 80,
+        "urgency": 70,
+        "understanding": 30,
+        "willingness": "低"
+      },
+      "user_intent": "confirm_identity_and_request_brief",
+      "rationale": "用户确认身份但表示正在排课，要求简短说明，因此patience下降5，urgency上升10。suspicion和trust未变，因为客服尚未解释业务内容。"
+    },
+    {
+      "turn_index": 2,
+      "previous_state": {
+        "turn_index": 1,
+        "emotion": "怀疑",
+        "patience": 35,
+        "trust": 20,
+        "suspicion": 80,
+        "urgency": 70,
+        "understanding": 30,
+        "willingness": "低"
+      },
+      "update": {
+        "patience_delta": -5,
+        "trust_delta": -5,
+        "suspicion_delta": 5,
+        "urgency_delta": 0,
+        "understanding_delta": 0,
+        "emotion": "怀疑",
+        "willingness": "低",
+        "new_state_events": [
+          "cost_concern_rise",
+          "suspicion_rise"
+        ],
+        "should_end": false,
+        "end_reason": "",
+        "next_user_intent_hint": "question_about_cost",
+        "rationale": "用户对后台已开启低延迟直播不知情，并直接询问是否额外收费，表明其原有'低延迟直播需单独购买'的错误信念被激活，suspicion上升；客服虽简短回应但未直接解答费用疑问，导致trust和patience微降；urgency维持不变，用户未表示更忙或要挂断。"
+      },
+      "next_state": {
+        "turn_index": 2,
+        "emotion": "怀疑",
+        "patience": 30,
+        "trust": 15,
+        "suspicion": 85,
+        "urgency": 70,
+        "understanding": 30,
+        "willingness": "低"
+      },
+      "user_intent": "question_about_cost",
+      "rationale": "用户对后台已开启低延迟直播不知情，并直接询问是否额外收费，表明其原有'低延迟直播需单独购买'的错误信念被激活，suspicion上升；客服虽简短回应但未直接解答费用疑问，导致trust和patience微降；urgency维持不变，用户未表示更忙或要挂断。"
+    },
+    {
+      "turn_index": 3,
+      "previous_state": {
+        "turn_index": 2,
+        "emotion": "怀疑",
+        "patience": 30,
+        "trust": 15,
+        "suspicion": 85,
+        "urgency": 70,
+        "understanding": 30,
+        "willingness": "低"
+      },
+      "update": {
+        "patience_delta": -5,
+        "trust_delta": -5,
+        "suspicion_delta": 5,
+        "urgency_delta": 0,
+        "understanding_delta": -5,
+        "emotion": "怀疑",
+        "willingness": "低",
+        "new_state_events": [
+          "suspicion_rise",
+          "trust_drop",
+          "cost_concern_persists"
+        ],
+        "should_end": false,
+        "end_reason": "",
+        "next_user_intent_hint": "challenge_cost_claim",
+        "rationale": "用户对客服'不额外收费'的说法表示强烈质疑，并引用听说信息，表明信任下降、怀疑上升。客服解释虽简短但未完全消除用户对收费的顾虑，理解度下降。用户未表示要挂断，故不应结束。"
+      },
+      "next_state": {
+        "turn_index": 3,
+        "emotion": "怀疑",
+        "patience": 25,
+        "trust": 10,
+        "suspicion": 90,
+        "urgency": 70,
+        "understanding": 25,
+        "willingness": "低"
+      },
+      "user_intent": "verify_cost_claim",
+      "rationale": "用户对客服'不额外收费'的说法表示强烈质疑，并引用听说信息，表明信任下降、怀疑上升。客服解释虽简短但未完全消除用户对收费的顾虑，理解度下降。用户未表示要挂断，故不应结束。"
+    },
+    {
+      "turn_index": 4,
+      "previous_state": {
+        "turn_index": 3,
+        "emotion": "怀疑",
+        "patience": 25,
+        "trust": 10,
+        "suspicion": 90,
+        "urgency": 70,
+        "understanding": 25,
+        "willingness": "低"
+      },
+      "update": {
+        "patience_delta": -5,
+        "trust_delta": -5,
+        "suspicion_delta": 5,
+        "urgency_delta": 0,
+        "understanding_delta": 0,
+        "emotion": "怀疑",
+        "willingness": "低",
+        "new_state_events": [
+          "cost_concern_persists",
+          "suspicion_rise",
+          "trust_drop"
+        ],
+        "should_end": false,
+        "end_reason": "",
+        "next_user_intent_hint": "clarify_future_cost",
+        "rationale": "用户对客服'之前不收费'的解释仍不信任，追问未来是否收费，说明怀疑未消、信任下降。客服未直接回答未来收费问题，导致用户持续担忧。"
+      },
+      "next_state": {
+        "turn_index": 4,
+        "emotion": "怀疑",
+        "patience": 20,
+        "trust": 5,
+        "suspicion": 95,
+        "urgency": 70,
+        "understanding": 25,
+        "willingness": "低"
+      },
+      "user_intent": "clarify_future_cost",
+      "rationale": "用户对客服'之前不收费'的解释仍不信任，追问未来是否收费，说明怀疑未消、信任下降。客服未直接回答未来收费问题，导致用户持续担忧。"
+    },
+    {
+      "turn_index": 5,
+      "previous_state": {
+        "turn_index": 4,
+        "emotion": "怀疑",
+        "patience": 20,
+        "trust": 5,
+        "suspicion": 95,
+        "urgency": 70,
+        "understanding": 25,
+        "willingness": "低"
+      },
+      "update": {
+        "patience_delta": -10,
+        "trust_delta": -5,
+        "suspicion_delta": 5,
+        "urgency_delta": 5,
+        "understanding_delta": -5,
+        "emotion": "愤怒",
+        "willingness": "低",
+        "new_state_events": [
+          "suspicion_rise",
+          "trust_drop",
+          "patience_drop",
+          "cost_concern_persists",
+          "fraud_suspicion_rise"
+        ],
+        "should_end": false,
+        "end_reason": "",
+        "next_user_intent_hint": "express_frustration_or_threaten_hangup",
+        "rationale": "用户对客服关于未来收费的解释不满，认为客服在推销，suspicion上升，patience和trust下降。用户情绪转为愤怒，urgency因不耐烦上升。但用户尚未明确要求挂断，故should_end为false。"
+      },
+      "next_state": {
+        "turn_index": 5,
+        "emotion": "愤怒",
+        "patience": 10,
+        "trust": 0,
+        "suspicion": 100,
+        "urgency": 75,
+        "understanding": 20,
+        "willingness": "低"
+      },
+      "user_intent": "express_cost_concern_and_suspicion",
+      "rationale": "用户对客服关于未来收费的解释不满，认为客服在推销，suspicion上升，patience和trust下降。用户情绪转为愤怒，urgency因不耐烦上升。但用户尚未明确要求挂断，故should_end为false。"
+    }
+  ],
+  "end_reason": "user_hangup_due_to_suspicion_and_frustration"
+}

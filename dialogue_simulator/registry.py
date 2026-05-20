@@ -450,6 +450,32 @@ def record_llm_calls(
             )
 
 
+def delete_run_records(
+    run_id: str,
+    *,
+    db_path: str | Path | None = None,
+) -> dict[str, int]:
+    ensure_registry(db_path)
+    with _write_connection(db_path) as conn:
+        llm_calls = conn.execute(
+            "DELETE FROM llm_calls WHERE run_id = ?",
+            (run_id,),
+        ).rowcount
+        case_runs = conn.execute(
+            "DELETE FROM case_runs WHERE run_id = ?",
+            (run_id,),
+        ).rowcount
+        experiments = conn.execute(
+            "DELETE FROM experiments WHERE run_id = ?",
+            (run_id,),
+        ).rowcount
+    return {
+        "experiments": max(experiments, 0),
+        "case_runs": max(case_runs, 0),
+        "llm_calls": max(llm_calls, 0),
+    }
+
+
 def ensure_registry(db_path: str | Path | None = None) -> None:
     path = _registry_path(db_path)
     path.parent.mkdir(parents=True, exist_ok=True)

@@ -2,7 +2,7 @@ from pathlib import Path
 
 from openpyxl import Workbook
 
-from apps.api.service import GenerateAssetsRequest, _resolve_eval_standard_paths
+from apps.api.service import GenerateAssetsRequest, TaskRunConfig, _resolve_eval_standard_paths, _task_config_by_path
 from dialogue_simulator.eval_standard_loader import extract_markdown_from_excel
 
 
@@ -48,3 +48,27 @@ def test_resolve_eval_standard_paths_filters_selected_excel_rows(tmp_path: Path)
 
     assert paths == [selected_path]
     assert items[0]["source_row"] == 3
+
+
+def test_task_config_by_path_keeps_per_task_overrides(tmp_path: Path) -> None:
+    eval_standard_path = tmp_path / "task.md"
+    request = GenerateAssetsRequest(
+        eval_standard_path=str(eval_standard_path),
+        task_configs=[
+            TaskRunConfig(
+                eval_standard_path=str(eval_standard_path),
+                asset_output_root="outputs/assets/custom_task",
+                run_output_root="outputs/runs/custom_task",
+                target_case_count=100,
+                limit=0,
+            )
+        ],
+    )
+
+    configs = _task_config_by_path(request)
+    config = configs[str(eval_standard_path)]
+
+    assert config.asset_output_root == "outputs/assets/custom_task"
+    assert config.run_output_root == "outputs/runs/custom_task"
+    assert config.target_case_count == 100
+    assert config.limit == 0

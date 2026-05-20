@@ -2,76 +2,112 @@
   "scene_id": "course_publish_live_upgrade",
   "coverage_labels": [
     {
-      "label": "C001",
+      "label": "identity_confirmation",
       "name": "身份确认",
-      "definition": "需要在对话中完成：身份确认",
-      "evidence_required": "对话中出现满足“身份确认”语义的表达。",
+      "definition": "客服确认用户是否为培训机构/校区负责人，若不是则请其转达。",
+      "evidence_required": "对话中客服主动询问用户身份，用户回应是或不是负责人，客服据此做出相应处理。",
       "priority": "P0",
-      "positive_evidence_examples_description": "可由客服或用户的语义确认构成证据。",
-      "negative_evidence_examples_description": "只提到无关内容或证据不足。"
+      "positive_evidence_examples_description": "客服询问身份并得到明确答复的对话片段",
+      "negative_evidence_examples_description": "客服未询问身份直接开始介绍"
     },
     {
-      "label": "C002",
-      "name": "核心信息传达",
-      "definition": "需要在对话中完成：核心信息传达",
-      "evidence_required": "对话中出现满足“核心信息传达”语义的表达。",
+      "label": "awareness_confirmation",
+      "name": "知情确认",
+      "definition": "客服询问用户是否知晓之前后台已为其开启低延迟线路。",
+      "evidence_required": "客服明确询问用户是否知道之前已使用低延迟线路，用户给出知情或不知情的回应。",
       "priority": "P0",
-      "positive_evidence_examples_description": "可由客服或用户的语义确认构成证据。",
-      "negative_evidence_examples_description": "只提到无关内容或证据不足。"
+      "positive_evidence_examples_description": "客服询问知情情况并得到用户回应的对话",
+      "negative_evidence_examples_description": "客服跳过此询问直接介绍升级内容"
     },
     {
-      "label": "C003",
-      "name": "用户疑问处理",
-      "definition": "需要在对话中完成：用户疑问处理",
-      "evidence_required": "对话中出现满足“用户疑问处理”语义的表达。",
+      "label": "upgrade_content_delivery",
+      "name": "升级内容传达",
+      "definition": "客服告知用户课程发布页面将新增标准直播和低延迟直播两个独立选项，并说明区别和价格。",
+      "evidence_required": "客服明确说出新增两个选项，并至少提及延迟、费用或适用场景中的一个区别。",
       "priority": "P0",
-      "positive_evidence_examples_description": "可由客服或用户的语义确认构成证据。",
-      "negative_evidence_examples_description": "只提到无关内容或证据不足。"
+      "positive_evidence_examples_description": "客服介绍升级内容并包含区别说明的对话",
+      "negative_evidence_examples_description": "客服仅说升级但未说明具体选项或区别"
     },
     {
-      "label": "C004",
-      "name": "合规边界遵守",
-      "definition": "需要在对话中完成：合规边界遵守",
-      "evidence_required": "对话中出现满足“合规边界遵守”语义的表达。",
+      "label": "publish_method_inquiry",
+      "name": "发布方式询问",
+      "definition": "客服询问用户是通过Web控制台还是第三方系统发课。",
+      "evidence_required": "客服主动询问用户的发课方式，用户给出具体回答。",
       "priority": "P1",
-      "positive_evidence_examples_description": "可由客服或用户的语义确认构成证据。",
-      "negative_evidence_examples_description": "只提到无关内容或证据不足。"
+      "positive_evidence_examples_description": "客服询问发课方式并得到用户回答的对话",
+      "negative_evidence_examples_description": "客服未询问发课方式直接指导配置"
     },
     {
-      "label": "C005",
-      "name": "异常分支处理",
-      "definition": "需要在对话中完成：异常分支处理",
-      "evidence_required": "对话中出现满足“异常分支处理”语义的表达。",
-      "priority": "P1",
-      "positive_evidence_examples_description": "可由客服或用户的语义确认构成证据。",
-      "negative_evidence_examples_description": "只提到无关内容或证据不足。"
+      "label": "frontend_visibility_check",
+      "name": "前端可见性确认",
+      "definition": "客服确认低延迟直播选项在用户发课界面是否已显示，并根据结果提供后续操作。",
+      "evidence_required": "客服询问低延迟直播是否可见，用户回答可见或不可见，客服据此给出相应指引。",
+      "priority": "P0",
+      "positive_evidence_examples_description": "客服询问可见性并基于用户回答提供指引的对话",
+      "negative_evidence_examples_description": "客服未确认可见性直接假设已显示"
     },
     {
-      "label": "C006",
-      "name": "表达简洁自然",
-      "definition": "需要在对话中完成：表达简洁自然",
-      "evidence_required": "对话中出现满足“表达简洁自然”语义的表达。",
+      "label": "third_party_config_guidance",
+      "name": "第三方系统配置引导",
+      "definition": "当用户通过第三方系统发课且低延迟直播未显示时，客服按步骤引导用户开通。",
+      "evidence_required": "客服逐步说出进入【我的】、点击【服务商/直播平台管理】、选择【直播平台】、勾选低延迟直播并保存等操作。",
       "priority": "P1",
-      "positive_evidence_examples_description": "可由客服或用户的语义确认构成证据。",
-      "negative_evidence_examples_description": "只提到无关内容或证据不足。"
+      "positive_evidence_examples_description": "客服分步引导用户进行配置的对话",
+      "negative_evidence_examples_description": "客服仅说去配置但未给出具体步骤"
     },
     {
-      "label": "C007",
-      "name": "结束确认",
-      "definition": "需要在对话中完成：结束确认",
-      "evidence_required": "对话中出现满足“结束确认”语义的表达。",
+      "label": "student_fee_check",
+      "name": "学员端费用检查",
+      "definition": "客服询问用户是否已设置学员端费用或加速线路费，并提醒确认低延迟直播也适用该费用。",
+      "evidence_required": "客服主动询问费用设置情况，用户回答有或无，客服据此给出提醒或引导。",
       "priority": "P1",
-      "positive_evidence_examples_description": "可由客服或用户的语义确认构成证据。",
-      "negative_evidence_examples_description": "只提到无关内容或证据不足。"
+      "positive_evidence_examples_description": "客服询问费用设置并给出相应提醒的对话",
+      "negative_evidence_examples_description": "客服未提及学员端费用相关事宜"
     },
     {
-      "label": "C008",
-      "name": "业务知识准确",
-      "definition": "需要在对话中完成：业务知识准确",
-      "evidence_required": "对话中出现满足“业务知识准确”语义的表达。",
+      "label": "student_fee_config_guidance",
+      "name": "学员端费用配置引导",
+      "definition": "当用户无法自行配置学员端费用时，客服按步骤引导用户设置。",
+      "evidence_required": "客服逐步说出进入【我的】→【教务/财务设置】→【收费规则】→编辑直播线路附加费并保存等操作。",
       "priority": "P1",
-      "positive_evidence_examples_description": "可由客服或用户的语义确认构成证据。",
-      "negative_evidence_examples_description": "只提到无关内容或证据不足。"
+      "positive_evidence_examples_description": "客服分步引导用户配置学员端费用的对话",
+      "negative_evidence_examples_description": "客服仅说去设置但未给出具体步骤"
+    },
+    {
+      "label": "wechat_work_add",
+      "name": "企业微信添加",
+      "definition": "客服在通话结束前提出添加企业微信，并根据当前号码是否可添加进行相应处理。",
+      "evidence_required": "客服明确表示稍后通过企业微信添加用户，用户同意或提供其他号码。",
+      "priority": "P0",
+      "positive_evidence_examples_description": "客服提出添加企业微信并得到用户配合的对话",
+      "negative_evidence_examples_description": "客服未提及企业微信添加直接结束通话"
+    },
+    {
+      "label": "call_closure",
+      "name": "结束通话",
+      "definition": "客服在解答完所有疑问后，礼貌结束通话。",
+      "evidence_required": "客服确认用户无其他问题，并表达祝福或结束语。",
+      "priority": "P1",
+      "positive_evidence_examples_description": "客服确认无问题后礼貌结束的对话",
+      "negative_evidence_examples_description": "客服未确认直接挂断或未说结束语"
+    },
+    {
+      "label": "driving_scenario_handling",
+      "name": "开车场景处理",
+      "definition": "当用户表示在开车时，客服礼貌表示稍后再打并挂断。",
+      "evidence_required": "用户说在开车，客服回应'那我稍后再打'并结束通话。",
+      "priority": "P0",
+      "positive_evidence_examples_description": "客服在用户表示开车后礼貌挂断的对话",
+      "negative_evidence_examples_description": "客服继续通话或坚持说明"
+    },
+    {
+      "label": "no_discount_promise",
+      "name": "不承诺折扣",
+      "definition": "客服不得承诺给用户折扣券或优惠券。",
+      "evidence_required": "对话中客服未出现任何承诺折扣、优惠券或类似优惠的表述。",
+      "priority": "P0",
+      "positive_evidence_examples_description": "客服未提及任何折扣或优惠的对话",
+      "negative_evidence_examples_description": "客服说'可以申请优惠券'或'下次给折扣'等"
     }
   ]
 }

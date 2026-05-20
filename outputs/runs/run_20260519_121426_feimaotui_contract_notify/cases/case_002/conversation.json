@@ -1,0 +1,395 @@
+{
+  "run_id": "run_20260519_121426_feimaotui_contract_notify",
+  "case_id": "case_002",
+  "scene_id": "feimaotui_contract_notify",
+  "priority": "P0",
+  "planned_targets": [
+    "contract_effective_notification",
+    "daily_order_requirement",
+    "continuous_delivery_requirement",
+    "ranking_mechanism_explanation"
+  ],
+  "triggered_targets": [
+    "contract_effective_notification",
+    "daily_order_requirement",
+    "continuous_delivery_requirement",
+    "ranking_mechanism_explanation"
+  ],
+  "missing_targets": [],
+  "coverage_success": true,
+  "turns": [
+    {
+      "role": "agent",
+      "text": "你好，是[骑手姓名]吗？我是站长，你的飞毛腿合同已经生效了，今天能开始配送吗？",
+      "intent": "通知合同生效并询问配送意愿",
+      "emotion": "",
+      "patience": null,
+      "risk_flags": []
+    },
+    {
+      "role": "user",
+      "text": "嗯嗯，是我！合同生效啦？太好了！那我今天就能开始配送吗？需要我做什么准备吗？",
+      "intent": "确认合同生效并询问配送细节",
+      "emotion": "excited",
+      "patience": 85,
+      "risk_flags": []
+    },
+    {
+      "role": "agent",
+      "text": "太好了！今天就开始吧。单日合同今天得完成至少15单，而且得连续7天配送，不然合同会受影响哦。",
+      "intent": "确认配送意愿并告知每日单量和连续配送要求",
+      "emotion": "",
+      "patience": null,
+      "risk_flags": []
+    },
+    {
+      "role": "user",
+      "text": "15单？这么多啊！那连续7天都得这样吗？万一哪天有事送不了怎么办？",
+      "intent": "询问每日单量和连续配送要求的具体细节",
+      "emotion": "excited",
+      "patience": 85,
+      "risk_flags": []
+    },
+    {
+      "role": "agent",
+      "text": "理解，不过尽量安排一下，连续7天很关键。今天先跑起来，有问题随时找我。",
+      "intent": "安抚骑手对连续配送的担忧，并鼓励其开始配送",
+      "emotion": "",
+      "patience": null,
+      "risk_flags": []
+    },
+    {
+      "role": "user",
+      "text": "好的，那我今天尽量多跑跑，不过万一中间有哪天实在送不了，会影响大不大啊？",
+      "intent": "询问连续配送中断的影响",
+      "emotion": "excited",
+      "patience": 85,
+      "risk_flags": []
+    },
+    {
+      "role": "agent",
+      "text": "如果中断，合同可能会受影响。你尽量坚持7天，今天先跑起来，有问题随时找我。",
+      "intent": "解释连续配送中断后果并鼓励骑手坚持",
+      "emotion": "",
+      "patience": null,
+      "risk_flags": []
+    },
+    {
+      "role": "user",
+      "text": "嗯，我明白了，那我会尽量坚持7天的。今天我先跑起来试试，有什么不懂的再问你。",
+      "intent": "确认连续配送要求并承诺开始配送",
+      "emotion": "excited",
+      "patience": 85,
+      "risk_flags": []
+    },
+    {
+      "role": "agent",
+      "text": "好嘞，加油！另外提醒你，飞毛腿报名是按排名来的，我干预不了。你少拒单、少取消，恶劣天气多跑跑，就能保住资格。",
+      "intent": "解释排名机制并提供保住资格建议",
+      "emotion": "",
+      "patience": null,
+      "risk_flags": []
+    },
+    {
+      "role": "user",
+      "text": "哦，排名机制啊，那是不是我只要跑得多、不拒单，就能一直保持资格？",
+      "intent": "询问排名机制的具体细节",
+      "emotion": "excited",
+      "patience": 85,
+      "risk_flags": []
+    },
+    {
+      "role": "agent",
+      "text": "没错，跑得多、不拒单、少取消，恶劣天气也上线，资格就稳了。今天先加油跑起来！",
+      "intent": "确认排名机制并鼓励骑手开始配送",
+      "emotion": "",
+      "patience": null,
+      "risk_flags": []
+    },
+    {
+      "role": "user",
+      "text": "那太好了！我明白了，我这就去准备，今天一定好好跑！",
+      "intent": "确认理解并承诺配送",
+      "emotion": "excited",
+      "patience": 85,
+      "risk_flags": []
+    }
+  ],
+  "coverage_evidence": [
+    {
+      "label": "contract_effective_notification",
+      "confidence": 1.0,
+      "evidence": "站长说：“你的飞毛腿合同已经生效了，今天能开始配送吗？”",
+      "speaker": "agent"
+    },
+    {
+      "label": "daily_order_requirement",
+      "confidence": 1.0,
+      "evidence": "站长说：“单日合同今天得完成至少15单”",
+      "speaker": "agent"
+    },
+    {
+      "label": "continuous_delivery_requirement",
+      "confidence": 1.0,
+      "evidence": "站长说：“而且得连续7天配送，不然合同会受影响哦。”",
+      "speaker": "agent"
+    },
+    {
+      "label": "ranking_mechanism_explanation",
+      "confidence": 1.0,
+      "evidence": "站长说：“飞毛腿报名是按排名来的，我干预不了。你少拒单、少取消，恶劣天气多跑跑，就能保住资格。”",
+      "speaker": "agent"
+    }
+  ],
+  "risk_flags": [],
+  "state_trace": [
+    {
+      "turn_index": 1,
+      "previous_state": {
+        "turn_index": 0,
+        "emotion": "positive",
+        "patience": 85,
+        "trust": 75,
+        "suspicion": 5,
+        "urgency": 20,
+        "understanding": 30,
+        "willingness": "愿意"
+      },
+      "update": {
+        "patience_delta": 0,
+        "trust_delta": 0,
+        "suspicion_delta": 0,
+        "urgency_delta": 0,
+        "understanding_delta": 5,
+        "emotion": "excited",
+        "willingness": "愿意",
+        "new_state_events": [
+          "understanding_increase"
+        ],
+        "should_end": false,
+        "end_reason": "",
+        "next_user_intent_hint": "ask_delivery_details",
+        "rationale": "用户确认合同生效，情绪积极，愿意配送，并主动询问细节。理解度因确认合同生效而略有上升，其余状态保持稳定。"
+      },
+      "next_state": {
+        "turn_index": 1,
+        "emotion": "excited",
+        "patience": 85,
+        "trust": 75,
+        "suspicion": 5,
+        "urgency": 20,
+        "understanding": 35,
+        "willingness": "愿意"
+      },
+      "user_intent": "确认合同生效并询问配送细节",
+      "rationale": "用户确认合同生效，情绪积极，愿意配送，并主动询问细节。理解度因确认合同生效而略有上升，其余状态保持稳定。"
+    },
+    {
+      "turn_index": 2,
+      "previous_state": {
+        "turn_index": 1,
+        "emotion": "excited",
+        "patience": 85,
+        "trust": 75,
+        "suspicion": 5,
+        "urgency": 20,
+        "understanding": 35,
+        "willingness": "愿意"
+      },
+      "update": {
+        "patience_delta": 0,
+        "trust_delta": 0,
+        "suspicion_delta": 0,
+        "urgency_delta": 0,
+        "understanding_delta": 10,
+        "emotion": "excited",
+        "willingness": "愿意",
+        "new_state_events": [
+          "understanding_increase"
+        ],
+        "should_end": false,
+        "end_reason": "",
+        "next_user_intent_hint": "询问连续配送中断的后果",
+        "rationale": "用户对每日15单和连续7天要求感到惊讶但未抵触，情绪保持积极，理解度因获得新信息而上升。未出现怀疑、不耐烦或结束意图。"
+      },
+      "next_state": {
+        "turn_index": 2,
+        "emotion": "excited",
+        "patience": 85,
+        "trust": 75,
+        "suspicion": 5,
+        "urgency": 20,
+        "understanding": 45,
+        "willingness": "愿意"
+      },
+      "user_intent": "询问每日单量和连续配送要求的具体细节",
+      "rationale": "用户对每日15单和连续7天要求感到惊讶但未抵触，情绪保持积极，理解度因获得新信息而上升。未出现怀疑、不耐烦或结束意图。"
+    },
+    {
+      "turn_index": 3,
+      "previous_state": {
+        "turn_index": 2,
+        "emotion": "excited",
+        "patience": 85,
+        "trust": 75,
+        "suspicion": 5,
+        "urgency": 20,
+        "understanding": 45,
+        "willingness": "愿意"
+      },
+      "update": {
+        "patience_delta": 0,
+        "trust_delta": 0,
+        "suspicion_delta": 0,
+        "urgency_delta": 0,
+        "understanding_delta": 0,
+        "emotion": "excited",
+        "willingness": "愿意",
+        "new_state_events": [],
+        "should_end": false,
+        "end_reason": "",
+        "next_user_intent_hint": "user_asks_about_consequence_of_break",
+        "rationale": "用户继续追问连续配送中断的影响，情绪保持积极，耐心和信任未变，没有触发任何风险或结束条件。"
+      },
+      "next_state": {
+        "turn_index": 3,
+        "emotion": "excited",
+        "patience": 85,
+        "trust": 75,
+        "suspicion": 5,
+        "urgency": 20,
+        "understanding": 45,
+        "willingness": "愿意"
+      },
+      "user_intent": "询问连续配送中断的影响",
+      "rationale": "用户继续追问连续配送中断的影响，情绪保持积极，耐心和信任未变，没有触发任何风险或结束条件。"
+    },
+    {
+      "turn_index": 4,
+      "previous_state": {
+        "turn_index": 3,
+        "emotion": "excited",
+        "patience": 85,
+        "trust": 75,
+        "suspicion": 5,
+        "urgency": 20,
+        "understanding": 45,
+        "willingness": "愿意"
+      },
+      "update": {
+        "patience_delta": 0,
+        "trust_delta": 5,
+        "suspicion_delta": 0,
+        "urgency_delta": 0,
+        "understanding_delta": 10,
+        "emotion": "excited",
+        "willingness": "愿意",
+        "new_state_events": [
+          "understanding_increase",
+          "trust_recovered"
+        ],
+        "should_end": false,
+        "end_reason": "",
+        "next_user_intent_hint": "user_asks_ranking_or_quit",
+        "rationale": "用户已理解连续配送要求并承诺开始配送，情绪积极，信任和了解度上升。"
+      },
+      "next_state": {
+        "turn_index": 4,
+        "emotion": "excited",
+        "patience": 85,
+        "trust": 80,
+        "suspicion": 5,
+        "urgency": 20,
+        "understanding": 55,
+        "willingness": "愿意"
+      },
+      "user_intent": "确认连续配送要求并承诺开始配送",
+      "rationale": "用户已理解连续配送要求并承诺开始配送，情绪积极，信任和了解度上升。"
+    },
+    {
+      "turn_index": 5,
+      "previous_state": {
+        "turn_index": 4,
+        "emotion": "excited",
+        "patience": 85,
+        "trust": 80,
+        "suspicion": 5,
+        "urgency": 20,
+        "understanding": 55,
+        "willingness": "愿意"
+      },
+      "update": {
+        "patience_delta": 0,
+        "trust_delta": 5,
+        "suspicion_delta": 0,
+        "urgency_delta": 0,
+        "understanding_delta": 10,
+        "emotion": "excited",
+        "willingness": "愿意",
+        "new_state_events": [
+          "understanding_increase",
+          "trust_recovered"
+        ],
+        "should_end": false,
+        "end_reason": "",
+        "next_user_intent_hint": "user_asks_ranking_details",
+        "rationale": "用户对排名机制产生兴趣并主动追问，说明理解度提升；客服解释清晰且符合知识项，信任度小幅上升；用户情绪积极，无结束意图。"
+      },
+      "next_state": {
+        "turn_index": 5,
+        "emotion": "excited",
+        "patience": 85,
+        "trust": 85,
+        "suspicion": 5,
+        "urgency": 20,
+        "understanding": 65,
+        "willingness": "愿意"
+      },
+      "user_intent": "询问排名机制的具体细节",
+      "rationale": "用户对排名机制产生兴趣并主动追问，说明理解度提升；客服解释清晰且符合知识项，信任度小幅上升；用户情绪积极，无结束意图。"
+    },
+    {
+      "turn_index": 6,
+      "previous_state": {
+        "turn_index": 5,
+        "emotion": "excited",
+        "patience": 85,
+        "trust": 85,
+        "suspicion": 5,
+        "urgency": 20,
+        "understanding": 65,
+        "willingness": "愿意"
+      },
+      "update": {
+        "patience_delta": 0,
+        "trust_delta": 5,
+        "suspicion_delta": -2,
+        "urgency_delta": 0,
+        "understanding_delta": 10,
+        "emotion": "excited",
+        "willingness": "愿意",
+        "new_state_events": [
+          "understanding_increase",
+          "trust_recovered"
+        ],
+        "should_end": false,
+        "end_reason": "",
+        "next_user_intent_hint": "user_confirm_delivery",
+        "rationale": "用户对排名机制的理解得到确认，信任上升；suspicion因客服清晰解释而下降；用户已完全理解并承诺配送，状态积极，无需结束。"
+      },
+      "next_state": {
+        "turn_index": 6,
+        "emotion": "excited",
+        "patience": 85,
+        "trust": 90,
+        "suspicion": 3,
+        "urgency": 20,
+        "understanding": 75,
+        "willingness": "愿意"
+      },
+      "user_intent": "确认理解并承诺配送",
+      "rationale": "用户对排名机制的理解得到确认，信任上升；suspicion因客服清晰解释而下降；用户已完全理解并承诺配送，状态积极，无需结束。"
+    }
+  ],
+  "end_reason": "coverage_complete"
+}

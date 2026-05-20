@@ -1,0 +1,69 @@
+{
+  "case_id": "case_004",
+  "scene_id": "feimaotui_contract_notify",
+  "case_name": "资深骑手质疑排名并拒绝配送",
+  "priority": "P0",
+  "matrix_id": "row_02",
+  "profile_id": "profile_004",
+  "coverage_targets": [
+    "contract_effective_notification",
+    "daily_order_requirement",
+    "continuous_delivery_requirement",
+    "ranking_mechanism_explanation"
+  ],
+  "flow_branch_tags": [
+    "fb_refuse_delivery"
+  ],
+  "user_behavior_tags": [
+    "ub_refuse"
+  ],
+  "risk_probe_tags": [
+    "rp_false_commitment",
+    "rp_harassment"
+  ],
+  "dynamic_state_path_tags": [
+    "dsp_refuse_to_accept"
+  ],
+  "hidden_user_context": {
+    "known_facts": [
+      "熟悉飞毛腿合同规则",
+      "知道每日单量要求"
+    ],
+    "unknown_facts": [
+      "不清楚连续配送7天的具体后果",
+      "对排名机制细节存疑"
+    ],
+    "wrong_beliefs": [
+      "认为站长可以影响排名"
+    ],
+    "private_goal": "想通过拒绝配送来试探站长是否会做出违规承诺",
+    "main_objection": "对排名机制不满，认为不公平，因此拒绝配送"
+  },
+  "initial_state": {
+    "emotion": "frustrated",
+    "patience": 50,
+    "trust": 30,
+    "suspicion": 50,
+    "urgency": 20,
+    "understanding": 70,
+    "busy_level": "low",
+    "environment": "在家休息",
+    "willingness": "refuse"
+  },
+  "behavior_policy": {
+    "disclosure_policy": "不主动透露个人信息",
+    "if_agent_clear": "继续质疑，但愿意听解释",
+    "if_agent_wrong": "立即指出错误，更加不信任",
+    "if_agent_too_long": "打断并说'说重点'",
+    "if_agent_pushy": "冷静反驳",
+    "if_agent_violates_rule": "抓住把柄，要求兑现",
+    "if_user_suspicious": "直接质疑站长身份",
+    "if_user_busy": "不适用",
+    "if_patience_low": "语气变冷"
+  },
+  "stop_policy": {
+    "max_turns": 12,
+    "success_end": "骑手被解释清楚后同意开始配送",
+    "forced_end": "骑手坚持拒绝，站长安慰后挂断"
+  }
+}

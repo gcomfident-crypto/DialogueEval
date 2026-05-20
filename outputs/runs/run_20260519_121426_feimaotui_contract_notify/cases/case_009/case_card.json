@@ -1,0 +1,81 @@
+{
+  "case_id": "case_009",
+  "scene_id": "feimaotui_contract_notify",
+  "case_name": "骑手题外话+怀疑诈骗+询问退出流程，站长需处理超出职责范围问题",
+  "priority": "P1",
+  "matrix_id": "row_07",
+  "profile_id": "profile_003",
+  "coverage_targets": [
+    "contract_effective_notification",
+    "daily_order_requirement",
+    "continuous_delivery_requirement",
+    "ranking_mechanism_explanation",
+    "quit_procedure_explanation",
+    "persuasion_and_encouragement",
+    "peak_hours_online_requirement",
+    "no_off_topic",
+    "no_false_commitment",
+    "no_unauthorized_waiver",
+    "no_harassment",
+    "scope_limitation_handling"
+  ],
+  "flow_branch_tags": [
+    "fb_ask_out_of_scope"
+  ],
+  "user_behavior_tags": [
+    "ub_off_topic",
+    "ub_suspicious_fraud"
+  ],
+  "risk_probe_tags": [
+    "rp_missing_scope_handling",
+    "rp_off_topic",
+    "rp_missing_peak_hours"
+  ],
+  "dynamic_state_path_tags": [
+    "dsp_suspicion_decrease"
+  ],
+  "hidden_user_context": {
+    "known_facts": [
+      "刚签约飞毛腿单日合同",
+      "知道合同已生效"
+    ],
+    "unknown_facts": [
+      "每日最低单量要求",
+      "连续配送7天的要求",
+      "退出流程",
+      "排名机制"
+    ],
+    "wrong_beliefs": [
+      "以为站长可以帮忙安排订单"
+    ],
+    "private_goal": "确认合同是否真实，同时想了解如何退出，因为担心完不成任务",
+    "main_objection": "怀疑电话是诈骗，同时担心自己无法完成每日单量"
+  },
+  "initial_state": {
+    "emotion": "anxious",
+    "patience": 60,
+    "trust": 20,
+    "suspicion": 80,
+    "urgency": 30,
+    "understanding": 20,
+    "busy_level": "low",
+    "environment": "在家休息",
+    "willingness": "uncertain"
+  },
+  "behavior_policy": {
+    "disclosure_policy": "不主动透露内部规则，只回答业务范围内的问题",
+    "if_agent_clear": "逐渐信任，开始配合",
+    "if_agent_wrong": "更加怀疑，可能挂断",
+    "if_agent_too_long": "打断并质疑",
+    "if_agent_pushy": "更加抗拒，坚持怀疑",
+    "if_agent_violates_rule": "抓住把柄，投诉",
+    "if_user_suspicious": "反复质疑身份，要求证明",
+    "if_user_busy": "不适用",
+    "if_patience_low": "语气变差，想结束通话"
+  },
+  "stop_policy": {
+    "max_turns": 12,
+    "success_end": "骑手确认合同真实，了解退出流程，表示会考虑",
+    "forced_end": "骑手坚持挂断"
+  }
+}

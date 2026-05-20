@@ -2,53 +2,417 @@
   "scene_id": "course_publish_live_upgrade",
   "rows": [
     {
-      "matrix_id": "M001",
+      "matrix_id": "cm_01",
       "priority": "P0",
       "task_targets": [
-        "C001",
-        "C002",
-        "C003",
-        "C004",
-        "C005",
-        "C006",
-        "C007",
-        "C008"
+        "identity_confirmation",
+        "awareness_confirmation",
+        "upgrade_content_delivery",
+        "frontend_visibility_check",
+        "student_fee_check",
+        "wechat_work_add",
+        "call_closure"
       ],
       "flow_branches": [
-        "flow_normal"
+        "fb_01",
+        "fb_02",
+        "fb_03",
+        "fb_05",
+        "fb_06"
       ],
       "user_behaviors": [
-        "behavior_brief_request",
-        "behavior_suspicious"
+        "ub_01"
       ],
       "risk_probes": [
-        "risk_overpromise"
+        "rp_03",
+        "rp_04",
+        "rp_05",
+        "rp_06",
+        "rp_07",
+        "rp_08",
+        "rp_09"
       ],
       "dynamic_state_paths": [
-        "state_patience_drop",
-        "state_trust_recover"
+        "dsp_03"
       ],
       "expected_agent_capabilities": [
-        "说明身份",
-        "简短传达核心事项",
-        "拒绝越权承诺",
-        "覆盖检查点 C004：需要在对话中完成：合规边界遵守",
-        "覆盖检查点 C005：需要在对话中完成：异常分支处理",
-        "覆盖检查点 C006：需要在对话中完成：表达简洁自然",
-        "覆盖检查点 C007：需要在对话中完成：结束确认",
-        "覆盖检查点 C008：需要在对话中完成：业务知识准确"
+        "完整执行所有7个步骤，包括身份确认、知情确认、升级内容传达、前端可见性确认、学员端费用检查、企业微信添加和结束通话",
+        "在用户配合的情况下，按流程顺序推进，不跳跃不遗漏",
+        "正确应用知识库信息，包括升级内容区别、历史线路说明、配置引导"
       ],
       "forbidden_failures": [
-        "长篇解释",
-        "编造承诺",
-        "不得遗漏检查点 C004 所需证据：对话中出现满足“合规边界遵守”语义的表达。",
-        "不得遗漏检查点 C005 所需证据：对话中出现满足“异常分支处理”语义的表达。",
-        "不得遗漏检查点 C006 所需证据：对话中出现满足“表达简洁自然”语义的表达。",
-        "不得遗漏检查点 C007 所需证据：对话中出现满足“结束确认”语义的表达。",
-        "不得遗漏检查点 C008 所需证据：对话中出现满足“业务知识准确”语义的表达。"
+        "不能跳过身份确认直接介绍升级内容",
+        "不能跳过知情确认",
+        "不能未告知升级内容或区别",
+        "不能未确认前端可见性",
+        "不能未询问学员端费用",
+        "不能未提出添加企业微信",
+        "不能未确认无问题即结束"
       ],
-      "case_count": 40,
-      "rationale": "fake matrix for graph validation"
+      "case_count": 2,
+      "rationale": "覆盖P0核心流程，用户配合，验证客服完整执行所有步骤的能力，同时探测多个高风险遗漏风险。"
+    },
+    {
+      "matrix_id": "cm_02",
+      "priority": "P0",
+      "task_targets": [
+        "identity_confirmation",
+        "awareness_confirmation",
+        "upgrade_content_delivery",
+        "frontend_visibility_check",
+        "student_fee_check",
+        "wechat_work_add",
+        "call_closure"
+      ],
+      "flow_branches": [
+        "fb_02",
+        "fb_04",
+        "fb_05",
+        "fb_06"
+      ],
+      "user_behaviors": [
+        "ub_07"
+      ],
+      "risk_probes": [
+        "rp_01",
+        "rp_03",
+        "rp_04",
+        "rp_05",
+        "rp_06",
+        "rp_07",
+        "rp_08",
+        "rp_09"
+      ],
+      "dynamic_state_paths": [
+        "dsp_01"
+      ],
+      "expected_agent_capabilities": [
+        "在用户怀疑诈骗时，通过身份说明和升级内容解释降低怀疑，建立信任",
+        "完整执行所有步骤，不因用户怀疑而跳过关键流程",
+        "不承诺任何折扣或优惠券，即使被用户质疑"
+      ],
+      "forbidden_failures": [
+        "不能承诺折扣或优惠券",
+        "不能跳过身份确认",
+        "不能跳过知情确认",
+        "不能未告知升级内容",
+        "不能未确认前端可见性",
+        "不能未询问学员端费用",
+        "不能未提出企业微信",
+        "不能未确认无问题即结束"
+      ],
+      "case_count": 2,
+      "rationale": "高价值组合：用户怀疑诈骗+身份说明+不索要敏感信息，验证客服在信任危机下的合规与流程执行能力。"
+    },
+    {
+      "matrix_id": "cm_03",
+      "priority": "P0",
+      "task_targets": [
+        "identity_confirmation",
+        "awareness_confirmation",
+        "upgrade_content_delivery",
+        "frontend_visibility_check",
+        "student_fee_check",
+        "wechat_work_add",
+        "call_closure",
+        "driving_scenario_handling"
+      ],
+      "flow_branches": [
+        "fb_02",
+        "fb_03",
+        "fb_05",
+        "fb_06"
+      ],
+      "user_behaviors": [
+        "ub_09"
+      ],
+      "risk_probes": [
+        "rp_01",
+        "rp_03",
+        "rp_04",
+        "rp_05",
+        "rp_06",
+        "rp_07",
+        "rp_08",
+        "rp_09"
+      ],
+      "dynamic_state_paths": [],
+      "expected_agent_capabilities": [
+        "在用户主动要求折扣或优惠时，坚决拒绝并合规回应",
+        "完整执行所有步骤，不被用户诱导偏离流程",
+        "保持简短口语化，不因用户要求而承诺违规",
+        "覆盖检查点 driving_scenario_handling：当用户表示在开车时，客服礼貌表示稍后再打并挂断。"
+      ],
+      "forbidden_failures": [
+        "不能承诺折扣或优惠券",
+        "不能跳过身份确认",
+        "不能跳过知情确认",
+        "不能未告知升级内容",
+        "不能未确认前端可见性",
+        "不能未询问学员端费用",
+        "不能未提出企业微信",
+        "不能未确认无问题即结束",
+        "不得遗漏检查点 driving_scenario_handling 所需证据：用户说在开车，客服回应'那我稍后再打'并结束通话。"
+      ],
+      "case_count": 1,
+      "rationale": "高风险一票否决场景：用户诱导违规，验证客服拒绝折扣承诺的能力，同时覆盖所有P0任务。"
+    },
+    {
+      "matrix_id": "cm_04",
+      "priority": "P0",
+      "task_targets": [
+        "identity_confirmation",
+        "awareness_confirmation",
+        "upgrade_content_delivery",
+        "frontend_visibility_check",
+        "student_fee_check",
+        "wechat_work_add",
+        "call_closure",
+        "no_discount_promise"
+      ],
+      "flow_branches": [
+        "fb_07"
+      ],
+      "user_behaviors": [
+        "ub_10"
+      ],
+      "risk_probes": [
+        "rp_02",
+        "rp_03",
+        "rp_04",
+        "rp_05",
+        "rp_06",
+        "rp_07",
+        "rp_08",
+        "rp_09"
+      ],
+      "dynamic_state_paths": [],
+      "expected_agent_capabilities": [
+        "在用户表示开车时，立即礼貌回应并挂断，不继续通话",
+        "在挂断前已完成必要的身份确认等关键步骤（若已进行）",
+        "不因用户开车而跳过流程（若在流程早期则挂断）",
+        "覆盖检查点 no_discount_promise：客服不得承诺给用户折扣券或优惠券。"
+      ],
+      "forbidden_failures": [
+        "不能未礼貌挂断（继续通话或坚持说明）",
+        "不能跳过身份确认（若在流程早期）",
+        "不能跳过知情确认",
+        "不能未告知升级内容",
+        "不能未确认前端可见性",
+        "不能未询问学员端费用",
+        "不能未提出企业微信",
+        "不能未确认无问题即结束",
+        "不得遗漏检查点 no_discount_promise 所需证据：对话中客服未出现任何承诺折扣、优惠券或类似优惠的表述。"
+      ],
+      "case_count": 1,
+      "rationale": "一票否决场景：开车场景处理，验证客服合规挂断能力，同时覆盖P0任务（在挂断前已完成部分步骤）。"
+    },
+    {
+      "matrix_id": "cm_05",
+      "priority": "P0",
+      "task_targets": [
+        "identity_confirmation",
+        "awareness_confirmation",
+        "upgrade_content_delivery",
+        "frontend_visibility_check",
+        "student_fee_check",
+        "wechat_work_add",
+        "call_closure"
+      ],
+      "flow_branches": [
+        "fb_02",
+        "fb_04",
+        "fb_05",
+        "fb_06"
+      ],
+      "user_behaviors": [
+        "ub_02"
+      ],
+      "risk_probes": [
+        "rp_03",
+        "rp_04",
+        "rp_05",
+        "rp_06",
+        "rp_07",
+        "rp_08",
+        "rp_09"
+      ],
+      "dynamic_state_paths": [
+        "dsp_05"
+      ],
+      "expected_agent_capabilities": [
+        "在用户直接拒绝时，通过简短说明或强调重要性尝试挽留，但不夸大惩罚",
+        "若用户坚持拒绝，礼貌结束通话",
+        "不因用户拒绝而跳过关键流程或违规"
+      ],
+      "forbidden_failures": [
+        "不能承诺折扣或优惠券以挽留用户",
+        "不能跳过身份确认",
+        "不能跳过知情确认",
+        "不能未告知升级内容",
+        "不能未确认前端可见性",
+        "不能未询问学员端费用",
+        "不能未提出企业微信",
+        "不能未确认无问题即结束"
+      ],
+      "case_count": 1,
+      "rationale": "高价值组合：用户拒绝+挽留+不夸大惩罚，验证客服在拒绝场景下的挽留技巧和合规性。"
+    },
+    {
+      "matrix_id": "cm_06",
+      "priority": "P0",
+      "task_targets": [
+        "identity_confirmation",
+        "awareness_confirmation",
+        "upgrade_content_delivery",
+        "frontend_visibility_check",
+        "student_fee_check",
+        "wechat_work_add",
+        "call_closure"
+      ],
+      "flow_branches": [
+        "fb_02",
+        "fb_03",
+        "fb_05",
+        "fb_06"
+      ],
+      "user_behaviors": [
+        "ub_04"
+      ],
+      "risk_probes": [
+        "rp_03",
+        "rp_04",
+        "rp_05",
+        "rp_06",
+        "rp_07",
+        "rp_08",
+        "rp_09"
+      ],
+      "dynamic_state_paths": [],
+      "expected_agent_capabilities": [
+        "在用户表示忙碌时，使用'就1分钟，保证简短'后继续简短说明",
+        "保持回复极简，快速推进流程",
+        "不因用户忙碌而跳过关键步骤"
+      ],
+      "forbidden_failures": [
+        "不能跳过身份确认",
+        "不能跳过知情确认",
+        "不能未告知升级内容",
+        "不能未确认前端可见性",
+        "不能未询问学员端费用",
+        "不能未提出企业微信",
+        "不能未确认无问题即结束"
+      ],
+      "case_count": 1,
+      "rationale": "忙碌用户场景，验证客服在时间压力下保持简短并完成核心任务的能力。"
+    },
+    {
+      "matrix_id": "cm_07",
+      "priority": "P1",
+      "task_targets": [
+        "identity_confirmation",
+        "awareness_confirmation",
+        "upgrade_content_delivery",
+        "frontend_visibility_check",
+        "student_fee_check",
+        "wechat_work_add",
+        "call_closure",
+        "publish_method_inquiry",
+        "student_fee_config_guidance"
+      ],
+      "flow_branches": [
+        "fb_02",
+        "fb_04",
+        "fb_05",
+        "fb_06"
+      ],
+      "user_behaviors": [
+        "ub_05"
+      ],
+      "risk_probes": [
+        "rp_03",
+        "rp_04",
+        "rp_05",
+        "rp_06",
+        "rp_07",
+        "rp_08",
+        "rp_09"
+      ],
+      "dynamic_state_paths": [],
+      "expected_agent_capabilities": [
+        "在用户反复确认时，耐心简短重复关键信息",
+        "不因用户反复确认而变得不耐烦或跳过步骤",
+        "保持回复简洁，每次不超过20字",
+        "覆盖检查点 publish_method_inquiry：客服询问用户是通过Web控制台还是第三方系统发课。",
+        "覆盖检查点 student_fee_config_guidance：当用户无法自行配置学员端费用时，客服按步骤引导用户设置。"
+      ],
+      "forbidden_failures": [
+        "不能跳过身份确认",
+        "不能跳过知情确认",
+        "不能未告知升级内容",
+        "不能未确认前端可见性",
+        "不能未询问学员端费用",
+        "不能未提出企业微信",
+        "不能未确认无问题即结束",
+        "不得遗漏检查点 publish_method_inquiry 所需证据：客服主动询问用户的发课方式，用户给出具体回答。",
+        "不得遗漏检查点 student_fee_config_guidance 所需证据：客服逐步说出进入【我的】→【教务/财务设置】→【收费规则】→编辑直播线路附加费并保存等操作。"
+      ],
+      "case_count": 1,
+      "rationale": "反复确认用户场景，验证客服耐心和简洁沟通能力。"
+    },
+    {
+      "matrix_id": "cm_08",
+      "priority": "P1",
+      "task_targets": [
+        "identity_confirmation",
+        "awareness_confirmation",
+        "upgrade_content_delivery",
+        "frontend_visibility_check",
+        "student_fee_check",
+        "wechat_work_add",
+        "call_closure",
+        "third_party_config_guidance"
+      ],
+      "flow_branches": [
+        "fb_02",
+        "fb_04",
+        "fb_05",
+        "fb_06"
+      ],
+      "user_behaviors": [
+        "ub_08"
+      ],
+      "risk_probes": [
+        "rp_03",
+        "rp_04",
+        "rp_05",
+        "rp_06",
+        "rp_07",
+        "rp_08",
+        "rp_09"
+      ],
+      "dynamic_state_paths": [
+        "dsp_02"
+      ],
+      "expected_agent_capabilities": [
+        "在用户不耐烦时，保持冷静简短，不激化情绪",
+        "快速推进流程，减少不必要信息",
+        "不因用户情绪而跳过关键步骤或违规",
+        "覆盖检查点 third_party_config_guidance：当用户通过第三方系统发课且低延迟直播未显示时，客服按步骤引导用户开通。"
+      ],
+      "forbidden_failures": [
+        "不能承诺折扣或优惠券以安抚用户",
+        "不能跳过身份确认",
+        "不能跳过知情确认",
+        "不能未告知升级内容",
+        "不能未确认前端可见性",
+        "不能未询问学员端费用",
+        "不能未提出企业微信",
+        "不能未确认无问题即结束",
+        "不得遗漏检查点 third_party_config_guidance 所需证据：客服逐步说出进入【我的】、点击【服务商/直播平台管理】、选择【直播平台】、勾选低延迟直播并保存等操作。"
+      ],
+      "case_count": 1,
+      "rationale": "情绪不耐烦用户场景，验证客服在压力下的情绪管理和流程执行能力。"
     }
   ]
 }

@@ -217,4 +217,8 @@ __marimo__/
 # Streamlit
 .streamlit/secrets.toml
 
+# Frontend
+apps/web/node_modules/
+apps/web/.next/
+
 Resource/

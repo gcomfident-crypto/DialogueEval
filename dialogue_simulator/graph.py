@@ -76,10 +76,25 @@ def build_asset_generation_graph(
     llm: LLMClient,
     *,
     output_root: str | Path,
+    progress_callback: Callable[[dict[str, Any]], None] | None = None,
+    cancel_check: Callable[[], None] | None = None,
 ):
     retry_count = 1
 
+    def checkpoint(node_name: str, state: dict[str, Any] | None = None) -> None:
+        if cancel_check:
+            cancel_check()
+        if progress_callback:
+            progress_callback(
+                {
+                    "phase": "asset_node",
+                    "node": node_name,
+                    "scene_id": getattr((state or {}).get("scene_asset"), "scene_id", ""),
+                }
+            )
+
     def load_eval_standard(state: AssetGenerationState) -> dict[str, Any]:
+        checkpoint("load_eval_standard", state)
         eval_standard_path = state["eval_standard_path"]
         business_config_path = state.get("business_config_path")
         generation_policy_path = state.get("generation_policy_path")
@@ -107,6 +122,18 @@ def build_asset_generation_graph(
                 if generation_policy_path
                 else GenerationPolicy()
             )
+            target_case_count = int(state.get("target_case_count") or 0)
+            if target_case_count > 0:
+                case_policy = generation_policy.case_generation.model_copy(
+                    update={
+                        "target_cases": target_case_count,
+                        "min_cases": min(generation_policy.case_generation.min_cases, target_case_count),
+                        "max_cases": max(generation_policy.case_generation.max_cases, target_case_count),
+                    }
+                )
+                generation_policy = generation_policy.model_copy(
+                    update={"case_generation": case_policy}
+                )
             raw_eval_standard_text = read_text(eval_standard_path)
             eval_standard_text = raw_eval_standard_text
             materialized_eval_standard = None
@@ -139,6 +166,7 @@ def build_asset_generation_graph(
             return result
 
     def generate_scene_brief(state: AssetGenerationState) -> dict[str, Any]:
+        checkpoint("generate_scene_brief", state)
         with trace_span(
             "asset.generate_scene_brief",
             attributes={
@@ -170,6 +198,7 @@ def build_asset_generation_graph(
             return result
 
     def generate_coverage(state: AssetGenerationState) -> dict[str, Any]:
+        checkpoint("generate_coverage_plan", state)
         with trace_span(
             "asset.generate_coverage_plan",
             attributes={
@@ -195,6 +224,7 @@ def build_asset_generation_graph(
             return {"coverage_plan": coverage_plan}
 
     def generate_profiles(state: AssetGenerationState) -> dict[str, Any]:
+        checkpoint("generate_user_profiles", state)
         with trace_span(
             "asset.generate_user_profiles",
             attributes={
@@ -221,6 +251,7 @@ def build_asset_generation_graph(
             return {"user_profiles": user_profiles}
 
     def generate_rubric(state: AssetGenerationState) -> dict[str, Any]:
+        checkpoint("generate_scoring_rubric", state)
         with trace_span(
             "asset.generate_scoring_rubric",
             attributes={
@@ -249,6 +280,7 @@ def build_asset_generation_graph(
             return {"scoring_rubric": scoring_rubric}
 
     def generate_taxonomy(state: AssetGenerationState) -> dict[str, Any]:
+        checkpoint("generate_coverage_taxonomy", state)
         with trace_span(
             "asset.generate_coverage_taxonomy",
             attributes={
@@ -280,6 +312,7 @@ def build_asset_generation_graph(
             return {"coverage_taxonomy": taxonomy}
 
     def generate_matrix(state: AssetGenerationState) -> dict[str, Any]:
+        checkpoint("generate_coverage_matrix", state)
         with trace_span(
             "asset.generate_coverage_matrix",
             attributes={
@@ -309,6 +342,7 @@ def build_asset_generation_graph(
             return {"coverage_matrix": matrix}
 
     def generate_case_plan(state: AssetGenerationState) -> dict[str, Any]:
+        checkpoint("generate_case_generation_plan", state)
         with trace_span(
             "asset.generate_case_generation_plan",
             attributes={
@@ -335,9 +369,19 @@ def build_asset_generation_graph(
                     "allocated_case_count": sum(item.case_count for item in plan.allocations),
                 }
             )
+            if progress_callback:
+                progress_callback(
+                    {
+                        "phase": "case_generation_plan",
+                        "target_case_count": plan.target_case_count,
+                        "allocated_case_count": sum(item.case_count for item in plan.allocations),
+                        "allocation_count": len(plan.allocations),
+                    }
+                )
             return {"case_generation_plan": plan}
 
     def generate_cases(state: AssetGenerationState) -> dict[str, Any]:
+        checkpoint("generate_case_cards", state)
         with trace_span(
             "asset.generate_case_cards",
             attributes={
@@ -358,6 +402,8 @@ def build_asset_generation_graph(
                 coverage_taxonomy=state.get("coverage_taxonomy"),
                 coverage_matrix=state.get("coverage_matrix"),
                 case_generation_plan=state.get("case_generation_plan"),
+                progress_callback=progress_callback,
+                cancel_check=cancel_check,
             )
             span.set_output(
                 {
@@ -368,6 +414,7 @@ def build_asset_generation_graph(
             return {"case_cards": case_cards}
 
     def validate_assets(state: AssetGenerationState) -> dict[str, Any]:
+        checkpoint("validate_assets", state)
         with trace_span(
             "asset.validate_assets",
             attributes={
@@ -390,6 +437,7 @@ def build_asset_generation_graph(
             return {}
 
     def persist_assets(state: AssetGenerationState) -> dict[str, Any]:
+        checkpoint("persist_assets", state)
         with trace_span(
             "asset.persist_assets",
             attributes={
@@ -427,6 +475,7 @@ def build_asset_generation_graph(
                 coverage_taxonomy=state.get("coverage_taxonomy"),
                 coverage_matrix=state.get("coverage_matrix"),
                 case_generation_plan=state.get("case_generation_plan"),
+                user_profiles=state["user_profiles"],
                 case_cards=state["case_cards"],
             )
             materialized_eval_standard = state.get("materialized_eval_standard")

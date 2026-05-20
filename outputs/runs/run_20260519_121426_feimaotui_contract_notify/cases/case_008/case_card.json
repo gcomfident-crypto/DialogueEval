@@ -1,0 +1,69 @@
+{
+  "case_id": "case_008",
+  "scene_id": "feimaotui_contract_notify",
+  "case_name": "配合骑手询问退出流程，站长正确说明并覆盖高峰期和超出职责范围处理",
+  "priority": "P1",
+  "matrix_id": "row_06",
+  "profile_id": "profile_010",
+  "coverage_targets": [
+    "contract_effective_notification",
+    "daily_order_requirement",
+    "continuous_delivery_requirement",
+    "ranking_mechanism_explanation",
+    "peak_hours_online_requirement",
+    "scope_limitation_handling"
+  ],
+  "flow_branch_tags": [
+    "fb_ask_about_quit"
+  ],
+  "user_behavior_tags": [
+    "ub_cooperative"
+  ],
+  "risk_probe_tags": [
+    "rp_missing_quit_procedure",
+    "rp_missing_extra_reward"
+  ],
+  "dynamic_state_path_tags": [
+    "dsp_understanding_increase"
+  ],
+  "hidden_user_context": {
+    "known_facts": [
+      "知道飞毛腿合同已生效",
+      "知道每日有单量要求"
+    ],
+    "unknown_facts": [
+      "不清楚退出飞毛腿的具体流程",
+      "不清楚多日合同的额外奖励"
+    ],
+    "wrong_beliefs": [],
+    "private_goal": "确认退出流程，如果流程不麻烦就退出，否则继续配送",
+    "main_objection": "退出流程是否复杂"
+  },
+  "initial_state": {
+    "emotion": "neutral",
+    "patience": 70,
+    "trust": 60,
+    "suspicion": 20,
+    "urgency": 30,
+    "understanding": 40,
+    "busy_level": "low",
+    "environment": "在家休息",
+    "willingness": "unknown"
+  },
+  "behavior_policy": {
+    "disclosure_policy": "不主动透露退出意图，先听站长通知",
+    "if_agent_clear": "直接确认并配合",
+    "if_agent_wrong": "礼貌纠正",
+    "if_agent_too_long": "耐心等待",
+    "if_agent_pushy": "礼貌坚持自己的节奏",
+    "if_agent_violates_rule": "指出问题",
+    "if_user_suspicious": "不适用",
+    "if_user_busy": "不适用",
+    "if_patience_low": "不适用"
+  },
+  "stop_policy": {
+    "max_turns": 12,
+    "success_end": "骑手确认退出流程，站长完成通知后挂断",
+    "forced_end": "骑手突然挂断"
+  }
+}

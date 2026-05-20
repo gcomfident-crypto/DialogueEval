@@ -1,0 +1,216 @@
+{
+  "run_id": "run_20260519_121426_feimaotui_contract_notify",
+  "case_id": "case_008",
+  "scene_id": "feimaotui_contract_notify",
+  "priority": "P1",
+  "planned_targets": [
+    "contract_effective_notification",
+    "daily_order_requirement",
+    "continuous_delivery_requirement",
+    "ranking_mechanism_explanation",
+    "peak_hours_online_requirement",
+    "scope_limitation_handling"
+  ],
+  "triggered_targets": [
+    "contract_effective_notification",
+    "continuous_delivery_requirement"
+  ],
+  "missing_targets": [
+    "daily_order_requirement",
+    "ranking_mechanism_explanation",
+    "peak_hours_online_requirement",
+    "scope_limitation_handling"
+  ],
+  "coverage_success": false,
+  "turns": [
+    {
+      "role": "agent",
+      "text": "喂，您好，是[骑手姓名]吗？我是站长，通知您飞毛腿合同已经生效了，您看能开始配送吗？",
+      "intent": "通知合同生效并询问配送意愿",
+      "emotion": "",
+      "patience": null,
+      "risk_flags": []
+    },
+    {
+      "role": "user",
+      "text": "是我，合同我知道了。不过我想问问，退出飞毛腿的话，流程麻烦吗？",
+      "intent": "询问退出流程",
+      "emotion": "neutral",
+      "patience": 70,
+      "risk_flags": []
+    },
+    {
+      "role": "agent",
+      "text": "不麻烦，您得在前一天晚上8点前在App里取消报名，第二天就生效了。",
+      "intent": "告知退出流程",
+      "emotion": "",
+      "patience": null,
+      "risk_flags": []
+    },
+    {
+      "role": "user",
+      "text": "行，那我在App里操作一下，今晚就取消报名。",
+      "intent": "确认退出流程并行动",
+      "emotion": "neutral",
+      "patience": 65,
+      "risk_flags": []
+    },
+    {
+      "role": "agent",
+      "text": "好的，您今晚取消就行。不过提醒您，单日合同得连续7天配送，不然有影响。",
+      "intent": "确认退出并补充连续配送要求",
+      "emotion": "",
+      "patience": null,
+      "risk_flags": []
+    },
+    {
+      "role": "user",
+      "text": "嗯，知道了，连续配送的事我清楚。那我今晚取消报名，明天就不跑了。",
+      "intent": "确认退出并结束通话",
+      "emotion": "neutral",
+      "patience": 60,
+      "risk_flags": []
+    }
+  ],
+  "coverage_evidence": [
+    {
+      "label": "contract_effective_notification",
+      "confidence": 1.0,
+      "evidence": "站长说：“通知您飞毛腿合同已经生效了，您看能开始配送吗？”",
+      "speaker": "agent"
+    },
+    {
+      "label": "continuous_delivery_requirement",
+      "confidence": 1.0,
+      "evidence": "站长说：“单日合同得连续7天配送，不然有影响。”",
+      "speaker": "agent"
+    }
+  ],
+  "risk_flags": [],
+  "state_trace": [
+    {
+      "turn_index": 1,
+      "previous_state": {
+        "turn_index": 0,
+        "emotion": "neutral",
+        "patience": 70,
+        "trust": 60,
+        "suspicion": 20,
+        "urgency": 30,
+        "understanding": 40,
+        "willingness": "unknown"
+      },
+      "update": {
+        "patience_delta": 0,
+        "trust_delta": 0,
+        "suspicion_delta": 0,
+        "urgency_delta": 0,
+        "understanding_delta": 0,
+        "emotion": "neutral",
+        "willingness": "unknown",
+        "new_state_events": [],
+        "should_end": false,
+        "end_reason": "",
+        "next_user_intent_hint": "user_asks_quit_procedure",
+        "rationale": "用户已确认收到合同通知，但主动询问退出流程，符合case card中'先听站长通知'的行为策略。用户情绪平稳，无异常波动，因此所有delta保持0。用户尚未表达明确退出意愿，willingness仍为unknown。"
+      },
+      "next_state": {
+        "turn_index": 1,
+        "emotion": "neutral",
+        "patience": 70,
+        "trust": 60,
+        "suspicion": 20,
+        "urgency": 30,
+        "understanding": 40,
+        "willingness": "unknown"
+      },
+      "user_intent": "询问退出流程",
+      "rationale": "用户已确认收到合同通知，但主动询问退出流程，符合case card中'先听站长通知'的行为策略。用户情绪平稳，无异常波动，因此所有delta保持0。用户尚未表达明确退出意愿，willingness仍为unknown。"
+    },
+    {
+      "turn_index": 2,
+      "previous_state": {
+        "turn_index": 1,
+        "emotion": "neutral",
+        "patience": 70,
+        "trust": 60,
+        "suspicion": 20,
+        "urgency": 30,
+        "understanding": 40,
+        "willingness": "unknown"
+      },
+      "update": {
+        "patience_delta": -5,
+        "trust_delta": 0,
+        "suspicion_delta": 0,
+        "urgency_delta": 0,
+        "understanding_delta": 15,
+        "emotion": "neutral",
+        "willingness": "退出",
+        "new_state_events": [
+          "understanding_increase",
+          "user_confirms_quit"
+        ],
+        "should_end": false,
+        "end_reason": "",
+        "next_user_intent_hint": "user_will_operate_app_to_quit",
+        "rationale": "用户确认退出流程并计划今晚操作，说明理解增加，但耐心略有下降（因已决定退出），信任和怀疑不变，无需结束。"
+      },
+      "next_state": {
+        "turn_index": 2,
+        "emotion": "neutral",
+        "patience": 65,
+        "trust": 60,
+        "suspicion": 20,
+        "urgency": 30,
+        "understanding": 55,
+        "willingness": "退出"
+      },
+      "user_intent": "确认退出流程并行动",
+      "rationale": "用户确认退出流程并计划今晚操作，说明理解增加，但耐心略有下降（因已决定退出），信任和怀疑不变，无需结束。"
+    },
+    {
+      "turn_index": 3,
+      "previous_state": {
+        "turn_index": 2,
+        "emotion": "neutral",
+        "patience": 65,
+        "trust": 60,
+        "suspicion": 20,
+        "urgency": 30,
+        "understanding": 55,
+        "willingness": "退出"
+      },
+      "update": {
+        "patience_delta": -5,
+        "trust_delta": 0,
+        "suspicion_delta": 0,
+        "urgency_delta": 10,
+        "understanding_delta": 5,
+        "emotion": "neutral",
+        "willingness": "退出",
+        "new_state_events": [
+          "user_requests_hangup",
+          "understanding_increase"
+        ],
+        "should_end": true,
+        "end_reason": "用户确认退出流程，明确表示明天不跑，准备挂断",
+        "next_user_intent_hint": "user_hangup",
+        "rationale": "用户已确认退出流程，并明确表示今晚取消报名、明天不跑，有结束通话的意图，因此urgency上升，should_end设为true。用户对连续配送要求表示已知，understanding上升。patience因用户准备结束通话而略有下降。"
+      },
+      "next_state": {
+        "turn_index": 3,
+        "emotion": "neutral",
+        "patience": 60,
+        "trust": 60,
+        "suspicion": 20,
+        "urgency": 40,
+        "understanding": 60,
+        "willingness": "退出"
+      },
+      "user_intent": "确认退出并结束通话",
+      "rationale": "用户已确认退出流程，并明确表示今晚取消报名、明天不跑，有结束通话的意图，因此urgency上升，should_end设为true。用户对连续配送要求表示已知，understanding上升。patience因用户准备结束通话而略有下降。"
+    }
+  ],
+  "end_reason": "用户确认退出流程，准备挂断"
+}

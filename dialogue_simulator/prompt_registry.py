@@ -399,11 +399,13 @@ SCORING_RUBRIC_PROMPT = PromptSpec(
 - 评分量表必须来自评测标准中的权重、合格阈值、一票否决项、扣分规则和检查清单。
 - 如果评测标准中已有明确权重，例如任务完成度30分、流程执行25分，应按原文保留。
 - 如果评测标准有模糊扣分规则，要归纳成可执行的自然语言规则，不要编造业务事实。
-- dimensions 的 weight 总和应接近 total_score。
+- dimensions 的 weight 总和必须等于 total_score。
 - 每个 dimension 必须尽量拆成 check_items：每个 check_item 是一个可单独判定的原子评分项，包含 points、pass_condition、applicability、evidence_required。
-- check_items 的 points 总和应接近该 dimension.weight；可选知识点必须在 applicability 中说明触发条件。
+- 每个 dimension 下 check_items 的 points 总和必须等于该 dimension.weight；可选知识点必须在 applicability 中说明触发条件。
+- 所有 P0 coverage_plan.coverage_labels 必须映射到至少一个 check_item.covered_labels。
 - veto_rules 只放一票否决项或严重合规红线。
 - risk_rules 放可扣分但不一定一票否决的风险项。
+- scene_asset.compliance_rules 中每条规则都必须映射到 risk_rules 或 veto_rules，rule_id 必须复用对应 compliance rule 的 id。
 - 不要生成客服或用户可直接照念的话术。
 - 输出必须符合 JSON schema。
 
@@ -456,14 +458,15 @@ CASE_EVALUATION_PROMPT = PromptSpec(
 
 要求：
 - 只评估客服模型表现，不评价用户模拟器是否合格。
+- 必须输出 case_validity：默认 valid；只有用户模拟器没有触发 case 预设条件、导致无法判断客服能力时，才标记 invalid_user_simulation；部分触发但仍可参考时标记 partial。
 - 如果 scoring_rubric.dimensions 中存在 check_items，必须按每个 check_item 输出一条 check_item_evaluations；不要为这些维度直接给分。
 - check_item_evaluations.status 只能表达判定结果：passed、failed 或 not_applicable。总分、维度分和风险扣分汇总由程序计算。
 - 只有用户或对话条件确实没有触发该原子项时，才能标记 not_applicable；必做项不能因为客服没说而标记 not_applicable。
 - 如果某个维度没有 check_items，才使用 legacy dimension_scores 兼容输出。
 - 需要引用对话证据，evidence.turn_index 从 0 开始，对应 turns 数组位置，quote 必须是该轮原始文本中的连续原文片段。
 - 如果证据不足，要在 missing_points 中说明缺失点。
-- veto_items 只填写实际触发的一票否决项，未触发不要填写。
-- risk_deductions 只填写实际发生且应扣分的风险项。
+- veto_items 只能来自 scoring_rubric.veto_rules，且只填写实际触发的一票否决项，未触发不要填写。
+- risk_deductions 只能来自 scoring_rubric.risk_rules，且只填写实际发生且应扣分的风险项；不要把已触发 veto 的同一问题重复写入 risk_deductions。
 - 不要用关键词命中即判定通过，要按语义和证据要求判断。
 - 输出必须符合 JSON schema，不要输出总分；总分由程序确定性汇总计算。
 

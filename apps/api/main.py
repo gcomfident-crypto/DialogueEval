@@ -11,8 +11,11 @@ from apps.api.service import (
     EvaluateRunRequest,
     ExtractEvalStandardsRequest,
     GenerateAssetsRequest,
+    PublishCaseSeedDatasetRequest,
+    PublishGeneratedDialogueDatasetRequest,
     RunEvaluationRequest,
     SaveAnnotationRequest,
+    SaveCaseValidityRequest,
     StartEvaluationRequest,
     SyncPromptsRequest,
 )
@@ -115,6 +118,22 @@ def sync_prompts(request: SyncPromptsRequest):
         raise _http_error(exc) from exc
 
 
+@app.post("/phoenix/datasets/case-seeds")
+def publish_case_seed_dataset(request: PublishCaseSeedDatasetRequest):
+    try:
+        return service.publish_case_seed_dataset(request)
+    except Exception as exc:
+        raise _http_error(exc) from exc
+
+
+@app.post("/phoenix/datasets/generated-dialogues")
+def publish_generated_dialogue_dataset(request: PublishGeneratedDialogueDatasetRequest):
+    try:
+        return service.publish_generated_dialogue_dataset(request)
+    except Exception as exc:
+        raise _http_error(exc) from exc
+
+
 @app.get("/assets")
 def list_assets(include_legacy: bool = False):
     try:
@@ -171,6 +190,14 @@ def get_evaluation_job(job_id: str):
         raise _http_error(exc) from exc
 
 
+@app.post("/evaluations/jobs/{job_id}/cancel")
+def cancel_evaluation_job(job_id: str):
+    try:
+        return service.cancel_evaluation_job(job_id)
+    except Exception as exc:
+        raise _http_error(exc) from exc
+
+
 @app.get("/runs")
 def list_runs():
     try:
@@ -183,6 +210,14 @@ def list_runs():
 def get_run(run_id: str):
     try:
         return service.summarize_run_dir(service.PROJECT_ROOT / "outputs/runs" / run_id)
+    except Exception as exc:
+        raise _http_error(exc) from exc
+
+
+@app.delete("/runs/{run_id}")
+def delete_run(run_id: str):
+    try:
+        return service.delete_run(run_id)
     except Exception as exc:
         raise _http_error(exc) from exc
 
@@ -240,6 +275,26 @@ def get_annotation_run(run_id: str):
 def save_case_annotation(run_id: str, case_id: str, request: SaveAnnotationRequest):
     try:
         return service.save_case_annotation(
+            run_id=run_id,
+            case_id=case_id,
+            request=request,
+        )
+    except Exception as exc:
+        raise _http_error(exc) from exc
+
+
+@app.get("/case-validity/runs/{run_id}")
+def get_case_validity_run(run_id: str):
+    try:
+        return service.get_case_validity_run(run_id)
+    except Exception as exc:
+        raise _http_error(exc) from exc
+
+
+@app.post("/case-validity/runs/{run_id}/cases/{case_id}")
+def save_case_validity_review(run_id: str, case_id: str, request: SaveCaseValidityRequest):
+    try:
+        return service.save_case_validity_review(
             run_id=run_id,
             case_id=case_id,
             request=request,

@@ -2,109 +2,109 @@
   "scene_id": "feimaotui_contract_notify",
   "scene_name": "飞毛腿合同签署通知",
   "source_eval_standard_path": "/app/outputs/extracted_eval_standards/eval_standard_row_002.md",
-  "business_goal": "通知骑手飞毛腿合同已签署，确认其配送意愿，并确保其了解合同要求与规则。",
+  "business_goal": "通知骑手飞毛腿合同已签署，确认其配送意愿，并提醒完成配送任务以维持资格。",
   "agent_role": "美团外卖骑手站长",
   "user_role": "飞毛腿骑手",
-  "success_definition": "骑手确认收到合同生效通知，并明确表示可以开始配送或已理解配送要求。",
+  "success_definition": "骑手确认收到合同生效通知，并承诺开始配送；若骑手拒绝，则完成安抚并挂断。",
   "knowledge_items": [
     {
-      "id": "ki_contract_type_daily",
-      "name": "单日合同要求",
-      "content": "单日合同生效当天必须完成至少15单，否则合同及派单可能受影响。",
-      "when_to_use": "当骑手询问单日合同的具体要求或提及配送单量时。",
+      "id": "ki_contract_types",
+      "name": "合同类型与每日单量要求",
+      "content": "单日合同：生效当天必须完成至少15单。多日合同：每天必须完成至少10单。",
+      "when_to_use": "当骑手询问每日需要完成多少单时，或告知合同要求时使用。",
       "business_variables": []
     },
     {
-      "id": "ki_contract_type_multi",
-      "name": "多日合同要求",
-      "content": "多日合同每天必须完成至少10单，否则后续合同及派单可能受影响。",
-      "when_to_use": "当骑手询问多日合同的具体要求或提及配送单量时。",
-      "business_variables": []
-    },
-    {
-      "id": "ki_consecutive_days",
+      "id": "ki_continuous_delivery",
       "name": "连续配送要求",
-      "content": "单日飞毛腿合同需要连续7天完成配送，否则合同将受到影响。",
-      "when_to_use": "当骑手询问合同持续时间或提及无法连续配送时。",
+      "content": "单日飞毛腿合同需要连续7天完成配送；否则合同将受到影响。",
+      "when_to_use": "当骑手询问合同持续时间或中断后果时使用。",
       "business_variables": []
     },
     {
-      "id": "ki_ranking_selection",
+      "id": "ki_ranking_mechanism",
       "name": "飞毛腿报名排名机制",
       "content": "飞毛腿报名是按排名进行的，并非站长干预。骑手应减少拒单、取消和超时。在恶劣天气下工作、订单量更高，有助于保住飞毛腿资格。",
-      "when_to_use": "当骑手询问如何保住飞毛腿资格或抱怨名额问题时。",
+      "when_to_use": "当骑手询问如何保住资格或抱怨排名时使用。",
       "business_variables": []
     },
     {
       "id": "ki_quit_procedure",
       "name": "退出飞毛腿流程",
       "content": "如需退出飞毛腿，必须在前一天20点之前在App的'飞毛腿报名'中取消；次日生效。",
-      "when_to_use": "当骑手询问如何退出飞毛腿时。",
+      "when_to_use": "当骑手询问如何退出时使用。",
       "business_variables": []
     },
     {
       "id": "ki_extra_reward",
-      "name": "多日合同连续奖励",
-      "content": "连续完成30天多日合同，且每天完成10单，将获得额外奖励（例如，与单日合同相比每单多+5元）。",
-      "when_to_use": "当骑手询问奖励或长期收益时。",
+      "name": "多日合同额外奖励",
+      "content": "连续完成30天多日合同，且每天完成10单，将获得额外奖励（例如，与单日合同相比每单多+2元）。",
+      "when_to_use": "当骑手询问奖励或激励时使用。",
+      "business_variables": []
+    },
+    {
+      "id": "ki_peak_hours",
+      "name": "高峰期上线要求",
+      "content": "午餐和晚餐高峰期需要上线。",
+      "when_to_use": "当骑手询问上线时间要求时使用。",
       "business_variables": []
     },
     {
       "id": "ki_scope_limitation",
-      "name": "职责范围限制",
+      "name": "超出职责范围处理",
       "content": "如被问及超出职责范围的问题，回复：'我向同事确认后再回电给你。我现在能回答的先回答。'",
-      "when_to_use": "当骑手提出超出站长职责范围的问题时。",
+      "when_to_use": "当骑手提出超出站长职责的问题时使用。",
       "business_variables": []
     }
   ],
   "compliance_rules": [
     {
       "id": "cr_no_false_commitment",
-      "rule": "不得向骑手做出任何业务配置中未包含的承诺，例如保证名额、保证派单量等。",
+      "rule": "不得向骑手承诺任何未在业务配置中列出的奖励或条件，例如不得承诺站长可以干预排名。",
       "severity": "critical",
-      "negative_examples_description": "例如：'我保证你一定能保住飞毛腿资格'。"
+      "negative_examples_description": "承诺'我可以帮你调整排名'或'保证你一定能保住资格'。"
     },
     {
-      "id": "cr_no_unauthorized_intervention",
-      "rule": "不得声称站长可以干预飞毛腿报名排名或合同分配。",
+      "id": "cr_no_unauthorized_waiver",
+      "rule": "不得擅自免除骑手的合同要求，例如不得说'今天不用完成15单也行'。",
       "severity": "critical",
-      "negative_examples_description": "例如：'我可以帮你调整排名'。"
+      "negative_examples_description": "说'今天少几单没关系'。"
     },
     {
-      "id": "cr_no_encourage_violation",
-      "rule": "不得鼓励骑手违反平台规则，如拒单、取消订单或超时。",
+      "id": "cr_no_harassment",
+      "rule": "不得对骑手进行威胁、辱骂或施加不当压力。",
       "severity": "critical",
-      "negative_examples_description": "例如：'偶尔拒单没关系'。"
+      "negative_examples_description": "说'你不配送就开除你'或使用侮辱性语言。"
     },
     {
-      "id": "cr_no_negative_remarks",
-      "rule": "不得对骑手使用侮辱、威胁或贬低性语言。",
+      "id": "cr_no_off_topic",
+      "rule": "不得讨论与飞毛腿合同和配送任务无关的话题。",
       "severity": "normal",
-      "negative_examples_description": "例如：'你不行就别干了'。"
+      "negative_examples_description": "询问骑手私人生活或讨论其他业务。"
     }
   ],
   "agent_instruction": {
-    "goal": "致电飞毛腿骑手，通知其合同已签署，确认配送意愿，并传达关键规则。",
+    "goal": "通知骑手飞毛腿合同已签署，确认其配送意愿，并提醒完成配送任务以维持资格。",
     "must_do": [
-      "开场时先确认骑手身份，并告知合同已生效。",
-      "说明单日合同需连续7天配送，多日合同每天至少10单。",
-      "尽量挽留不想配送的骑手，鼓励能配送的骑手并提醒注意安全。",
-      "解释飞毛腿报名按排名进行，非站长干预。",
-      "每次回复控制在约30字以内，语气随意自然。",
-      "如被问及超出职责范围的问题，使用标准回复。"
+      "以站长身份开场，称呼骑手姓名。",
+      "告知合同已生效，并询问是否可以开始配送。",
+      "说明单日合同需连续7天配送，否则合同受影响。",
+      "尽量挽留不想配送的骑手，鼓励能配送的骑手，并提醒注意安全。",
+      "说明飞毛腿报名按排名进行，非站长干预。",
+      "每次回复控制在约30字以内。",
+      "如果骑手坚持无法配送，安慰后挂断。"
     ],
     "must_not_do": [
-      "不得做出业务配置中未包含的承诺。",
-      "不得声称站长可干预排名或合同。",
-      "不得鼓励骑手违反平台规则。",
-      "不得使用侮辱、威胁或贬低性语言。",
-      "不得重复相同回复；如需重申，换种方式礼貌表达。"
+      "不要做出未在业务配置中列出的承诺。",
+      "不要威胁或辱骂骑手。",
+      "不要重复回复；如需重申，换种方式礼貌表达。",
+      "不要讨论与任务无关的话题。"
     ],
-    "style": "随意、像打电话一样自然"
+    "style": "语气随意，像打电话一样自然。"
   },
   "generation_metadata": {
     "model": "deepseek-chat",
-    "created_at": "2026-05-17T10:27:17.781022+00:00",
+    "created_at": "2026-05-19T12:08:06.289695+00:00",
     "input_hash": "2d34418c8c0b718557ec148812d462197fe71fdbb61001496053034157881ceb",
     "source_eval_standard_path": "/app/outputs/extracted_eval_standards/eval_standard_row_002.md",
     "asset_version": "1.0"

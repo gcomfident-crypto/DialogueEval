@@ -7,6 +7,7 @@ from dialogue_simulator.schemas import (
     BusinessConfig,
     CaseEvaluationDraft,
     CaseEvaluationResult,
+    CaseValidityAssessment,
     CheckItemEvaluation,
     ConversationResult,
     CoveragePlan,
@@ -79,13 +80,22 @@ def aggregate_case_evaluation(
         risk_deductions=draft.risk_deductions,
     )
     veto_items = _normalize_veto_items(
+        scoring_rubric=scoring_rubric,
         conversation_result=conversation_result,
         veto_items=draft.veto_items,
+    )
+    case_validity = _normalize_case_validity(
+        conversation_result=conversation_result,
+        case_validity=draft.case_validity,
     )
     risk_deduction_total = sum(item.deduction for item in risk_deductions)
     total_score = max(0.0, min(scoring_rubric.total_score, raw_score - risk_deduction_total))
     veto_triggered = bool(veto_items)
-    passed = total_score >= scoring_rubric.pass_threshold and not veto_triggered
+    passed = (
+        case_validity.status != "invalid_user_simulation"
+        and total_score >= scoring_rubric.pass_threshold
+        and not veto_triggered
+    )
 
     return CaseEvaluationResult(
         run_id=conversation_result.run_id,
@@ -99,6 +109,7 @@ def aggregate_case_evaluation(
         passed=passed,
         veto_triggered=veto_triggered,
         veto_items=veto_items,
+        case_validity=case_validity,
         check_item_evaluations=check_item_evaluations,
         dimension_scores=normalized_scores,
         risk_deductions=risk_deductions,
@@ -130,6 +141,12 @@ def _normalize_check_item_evaluations(
                         name=check_item.name,
                         status="failed",
                         reason="评测模型未输出该原子评分项判定。",
+                        points=check_item.points,
+                        score_awarded=0.0,
+                        score_delta=check_item.points,
+                        pass_condition=check_item.pass_condition,
+                        applicability=check_item.applicability,
+                        evidence_required=check_item.evidence_required,
                         missing_points=[check_item.pass_condition],
                     )
                 )
@@ -143,12 +160,20 @@ def _normalize_check_item_evaluations(
                 status = "failed"
                 reason = f"{reason}；证据引用未通过原文校验。"
                 missing_points.append("缺少可回溯到原始对话的有效证据")
+            score_awarded = check_item.points if status == "passed" else 0.0
+            score_delta = check_item.points if status == "failed" else 0.0
             normalized.append(
                 draft_item.model_copy(
                     update={
                         "dimension_id": dimension.dimension_id,
                         "name": draft_item.name or check_item.name,
                         "status": status,
+                        "points": check_item.points,
+                        "score_awarded": score_awarded,
+                        "score_delta": score_delta,
+                        "pass_condition": check_item.pass_condition,
+                        "applicability": check_item.applicability,
+                        "evidence_required": check_item.evidence_required,
                         "evidence": evidence,
                         "missing_points": missing_points,
                     }
@@ -279,10 +304,19 @@ def _normalize_risk_deductions(
         item.rule_id: item.default_deduction
         for item in scoring_rubric.risk_rules
     }
+    risk_rules = {
+        item.rule_id: item
+        for item in scoring_rubric.risk_rules
+    }
+    veto_rule_ids = {item.rule_id for item in scoring_rubric.veto_rules}
     normalized: list[RiskDeduction] = []
     seen: set[str] = set()
     for item in risk_deductions:
         if not item.rule_id or item.rule_id in seen:
+            continue
+        if item.rule_id in veto_rule_ids:
+            continue
+        if item.rule_id not in risk_rules and item.deduction > 0:
             continue
         evidence = _validated_evidence(item.evidence, conversation_result)
         deduction = float(item.deduction)
@@ -291,9 +325,12 @@ def _normalize_risk_deductions(
             deduction = default_deduction if deduction <= 0 else min(deduction, default_deduction)
         if deduction > 0 and not evidence:
             continue
+        rule = risk_rules.get(item.rule_id)
         normalized.append(
             item.model_copy(
                 update={
+                    "description": item.description or (rule.description if rule else ""),
+                    "severity": rule.severity if rule else item.severity,
                     "deduction": round(max(0.0, deduction), 2),
                     "evidence": evidence,
                 }
@@ -305,20 +342,46 @@ def _normalize_risk_deductions(
 
 def _normalize_veto_items(
     *,
+    scoring_rubric: ScoringRubric,
     conversation_result: ConversationResult,
     veto_items: list[VetoFinding],
 ) -> list[VetoFinding]:
+    veto_rules = {
+        item.rule_id: item
+        for item in scoring_rubric.veto_rules
+    }
     normalized: list[VetoFinding] = []
     seen: set[str] = set()
     for item in veto_items:
         if not item.rule_id or item.rule_id in seen:
             continue
+        rule = veto_rules.get(item.rule_id)
+        if rule is None:
+            continue
         evidence = _validated_evidence(item.evidence, conversation_result)
         if not evidence:
             continue
-        normalized.append(item.model_copy(update={"evidence": evidence}))
+        normalized.append(
+            item.model_copy(
+                update={
+                    "description": item.description or rule.description,
+                    "severity": rule.severity,
+                    "evidence": evidence,
+                }
+            )
+        )
         seen.add(item.rule_id)
     return normalized
+
+
+def _normalize_case_validity(
+    *,
+    conversation_result: ConversationResult,
+    case_validity: CaseValidityAssessment,
+) -> CaseValidityAssessment:
+    return case_validity.model_copy(
+        update={"evidence": _validated_evidence(case_validity.evidence, conversation_result)}
+    )
 
 
 def _validated_evidence(

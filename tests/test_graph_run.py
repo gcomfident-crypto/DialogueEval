@@ -43,3 +43,21 @@ def test_conversation_graph_and_report_export(tmp_path: Path) -> None:
     assert (report_dir / "conversation_log.jsonl").exists()
     assert (report_dir / "coverage_report.csv").exists()
     assert (report_dir / "summary_report.md").exists()
+
+
+def test_asset_generation_graph_accepts_target_case_count(tmp_path: Path) -> None:
+    eval_standard = tmp_path / "eval_standard.md"
+    eval_standard.write_text("# 场景评测标准\n\n- 核心目标：完成外呼任务。\n", encoding="utf-8")
+
+    asset_graph = build_asset_generation_graph(FakeLLMClient(), output_root=tmp_path / "assets")
+    asset_result = asset_graph.invoke(
+        {
+            "eval_standard_path": str(eval_standard),
+            "target_case_count": 5,
+        }
+    )
+    assets = load_generated_assets(asset_result["asset_dir"])
+
+    assert len(assets.case_cards.cases) == 5
+    assert assets.case_generation_plan is not None
+    assert assets.case_generation_plan.target_case_count == 5

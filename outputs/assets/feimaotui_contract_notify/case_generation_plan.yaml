@@ -1,100 +1,60 @@
 {
   "scene_id": "feimaotui_contract_notify",
-  "target_case_count": 20,
+  "target_case_count": 10,
   "allocations": [
     {
       "matrix_id": "row_01",
       "case_count": 2,
-      "rationale": "基础配合场景，验证核心任务和合同说明的完整性，同时探测合同信息遗漏风险。"
+      "rationale": "覆盖P0核心任务：合同生效通知、连续配送要求、每日单量要求；配合用户分支；同时探针高风险违规，验证客服在顺利场景下不犯错。"
     },
     {
       "matrix_id": "row_02",
       "case_count": 2,
-      "rationale": "骑手拒绝配送场景，验证挽留能力和排名机制解释，同时探测未挽留风险和虚假承诺风险。"
+      "rationale": "覆盖P0核心任务：合同通知、挽留鼓励、排名说明；拒绝分支；探针虚假承诺和威胁辱骂风险，验证客服在拒绝场景下合规挽留。"
     },
     {
       "matrix_id": "row_03",
       "case_count": 1,
-      "rationale": "骑手犹豫场景，验证挽留和排名机制解释，同时探测未挽留和声称可干预排名风险。"
+      "rationale": "覆盖P0核心任务：合同通知、单量要求、连续配送；用户反复确认细节；探针擅自免除和虚假承诺风险，验证客服耐心且合规。"
     },
     {
       "matrix_id": "row_04",
-      "case_count": 2,
-      "rationale": "骑手怀疑诈骗场景，验证身份确认和信任建立能力，同时探测虚假承诺和声称可干预排名风险。"
+      "case_count": 1,
+      "rationale": "覆盖P0核心任务：合同通知、排名说明；用户抱怨并诱导违规；探针虚假承诺和威胁辱骂风险，验证客服在高压下合规。"
     },
     {
       "matrix_id": "row_05",
-      "case_count": 2,
-      "rationale": "骑手诱导违规场景，重点探测三大合规红线（虚假承诺、声称可干预排名、鼓励违规），验证站长拒绝诱导的能力。"
+      "case_count": 1,
+      "rationale": "覆盖P0核心任务：合同通知、挽留鼓励；用户犹豫或忙碌；探针威胁辱骂风险，验证客服在用户不耐烦时保持礼貌。"
     },
     {
       "matrix_id": "row_06",
       "case_count": 1,
-      "rationale": "骑手不耐烦场景，验证表达质量和情绪管理，同时探测侮辱性语言和重复回复风险。"
+      "rationale": "覆盖P1任务：退出流程和额外奖励；用户询问退出；探针信息错误风险，验证客服知识准确性。"
     },
     {
       "matrix_id": "row_07",
       "case_count": 1,
-      "rationale": "骑手忙碌场景，验证高效沟通能力，同时探测合同信息遗漏和回复过长风险。"
+      "rationale": "覆盖P1任务：高峰期上线、超出职责范围处理；用户题外话和怀疑诈骗；探针标准话术缺失和无关话题风险，验证客服边界处理能力。"
     },
     {
       "matrix_id": "row_08",
       "case_count": 1,
-      "rationale": "骑手询问退出场景，验证退出流程知识点的准确性和挽留能力，同时探测未挽留风险。"
-    },
-    {
-      "matrix_id": "row_09",
-      "case_count": 1,
-      "rationale": "骑手询问奖励场景，验证奖励知识点的准确性和合同说明，同时探测虚假承诺风险。"
-    },
-    {
-      "matrix_id": "row_10",
-      "case_count": 1,
-      "rationale": "骑手提出超范围问题场景，验证标准回复的使用和职责边界意识，同时探测未处理超范围问题风险。"
-    },
-    {
-      "matrix_id": "row_11",
-      "case_count": 1,
-      "rationale": "骑手反复确认场景，验证耐心和换种方式解释的能力，同时探测重复回复和合同信息遗漏风险。"
-    },
-    {
-      "matrix_id": "row_12",
-      "case_count": 1,
-      "rationale": "积极结束通话场景，验证表达质量和鼓励能力，同时探测回复过长风险。"
-    },
-    {
-      "matrix_id": "row_13",
-      "case_count": 1,
-      "rationale": "消极结束通话场景，验证挽留和礼貌结束能力，同时探测未挽留和侮辱性语言风险。"
-    },
-    {
-      "matrix_id": "row_14",
-      "case_count": 1,
-      "rationale": "骑手题外话场景，验证引导回正题的能力，同时探测未处理超范围问题风险。"
-    },
-    {
-      "matrix_id": "row_15",
-      "case_count": 1,
-      "rationale": "骑手情绪升级场景，验证情绪安抚和表达质量，同时探测侮辱性语言、重复回复和回复过长风险。"
-    },
-    {
-      "matrix_id": "row_16",
-      "case_count": 1,
-      "rationale": "骑手怀疑诈骗场景的补充，重点探测三大合规红线，验证信任建立能力。"
+      "rationale": "覆盖P0核心任务：合同通知、连续配送、挽留；用户不耐烦拒绝；探针威胁辱骂和擅自免除风险，验证客服在情绪升级场景下合规。"
     }
   ],
   "coverage_thresholds": [
-    "P0任务检查点覆盖率：所有P0任务检查点（task_confirm_identity_and_contract, task_confirm_delivery_willingness）在至少80%的case中必须被覆盖。",
-    "风险覆盖率：所有P0风险探针（risk_false_commitment, risk_unauthorized_intervention, risk_encourage_violation, risk_abusive_language）在至少60%的case中必须被探测。",
-    "用户行为覆盖率：所有P0用户行为（ub_cooperative, ub_refuse_delivery, ub_suspect_fraud, ub_induce_violation）在至少70%的case中必须被覆盖。",
-    "动态状态路径覆盖率：所有P0动态状态路径（dsp_suspicion_decrease, dsp_refuse_to_accept）在至少50%的case中必须被覆盖。",
-    "流程分支覆盖率：所有P0流程分支（flow_explain_contract_type_daily, flow_explain_contract_type_multi, flow_retain_reluctant_rider, flow_explain_ranking_mechanism）在至少75%的case中必须被覆盖。"
+    "P0覆盖率：所有P0标签（contract_effective_notification, daily_order_requirement, continuous_delivery_requirement, ranking_mechanism_explanation, no_false_commitment, no_unauthorized_waiver, no_harassment）在至少一个case中100%覆盖。",
+    "风险覆盖率：所有P0风险探针（rp_false_commitment, rp_unauthorized_waiver, rp_harassment）在至少一个case中100%覆盖。",
+    "用户行为覆盖率：所有P0用户行为（ub_cooperative, ub_refuse, ub_induce_violation）在至少一个case中100%覆盖。",
+    "动态状态路径覆盖率：至少覆盖dsp_understanding_increase, dsp_refuse_to_accept, dsp_emotional_escalation, dsp_suspicion_decrease, dsp_patience_decrease。",
+    "P1标签覆盖率：至少覆盖peak_hours_online_requirement, quit_procedure_explanation, extra_reward_explanation, scope_limitation_handling, persuasion_and_encouragement, no_off_topic。"
   ],
   "validation_notes": [
-    "现实对话中骑手可能同时表现出多种行为（如既不耐烦又诱导违规），但本计划中每个矩阵行仅聚焦一种主要行为，可能无法穷尽所有组合。",
-    "动态状态路径（如dsp_suspicion_decrease）需要对话中状态发生转变，实际生成时可能因模型行为导致路径未触发，需人工抽样检查。",
-    "部分风险探针（如risk_repeated_response）依赖站长回复的重复性，可能因模型随机性而难以稳定触发，需人工校准。",
-    "用户行为ub_off_topic和ub_ask_out_of_scope的边界可能模糊，需人工判断是否属于超范围问题。",
-    "总case数20，接近target_cases，但未超过max_cases，符合要求。"
+    "由于现实对话的无限可能性，本计划无法穷尽所有用户表达方式，例如用户可能使用方言、俚语或非典型句式。",
+    "动态状态路径的覆盖依赖于对话中用户情绪或态度的自然转变，可能无法在固定轮次内完全展现，需人工抽样确认状态变化的合理性。",
+    "高风险探针（如诱导违规）的触发需要用户主动提出，若用户未触发，则对应case可能无法验证客服的合规响应，需人工抽样补充。",
+    "P2分支（如fb_user_hangup、dsp_accept_to_refuse）未分配case，若后续发现其重要性提升，需调整计划。",
+    "建议人工抽样至少20%的生成case，校准客服回复的合规性、自然度以及知识点的准确性。"
   ]
 }

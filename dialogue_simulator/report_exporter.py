@@ -8,7 +8,13 @@ from typing import Any
 
 from pydantic import BaseModel
 
-from dialogue_simulator.schemas import CaseEvaluationResult, ConversationResult, LLMCallRecord
+from dialogue_simulator.schemas import (
+    CaseEvaluationResult,
+    ConversationResult,
+    CoveragePlan,
+    LLMCallRecord,
+    ScoringRubric,
+)
 
 
 def export_run_reports(results: list[ConversationResult], output_dir: str | Path) -> None:
@@ -24,6 +30,8 @@ def export_evaluation_reports(
     evaluations: list[CaseEvaluationResult],
     output_dir: str | Path,
     conversations: list[ConversationResult] | None = None,
+    coverage_plan: CoveragePlan | None = None,
+    scoring_rubric: ScoringRubric | None = None,
 ) -> None:
     path = Path(output_dir)
     path.mkdir(parents=True, exist_ok=True)
@@ -32,7 +40,13 @@ def export_evaluation_reports(
     }
     write_case_evaluation_jsonl(evaluations, path / "case_evaluation.jsonl")
     write_evaluation_csv(evaluations, path / "evaluation_report.csv")
-    write_evaluation_summary(evaluations, path / "evaluation_report.md")
+    write_evaluation_summary(
+        evaluations,
+        path / "evaluation_report.md",
+        conversations=conversations,
+        coverage_plan=coverage_plan,
+        scoring_rubric=scoring_rubric,
+    )
     case_dir = path / "case_reports"
     case_dir.mkdir(parents=True, exist_ok=True)
     for evaluation in evaluations:
@@ -160,6 +174,7 @@ def write_evaluation_csv(evaluations: list[CaseEvaluationResult], path: Path) ->
         "pass_threshold",
         "passed",
         "veto_triggered",
+        "case_validity",
         "coverage_success",
         "missing_targets",
         "check_item_evaluations",
@@ -183,6 +198,7 @@ def write_evaluation_csv(evaluations: list[CaseEvaluationResult], path: Path) ->
                     "pass_threshold": item.pass_threshold,
                     "passed": str(item.passed).lower(),
                     "veto_triggered": str(item.veto_triggered).lower(),
+                    "case_validity": item.case_validity.status,
                     "coverage_success": str(item.coverage_success).lower(),
                     "missing_targets": ";".join(item.missing_targets),
                     "check_item_evaluations": ";".join(
@@ -286,15 +302,33 @@ def write_summary(results: list[ConversationResult], path: Path) -> None:
     path.write_text("\n".join(lines) + "\n", encoding="utf-8")
 
 
-def write_evaluation_summary(evaluations: list[CaseEvaluationResult], path: Path) -> None:
-    passed = sum(1 for item in evaluations if item.passed)
+def write_evaluation_summary(
+    evaluations: list[CaseEvaluationResult],
+    path: Path,
+    *,
+    conversations: list[ConversationResult] | None = None,
+    coverage_plan: CoveragePlan | None = None,
+    scoring_rubric: ScoringRubric | None = None,
+) -> None:
+    metrics = _evaluation_metrics(
+        evaluations,
+        conversations=conversations,
+        coverage_plan=coverage_plan,
+        scoring_rubric=scoring_rubric,
+    )
+    passed = int(metrics["passed_count"])
     p0_items = [item for item in evaluations if item.priority == "P0"]
-    p0_passed = sum(1 for item in p0_items if item.passed)
-    veto_count = sum(1 for item in evaluations if item.veto_triggered)
-    risk_count = sum(len(item.risk_deductions) for item in evaluations)
-    average_score = _average([item.total_score for item in evaluations])
-    p0_average_score = _average([item.total_score for item in p0_items])
+    p0_passed = int(metrics["p0_passed_count"])
+    veto_count = int(metrics["veto_count"])
+    invalid_count = sum(
+        1 for item in evaluations
+        if item.case_validity.status == "invalid_user_simulation"
+    )
+    risk_count = int(metrics["risk_count"])
+    average_score = float(metrics["average_score"])
+    p0_average_score = float(metrics["p0_average_score"])
     dimension_stats = _dimension_stats(evaluations)
+    stability = _stability_stats(evaluations)
 
     lines = [
         "# 对话模型评测总报告",
@@ -303,12 +337,18 @@ def write_evaluation_summary(evaluations: list[CaseEvaluationResult], path: Path
         "",
         f"- 总 case 数：{len(evaluations)}",
         f"- 通过 case 数：{passed}",
-        f"- 通过率：{_ratio(passed, len(evaluations))}",
+        f"- 总通过率：{_ratio(passed, len(evaluations))}",
         f"- 平均分：{average_score:.2f}",
         f"- P0 平均分：{p0_average_score:.2f}",
         f"- P0 通过率：{_ratio(p0_passed, len(p0_items))}",
+        f"- 测试设计指令覆盖率：{metrics['instruction_coverage_rate']}",
+        f"- P0 指令覆盖率：{metrics['p0_instruction_coverage_rate']}",
+        f"- 指令命中率：{metrics['instruction_hit_rate']}",
+        f"- 风险发现率：{metrics['risk_discovery_rate']}",
         f"- 一票否决 case 数：{veto_count}",
+        f"- 无效用户模拟 case 数：{invalid_count}",
         f"- 风险项数量：{risk_count}",
+        f"- 稳定性：{stability['summary']}",
         "",
         "## 2. 分数分布",
         "",
@@ -322,7 +362,25 @@ def write_evaluation_summary(evaluations: list[CaseEvaluationResult], path: Path
     lines.extend(
         [
             "",
-            "## 3. 维度得分",
+            "## 3. 核心量化指标",
+            "",
+            "| 指标 | 公式 | 数值 |",
+            "|---|---|---:|",
+            f"| 总通过率 | 通过 case 数 / 总 case 数 | {_ratio(passed, len(evaluations))} |",
+            f"| P0 通过率 | P0 通过 case 数 / P0 case 总数 | {_ratio(p0_passed, len(p0_items))} |",
+            f"| 测试设计指令覆盖率 | planned targets 去重数 / 全部指令点数 | {metrics['instruction_coverage_rate']} |",
+            f"| P0 指令覆盖率 | planned P0 targets 去重数 / 全部 P0 指令点数 | {metrics['p0_instruction_coverage_rate']} |",
+            f"| 指令命中率 | triggered targets 去重数 / 全部指令点数 | {metrics['instruction_hit_rate']} |",
+            f"| 风险发现率 | 已触发风险或一票否决规则数 / 已设计风险规则数 | {metrics['risk_discovery_rate']} |",
+            f"| 平均得分 | 所有 case 得分均值 | {average_score:.2f} |",
+            f"| 稳定性 | 同 case 多次重复评测得分标准差 | {stability['value']} |",
+        ]
+    )
+
+    lines.extend(
+        [
+            "",
+            "## 4. 维度得分",
             "",
             "| 维度 | 权重 | 平均得分 | 得分率 | 主要失分原因 |",
             "|---|---:|---:|---:|---|",
@@ -338,15 +396,16 @@ def write_evaluation_summary(evaluations: list[CaseEvaluationResult], path: Path
     lines.extend(
         [
             "",
-            "## 4. Case 明细",
+            "## 5. Case 明细",
             "",
-            "| case_id | 总分 | 是否通过 | 一票否决 | 缺失覆盖项 | 主要结论 |",
-            "|---|---:|---|---|---|---|",
+            "| case_id | 总分 | 是否通过 | case 有效性 | 一票否决 | 缺失覆盖项 | 主要结论 |",
+            "|---|---:|---|---|---|---|---|",
         ]
     )
     for item in evaluations:
         lines.append(
             f"| {item.case_id} | {item.total_score:.2f} | {_yes_no(item.passed)} | "
+            f"{_case_validity_text(item.case_validity.status)} | "
             f"{_yes_no(item.veto_triggered)} | {', '.join(item.missing_targets) or '无'} | "
             f"{_escape_table(item.final_comment)} |"
         )
@@ -354,7 +413,7 @@ def write_evaluation_summary(evaluations: list[CaseEvaluationResult], path: Path
     lines.extend(
         [
             "",
-            "## 5. 未覆盖项与证据",
+            "## 6. 未覆盖项与证据",
             "",
             "| case_id | missing_target | 缺失原因 |",
             "|---|---|---|",
@@ -372,10 +431,10 @@ def write_evaluation_summary(evaluations: list[CaseEvaluationResult], path: Path
     lines.extend(
         [
             "",
-            "## 6. 风险项",
+            "## 7. 风险项",
             "",
-            "| case_id | risk_rule | severity | deduction | evidence |",
-            "|---|---|---|---:|---|",
+            "| case_id | risk_rule | severity | deduction | description | evidence |",
+            "|---|---|---|---:|---|---|",
         ]
     )
     risk_rows = 0
@@ -384,12 +443,13 @@ def write_evaluation_summary(evaluations: list[CaseEvaluationResult], path: Path
             risk_rows += 1
             lines.append(
                 f"| {item.case_id} | {risk.rule_id} | {risk.severity} | "
-                f"{risk.deduction:.2f} | {_escape_table(_evidence_text(risk.evidence))} |"
+                f"{risk.deduction:.2f} | {_escape_table(risk.description)} | "
+                f"{_escape_table(_evidence_text(risk.evidence))} |"
             )
     if risk_rows == 0:
-        lines.append("| 无 | 无 | 无 | 0 | 无 |")
+        lines.append("| 无 | 无 | 无 | 0 | 无 | 无 |")
 
-    lines.extend(["", "## 7. 改进建议", ""])
+    lines.extend(["", "## 8. 改进建议", ""])
     failed = [item for item in evaluations if not item.passed]
     if failed:
         lines.append(f"- 优先复查未通过的 {len(failed)} 个 case：{', '.join(item.case_id for item in failed)}。")
@@ -423,9 +483,13 @@ def write_case_report(
         f"- 总分：{evaluation.total_score:.2f}",
         f"- 原始维度分：{evaluation.raw_score:.2f}",
         f"- 风险扣分：{evaluation.risk_deduction_total:.2f}",
+        f"- 计分公式：{evaluation.raw_score:.2f} - {evaluation.risk_deduction_total:.2f} = {evaluation.total_score:.2f}",
         f"- 合格线：{evaluation.pass_threshold:.2f}",
+        f"- 通过规则：总分 >= {evaluation.pass_threshold:.2f} 且未触发一票否决，且 case 有效",
         f"- 是否通过：{_yes_no(evaluation.passed)}",
         f"- 是否触发一票否决：{_yes_no(evaluation.veto_triggered)}",
+        f"- case 有效性：{_case_validity_text(evaluation.case_validity.status)}",
+        f"- case 有效性说明：{evaluation.case_validity.reason or '无'}",
         f"- 覆盖是否成功：{_yes_no(evaluation.coverage_success)}",
         f"- 缺失覆盖项：{', '.join(evaluation.missing_targets) or '无'}",
         "",
@@ -444,8 +508,8 @@ def write_case_report(
     if evaluation.check_item_evaluations:
         lines.extend(
             [
-                "| 维度 | 原子项 | 判定 | 原因 | 证据 | 缺失点 |",
-                "|---|---|---|---|---|---|",
+                "| 维度 | 原子项 | 分值 | 得分 | 失分 | 判定 | 应满足条件 | 适用条件 | 原因 | 证据 | 缺失点 |",
+                "|---|---|---:|---:|---:|---|---|---|---|---|---|",
             ]
         )
         dimension_names = {
@@ -455,7 +519,10 @@ def write_case_report(
         for check in evaluation.check_item_evaluations:
             lines.append(
                 f"| {_escape_table(dimension_names.get(check.dimension_id, check.dimension_id))} | "
-                f"{_escape_table(check.name or check.check_id)} | {_status_text(check.status)} | "
+                f"{_escape_table(check.name or check.check_id)} | {check.points:.2f} | "
+                f"{check.score_awarded:.2f} | {check.score_delta:.2f} | "
+                f"{_status_text(check.status)} | {_escape_table(check.pass_condition or '无')} | "
+                f"{_escape_table(check.applicability or '默认适用')} | "
                 f"{_escape_table(check.reason)} | {_escape_table(_evidence_text(check.evidence) or '无')} | "
                 f"{_escape_table(', '.join(check.missing_points) or '无')} |"
             )
@@ -618,6 +685,112 @@ def _average(values: list[float]) -> float:
     return sum(values) / len(values)
 
 
+def _evaluation_metrics(
+    evaluations: list[CaseEvaluationResult],
+    *,
+    conversations: list[ConversationResult] | None,
+    coverage_plan: CoveragePlan | None,
+    scoring_rubric: ScoringRubric | None,
+) -> dict[str, object]:
+    p0_items = [item for item in evaluations if item.priority == "P0"]
+    conversations = conversations or []
+    coverage_labels = {
+        item.label: item
+        for item in (coverage_plan.coverage_labels if coverage_plan else [])
+    }
+    all_instruction_labels = set(coverage_labels)
+    planned_targets = {
+        target
+        for conversation in conversations
+        for target in conversation.planned_targets
+    }
+    triggered_targets = {
+        target
+        for conversation in conversations
+        for target in conversation.triggered_targets
+    }
+    if not all_instruction_labels:
+        all_instruction_labels = planned_targets | triggered_targets
+
+    p0_instruction_labels = {
+        label
+        for label, item in coverage_labels.items()
+        if item.priority == "P0"
+    }
+    if not p0_instruction_labels:
+        p0_instruction_labels = {
+            target
+            for conversation in conversations
+            if conversation.priority == "P0"
+            for target in conversation.planned_targets
+        }
+
+    planned_p0_targets = planned_targets & p0_instruction_labels
+    risk_rule_ids = {
+        item.rule_id
+        for item in (scoring_rubric.risk_rules if scoring_rubric else [])
+    }
+    veto_rule_ids = {
+        item.rule_id
+        for item in (scoring_rubric.veto_rules if scoring_rubric else [])
+    }
+    designed_risk_ids = risk_rule_ids | veto_rule_ids
+    triggered_risk_ids = {
+        item.rule_id
+        for evaluation in evaluations
+        for item in [*evaluation.risk_deductions, *evaluation.veto_items]
+    }
+    if not designed_risk_ids:
+        designed_risk_ids = triggered_risk_ids
+
+    return {
+        "passed_count": sum(1 for item in evaluations if item.passed),
+        "p0_passed_count": sum(1 for item in p0_items if item.passed),
+        "veto_count": sum(1 for item in evaluations if item.veto_triggered),
+        "risk_count": sum(len(item.risk_deductions) for item in evaluations),
+        "average_score": _average([item.total_score for item in evaluations]),
+        "p0_average_score": _average([item.total_score for item in p0_items]),
+        "instruction_coverage_rate": _ratio(len(planned_targets), len(all_instruction_labels)),
+        "p0_instruction_coverage_rate": _ratio(
+            len(planned_p0_targets),
+            len(p0_instruction_labels),
+        ),
+        "instruction_hit_rate": _ratio(len(triggered_targets), len(all_instruction_labels)),
+        "risk_discovery_rate": _ratio(len(triggered_risk_ids), len(designed_risk_ids)),
+    }
+
+
+def _stability_stats(evaluations: list[CaseEvaluationResult]) -> dict[str, object]:
+    scores_by_case: dict[str, list[float]] = defaultdict(list)
+    for evaluation in evaluations:
+        key = f"{evaluation.scene_id}:{evaluation.case_id}"
+        scores_by_case[key].append(evaluation.total_score)
+
+    deviations = [
+        _stddev(scores)
+        for scores in scores_by_case.values()
+        if len(scores) >= 2
+    ]
+    if not deviations:
+        return {
+            "value": "样本不足",
+            "summary": "样本不足，需同一 case 至少 2 次重复评测",
+        }
+    average_stddev = _average(deviations)
+    return {
+        "value": f"{average_stddev:.2f}",
+        "summary": f"平均标准差 {average_stddev:.2f}（{len(deviations)} 个重复 case）",
+    }
+
+
+def _stddev(values: list[float]) -> float:
+    if len(values) <= 1:
+        return 0.0
+    mean = _average(values)
+    variance = sum((value - mean) ** 2 for value in values) / len(values)
+    return variance ** 0.5
+
+
 def _yes_no(value: bool) -> str:
     return "是" if value else "否"
 
@@ -627,6 +800,14 @@ def _status_text(value: str) -> str:
         "passed": "通过",
         "failed": "未通过",
         "not_applicable": "不适用",
+    }.get(value, value)
+
+
+def _case_validity_text(value: str) -> str:
+    return {
+        "valid": "有效",
+        "partial": "部分有效",
+        "invalid_user_simulation": "用户模拟无效",
     }.get(value, value)
 
 

@@ -1,2 +1,0 @@
-run_id,case_id,scene_id,priority,raw_score,risk_deduction_total,total_score,pass_threshold,passed,veto_triggered,coverage_success,missing_targets,dimension_scores,risk_deductions,final_comment
-run_20260517_110314_generated_scene,case_001,generated_scene,P0,85.0,0.0,85.0,80.0,true,false,false,C002;C003;C004;C005;C006;C007;C008,任务完成度:30.0/40.0;合规性:30.0/30.0;表达质量:25.0/30.0,generic_expression_gap:0.0,fake evaluation for graph validation

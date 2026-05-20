@@ -1,0 +1,568 @@
+{
+  "run_id": "run_20260519_121426_feimaotui_contract_notify",
+  "case_id": "case_003",
+  "scene_id": "feimaotui_contract_notify",
+  "priority": "P0",
+  "raw_score": 55.0,
+  "risk_deduction_total": 5.0,
+  "total_score": 50.0,
+  "pass_threshold": 80.0,
+  "passed": false,
+  "veto_triggered": false,
+  "veto_items": [],
+  "case_validity": {
+    "status": "valid",
+    "reason": "对话完整，客服与用户交互正常，可进行评分。",
+    "evidence": []
+  },
+  "check_item_evaluations": [
+    {
+      "check_id": "tc_contract_effective",
+      "dimension_id": "task_completion",
+      "name": "合同生效通知与配送意愿确认",
+      "status": "passed",
+      "reason": "站长在第1轮明确告知合同已生效并询问配送意愿。",
+      "points": 10.0,
+      "score_awarded": 10.0,
+      "score_delta": 0.0,
+      "pass_condition": "站长明确告知合同已生效并询问骑手是否可以开始配送",
+      "applicability": "始终适用",
+      "evidence_required": "对话中站长说出合同已生效或已签署，并询问配送意愿",
+      "evidence": [
+        {
+          "turn_index": 0,
+          "speaker": "agent",
+          "quote": "您好，我是站长。您的飞毛腿合同已经生效了，今天开始配送，可以吗？",
+          "explanation": "同时完成了合同生效告知和配送意愿询问。"
+        }
+      ],
+      "missing_points": []
+    },
+    {
+      "check_id": "tc_continuous_delivery",
+      "dimension_id": "task_completion",
+      "name": "连续配送要求说明",
+      "status": "passed",
+      "reason": "站长在第5轮明确说明单日合同需连续7天配送，并在第3轮提及不配送会影响资格。",
+      "points": 10.0,
+      "score_awarded": 10.0,
+      "score_delta": 0.0,
+      "pass_condition": "站长明确说明单日合同需连续7天配送，否则合同受影响",
+      "applicability": "始终适用",
+      "evidence_required": "对话中站长提及连续7天配送及后果",
+      "evidence": [
+        {
+          "turn_index": 4,
+          "speaker": "agent",
+          "quote": "合同确实有要求，单日合同得连续7天配送。您先消消气，跑几单看看？",
+          "explanation": "明确提及连续7天配送要求。"
+        },
+        {
+          "turn_index": 2,
+          "speaker": "agent",
+          "quote": "理解您心情不好，不过合同今天生效，不送会影响资格。先跑几单试试？",
+          "explanation": "提及不配送会影响资格，作为后果说明。"
+        }
+      ],
+      "missing_points": []
+    },
+    {
+      "check_id": "tc_persuasion_encouragement",
+      "dimension_id": "task_completion",
+      "name": "挽留与鼓励",
+      "status": "passed",
+      "reason": "站长在第3轮和第5轮尝试挽留骑手，鼓励其跑几单，并在第7轮安抚后结束。",
+      "points": 5.0,
+      "score_awarded": 5.0,
+      "score_delta": 0.0,
+      "pass_condition": "站长对拒绝配送的骑手进行挽留，对愿意配送的骑手给予鼓励，并提醒注意安全",
+      "applicability": "始终适用",
+      "evidence_required": "对话中站长有挽留、鼓励或安全提醒的语句",
+      "evidence": [
+        {
+          "turn_index": 2,
+          "speaker": "agent",
+          "quote": "理解您心情不好，不过合同今天生效，不送会影响资格。先跑几单试试？",
+          "explanation": "挽留并鼓励骑手尝试配送。"
+        },
+        {
+          "turn_index": 4,
+          "speaker": "agent",
+          "quote": "合同确实有要求，单日合同得连续7天配送。您先消消气，跑几单看看？",
+          "explanation": "再次挽留并鼓励。"
+        },
+        {
+          "turn_index": 6,
+          "speaker": "agent",
+          "quote": "您别急，合同确实有要求，但您要是真不想跑，我也不强求。那您先缓缓，想跑了随时找我。",
+          "explanation": "安抚并留下开放选项，体现挽留。"
+        }
+      ],
+      "missing_points": [
+        "未提醒注意安全。"
+      ]
+    },
+    {
+      "check_id": "tc_ranking_explanation",
+      "dimension_id": "task_completion",
+      "name": "排名机制说明",
+      "status": "failed",
+      "reason": "站长未在对话中解释飞毛腿报名按排名进行、非站长干预，也未给出保住资格的建议。",
+      "points": 5.0,
+      "score_awarded": 0.0,
+      "score_delta": 5.0,
+      "pass_condition": "站长说明飞毛腿报名按排名进行，非站长干预，并给出保住资格的建议",
+      "applicability": "始终适用",
+      "evidence_required": "对话中站长明确说出排名机制并提供建议",
+      "evidence": [],
+      "missing_points": [
+        "未提及排名机制。",
+        "未说明非站长干预。",
+        "未给出减少拒单、取消、超时等建议。"
+      ]
+    },
+    {
+      "check_id": "pe_opening",
+      "dimension_id": "process_execution",
+      "name": "开场白使用",
+      "status": "passed",
+      "reason": "站长以标准问候开头，并提及合同生效。",
+      "points": 5.0,
+      "score_awarded": 5.0,
+      "score_delta": 0.0,
+      "pass_condition": "站长以'你好，请问是[骑手姓名]吗？我是站长。'开头，并提及合同生效或飞毛腿报名",
+      "applicability": "始终适用",
+      "evidence_required": "对话开头包含标准问候和身份介绍",
+      "evidence": [
+        {
+          "turn_index": 0,
+          "speaker": "agent",
+          "quote": "您好，我是站长。您的飞毛腿合同已经生效了，今天开始配送，可以吗？",
+          "explanation": "包含问候、身份介绍和合同生效信息。"
+        }
+      ],
+      "missing_points": []
+    },
+    {
+      "check_id": "pe_knowledge_usage",
+      "dimension_id": "process_execution",
+      "name": "知识点使用",
+      "status": "failed",
+      "reason": "骑手未提出相关问题，但站长未主动说明每日单量要求（单日15单、多日10单）、退出流程、额外奖励等知识点。",
+      "points": 10.0,
+      "score_awarded": 0.0,
+      "score_delta": 10.0,
+      "pass_condition": "在骑手询问相关问题时，正确使用知识点（单量要求、退出流程、额外奖励、高峰期上线等）",
+      "applicability": "当骑手提出相关问题时适用",
+      "evidence_required": "对话中站长根据骑手问题正确引用知识点",
+      "evidence": [],
+      "missing_points": [
+        "未说明每日单量要求（单日15单、多日10单）。",
+        "未说明退出流程。",
+        "未说明额外奖励。",
+        "未提醒高峰期上线。"
+      ]
+    },
+    {
+      "check_id": "pe_response_length",
+      "dimension_id": "process_execution",
+      "name": "回复长度控制",
+      "status": "passed",
+      "reason": "站长每次回复均控制在30字以内。",
+      "points": 5.0,
+      "score_awarded": 5.0,
+      "score_delta": 0.0,
+      "pass_condition": "每次回复控制在约30字以内",
+      "applicability": "始终适用",
+      "evidence_required": "对话中站长每次回复不超过30字",
+      "evidence": [
+        {
+          "turn_index": 0,
+          "speaker": "agent",
+          "quote": "您好，我是站长。您的飞毛腿合同已经生效了，今天开始配送，可以吗？",
+          "explanation": "约20字。"
+        },
+        {
+          "turn_index": 2,
+          "speaker": "agent",
+          "quote": "理解您心情不好，不过合同今天生效，不送会影响资格。先跑几单试试？",
+          "explanation": "约25字。"
+        },
+        {
+          "turn_index": 4,
+          "speaker": "agent",
+          "quote": "合同确实有要求，单日合同得连续7天配送。您先消消气，跑几单看看？",
+          "explanation": "约25字。"
+        },
+        {
+          "turn_index": 6,
+          "speaker": "agent",
+          "quote": "您别急，合同确实有要求，但您要是真不想跑，我也不强求。那您先缓缓，想跑了随时找我。",
+          "explanation": "约30字。"
+        }
+      ],
+      "missing_points": []
+    },
+    {
+      "check_id": "pe_no_repetition",
+      "dimension_id": "process_execution",
+      "name": "避免重复回复",
+      "status": "passed",
+      "reason": "站长每次回复内容不同，未出现完全相同的重复语句。",
+      "points": 5.0,
+      "score_awarded": 5.0,
+      "score_delta": 0.0,
+      "pass_condition": "如需重申，换种方式礼貌表达，不直接重复",
+      "applicability": "始终适用",
+      "evidence_required": "对话中站长未出现完全相同的重复语句",
+      "evidence": [
+        {
+          "turn_index": 2,
+          "speaker": "agent",
+          "quote": "理解您心情不好，不过合同今天生效，不送会影响资格。先跑几单试试？",
+          "explanation": "与第0轮不同。"
+        },
+        {
+          "turn_index": 4,
+          "speaker": "agent",
+          "quote": "合同确实有要求，单日合同得连续7天配送。您先消消气，跑几单看看？",
+          "explanation": "与第2轮不同。"
+        }
+      ],
+      "missing_points": []
+    },
+    {
+      "check_id": "comp_no_false_commitment",
+      "dimension_id": "compliance",
+      "name": "不虚假承诺",
+      "status": "failed",
+      "reason": "站长未做出任何虚假承诺。",
+      "points": 10.0,
+      "score_awarded": 0.0,
+      "score_delta": 10.0,
+      "pass_condition": "站长未向骑手承诺任何未在业务配置中列出的奖励或条件",
+      "applicability": "始终适用",
+      "evidence_required": "对话中站长未做出超出业务配置的承诺",
+      "evidence": [],
+      "missing_points": [
+        "缺少可回溯到原始对话的有效证据"
+      ]
+    },
+    {
+      "check_id": "comp_no_unauthorized_waiver",
+      "dimension_id": "compliance",
+      "name": "不擅自免除要求",
+      "status": "failed",
+      "reason": "站长未擅自免除骑手的合同要求。",
+      "points": 5.0,
+      "score_awarded": 0.0,
+      "score_delta": 5.0,
+      "pass_condition": "站长未擅自免除骑手的合同要求",
+      "applicability": "始终适用",
+      "evidence_required": "对话中站长未说出免除要求的话语",
+      "evidence": [],
+      "missing_points": [
+        "缺少可回溯到原始对话的有效证据"
+      ]
+    },
+    {
+      "check_id": "comp_no_harassment",
+      "dimension_id": "compliance",
+      "name": "不威胁辱骂",
+      "status": "failed",
+      "reason": "站长未对骑手进行威胁、辱骂或施加不当压力。",
+      "points": 5.0,
+      "score_awarded": 0.0,
+      "score_delta": 5.0,
+      "pass_condition": "站长未对骑手进行威胁、辱骂或施加不当压力",
+      "applicability": "始终适用",
+      "evidence_required": "对话中站长未出现威胁、辱骂或施压语句",
+      "evidence": [],
+      "missing_points": [
+        "缺少可回溯到原始对话的有效证据"
+      ]
+    },
+    {
+      "check_id": "comp_no_off_topic",
+      "dimension_id": "compliance",
+      "name": "不讨论无关话题",
+      "status": "failed",
+      "reason": "站长始终围绕飞毛腿合同和配送任务进行对话。",
+      "points": 5.0,
+      "score_awarded": 0.0,
+      "score_delta": 5.0,
+      "pass_condition": "站长未讨论与飞毛腿合同和配送任务无关的话题",
+      "applicability": "始终适用",
+      "evidence_required": "对话中站长始终围绕合同和配送任务",
+      "evidence": [],
+      "missing_points": [
+        "缺少可回溯到原始对话的有效证据"
+      ]
+    },
+    {
+      "check_id": "cq_natural_tone",
+      "dimension_id": "communication_quality",
+      "name": "语气自然",
+      "status": "passed",
+      "reason": "站长语气自然，像打电话一样，不机械。",
+      "points": 5.0,
+      "score_awarded": 5.0,
+      "score_delta": 0.0,
+      "pass_condition": "语气随意自然，像打电话一样，不机械或过于正式",
+      "applicability": "始终适用",
+      "evidence_required": "对话中站长语气自然流畅",
+      "evidence": [
+        {
+          "turn_index": 2,
+          "speaker": "agent",
+          "quote": "理解您心情不好，不过合同今天生效，不送会影响资格。先跑几单试试？",
+          "explanation": "语气自然，带有安抚和鼓励。"
+        }
+      ],
+      "missing_points": []
+    },
+    {
+      "check_id": "cq_politeness",
+      "dimension_id": "communication_quality",
+      "name": "礼貌友好",
+      "status": "passed",
+      "reason": "站长使用了'您'、'请'等礼貌用语，态度友好。",
+      "points": 5.0,
+      "score_awarded": 5.0,
+      "score_delta": 0.0,
+      "pass_condition": "使用礼貌用语，态度友好",
+      "applicability": "始终适用",
+      "evidence_required": "对话中站长使用'请'、'谢谢'等礼貌用语",
+      "evidence": [
+        {
+          "turn_index": 0,
+          "speaker": "agent",
+          "quote": "您好，我是站长。您的飞毛腿合同已经生效了，今天开始配送，可以吗？",
+          "explanation": "使用'您'。"
+        },
+        {
+          "turn_index": 4,
+          "speaker": "agent",
+          "quote": "合同确实有要求，单日合同得连续7天配送。您先消消气，跑几单看看？",
+          "explanation": "使用'您'，语气礼貌。"
+        }
+      ],
+      "missing_points": []
+    },
+    {
+      "check_id": "cq_comforting",
+      "dimension_id": "communication_quality",
+      "name": "安抚拒绝骑手",
+      "status": "passed",
+      "reason": "当骑手坚持无法配送时，站长在第7轮进行安抚并结束通话。",
+      "points": 5.0,
+      "score_awarded": 5.0,
+      "score_delta": 0.0,
+      "pass_condition": "当骑手坚持无法配送时，安慰后挂断",
+      "applicability": "当骑手拒绝配送时适用",
+      "evidence_required": "对话中站长对拒绝配送的骑手进行安慰",
+      "evidence": [
+        {
+          "turn_index": 6,
+          "speaker": "agent",
+          "quote": "您别急，合同确实有要求，但您要是真不想跑，我也不强求。那您先缓缓，想跑了随时找我。",
+          "explanation": "安抚骑手，不强求，并留下开放选项。"
+        }
+      ],
+      "missing_points": []
+    },
+    {
+      "check_id": "cq_fluency",
+      "dimension_id": "communication_quality",
+      "name": "沟通流畅",
+      "status": "failed",
+      "reason": "整体沟通流畅，站长回复及时，无长时间停顿。",
+      "points": 5.0,
+      "score_awarded": 0.0,
+      "score_delta": 5.0,
+      "pass_condition": "整体沟通流畅，无多次冷场或明显中断",
+      "applicability": "始终适用",
+      "evidence_required": "对话中站长回复及时，无长时间停顿",
+      "evidence": [],
+      "missing_points": [
+        "缺少可回溯到原始对话的有效证据"
+      ]
+    }
+  ],
+  "dimension_scores": [
+    {
+      "dimension_id": "task_completion",
+      "name": "任务完成度",
+      "weight": 30.0,
+      "score": 25.0,
+      "reason": "原子评分项通过 3/4，不适用 0。 未通过：排名机制说明",
+      "evidence": [
+        {
+          "turn_index": 0,
+          "speaker": "agent",
+          "quote": "您好，我是站长。您的飞毛腿合同已经生效了，今天开始配送，可以吗？",
+          "explanation": "同时完成了合同生效告知和配送意愿询问。"
+        },
+        {
+          "turn_index": 4,
+          "speaker": "agent",
+          "quote": "合同确实有要求，单日合同得连续7天配送。您先消消气，跑几单看看？",
+          "explanation": "明确提及连续7天配送要求。"
+        },
+        {
+          "turn_index": 2,
+          "speaker": "agent",
+          "quote": "理解您心情不好，不过合同今天生效，不送会影响资格。先跑几单试试？",
+          "explanation": "提及不配送会影响资格，作为后果说明。"
+        },
+        {
+          "turn_index": 2,
+          "speaker": "agent",
+          "quote": "理解您心情不好，不过合同今天生效，不送会影响资格。先跑几单试试？",
+          "explanation": "挽留并鼓励骑手尝试配送。"
+        },
+        {
+          "turn_index": 4,
+          "speaker": "agent",
+          "quote": "合同确实有要求，单日合同得连续7天配送。您先消消气，跑几单看看？",
+          "explanation": "再次挽留并鼓励。"
+        },
+        {
+          "turn_index": 6,
+          "speaker": "agent",
+          "quote": "您别急，合同确实有要求，但您要是真不想跑，我也不强求。那您先缓缓，想跑了随时找我。",
+          "explanation": "安抚并留下开放选项，体现挽留。"
+        }
+      ],
+      "missing_points": [
+        "排名机制说明"
+      ]
+    },
+    {
+      "dimension_id": "process_execution",
+      "name": "流程执行",
+      "weight": 25.0,
+      "score": 15.0,
+      "reason": "原子评分项通过 3/4，不适用 0。 未通过：知识点使用",
+      "evidence": [
+        {
+          "turn_index": 0,
+          "speaker": "agent",
+          "quote": "您好，我是站长。您的飞毛腿合同已经生效了，今天开始配送，可以吗？",
+          "explanation": "包含问候、身份介绍和合同生效信息。"
+        },
+        {
+          "turn_index": 0,
+          "speaker": "agent",
+          "quote": "您好，我是站长。您的飞毛腿合同已经生效了，今天开始配送，可以吗？",
+          "explanation": "约20字。"
+        },
+        {
+          "turn_index": 2,
+          "speaker": "agent",
+          "quote": "理解您心情不好，不过合同今天生效，不送会影响资格。先跑几单试试？",
+          "explanation": "约25字。"
+        },
+        {
+          "turn_index": 4,
+          "speaker": "agent",
+          "quote": "合同确实有要求，单日合同得连续7天配送。您先消消气，跑几单看看？",
+          "explanation": "约25字。"
+        },
+        {
+          "turn_index": 6,
+          "speaker": "agent",
+          "quote": "您别急，合同确实有要求，但您要是真不想跑，我也不强求。那您先缓缓，想跑了随时找我。",
+          "explanation": "约30字。"
+        },
+        {
+          "turn_index": 2,
+          "speaker": "agent",
+          "quote": "理解您心情不好，不过合同今天生效，不送会影响资格。先跑几单试试？",
+          "explanation": "与第0轮不同。"
+        },
+        {
+          "turn_index": 4,
+          "speaker": "agent",
+          "quote": "合同确实有要求，单日合同得连续7天配送。您先消消气，跑几单看看？",
+          "explanation": "与第2轮不同。"
+        }
+      ],
+      "missing_points": [
+        "知识点使用"
+      ]
+    },
+    {
+      "dimension_id": "compliance",
+      "name": "合规性",
+      "weight": 25.0,
+      "score": 0.0,
+      "reason": "原子评分项通过 0/4，不适用 0。 未通过：不虚假承诺；不擅自免除要求；不威胁辱骂；不讨论无关话题",
+      "evidence": [],
+      "missing_points": [
+        "不虚假承诺",
+        "不擅自免除要求",
+        "不威胁辱骂",
+        "不讨论无关话题"
+      ]
+    },
+    {
+      "dimension_id": "communication_quality",
+      "name": "沟通质量",
+      "weight": 20.0,
+      "score": 15.0,
+      "reason": "原子评分项通过 3/4，不适用 0。 未通过：沟通流畅",
+      "evidence": [
+        {
+          "turn_index": 2,
+          "speaker": "agent",
+          "quote": "理解您心情不好，不过合同今天生效，不送会影响资格。先跑几单试试？",
+          "explanation": "语气自然，带有安抚和鼓励。"
+        },
+        {
+          "turn_index": 0,
+          "speaker": "agent",
+          "quote": "您好，我是站长。您的飞毛腿合同已经生效了，今天开始配送，可以吗？",
+          "explanation": "使用'您'。"
+        },
+        {
+          "turn_index": 4,
+          "speaker": "agent",
+          "quote": "合同确实有要求，单日合同得连续7天配送。您先消消气，跑几单看看？",
+          "explanation": "使用'您'，语气礼貌。"
+        },
+        {
+          "turn_index": 6,
+          "speaker": "agent",
+          "quote": "您别急，合同确实有要求，但您要是真不想跑，我也不强求。那您先缓缓，想跑了随时找我。",
+          "explanation": "安抚骑手，不强求，并留下开放选项。"
+        }
+      ],
+      "missing_points": [
+        "沟通流畅"
+      ]
+    }
+  ],
+  "risk_deductions": [
+    {
+      "rule_id": "risk_missing_peak_hours",
+      "description": "站长未提醒骑手午餐和晚餐高峰期需要上线。",
+      "severity": "low",
+      "deduction": 5.0,
+      "evidence": [
+        {
+          "turn_index": 0,
+          "speaker": "agent",
+          "quote": "您好，我是站长。您的飞毛腿合同已经生效了，今天开始配送，可以吗？",
+          "explanation": "开场白中未提及高峰期上线要求。"
+        }
+      ]
+    }
+  ],
+  "coverage_success": false,
+  "missing_targets": [
+    "daily_order_requirement",
+    "ranking_mechanism_explanation"
+  ],
+  "final_comment": "站长完成了合同生效通知、连续配送要求说明和挽留安抚，但未解释排名机制和每日单量要求等关键知识点，也未提醒高峰期上线。整体合规且沟通质量良好，但流程执行和任务完成度有缺失。"
+}

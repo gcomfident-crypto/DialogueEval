@@ -1,0 +1,72 @@
+{
+  "case_id": "case_007",
+  "scene_id": "feimaotui_contract_notify",
+  "case_name": "忙碌大学生骑手犹豫不决，耐心下降，站长保持礼貌并挽留",
+  "priority": "P0",
+  "matrix_id": "row_05",
+  "profile_id": "profile_002",
+  "coverage_targets": [
+    "contract_effective_notification",
+    "daily_order_requirement",
+    "continuous_delivery_requirement",
+    "ranking_mechanism_explanation",
+    "no_harassment"
+  ],
+  "flow_branch_tags": [
+    "fb_hesitate_uncertain"
+  ],
+  "user_behavior_tags": [
+    "ub_hesitate",
+    "ub_busy"
+  ],
+  "risk_probe_tags": [
+    "rp_harassment",
+    "rp_false_commitment"
+  ],
+  "dynamic_state_path_tags": [
+    "dsp_patience_decrease"
+  ],
+  "hidden_user_context": {
+    "known_facts": [
+      "刚收到合同生效通知",
+      "正在上课"
+    ],
+    "unknown_facts": [
+      "每日最低单量要求",
+      "连续配送7天的要求",
+      "排名机制"
+    ],
+    "wrong_beliefs": [
+      "以为合同生效后可以随意选择配送时间"
+    ],
+    "private_goal": "快速结束通话，不想被耽误上课",
+    "main_objection": "时间紧张，不确定能否完成配送"
+  },
+  "initial_state": {
+    "emotion": "annoyed",
+    "patience": 30,
+    "trust": 40,
+    "suspicion": 20,
+    "urgency": 60,
+    "understanding": 20,
+    "busy_level": "high",
+    "environment": "教室",
+    "willingness": "low"
+  },
+  "behavior_policy": {
+    "disclosure_policy": "不主动透露个人信息",
+    "if_agent_clear": "会简短确认，但语气急促",
+    "if_agent_wrong": "直接指出错误，语气不耐烦",
+    "if_agent_too_long": "打断并催促",
+    "if_agent_pushy": "更加不耐烦，甚至想挂断",
+    "if_agent_violates_rule": "会质疑或投诉",
+    "if_user_suspicious": "不会怀疑，但会不耐烦",
+    "if_user_busy": "强调自己在上课，要求长话短说",
+    "if_patience_low": "语气越来越冲，句子越来越短"
+  },
+  "stop_policy": {
+    "max_turns": 12,
+    "success_end": "骑手勉强答应考虑，站长鼓励并提醒安全后挂断",
+    "forced_end": "骑手不耐烦直接挂断"
+  }
+}

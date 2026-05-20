@@ -2,68 +2,364 @@
   "scene_id": "course_publish_live_upgrade",
   "task_targets": [
     {
-      "item_id": "task_core",
-      "name": "核心任务覆盖",
-      "description": "覆盖身份确认、核心信息传达和用户疑问处理。",
+      "item_id": "tt_01",
+      "name": "身份确认",
+      "description": "客服主动询问用户是否为培训机构/校区负责人，并根据回答做出相应处理（若是则继续，若不是则请其转达）。",
       "priority": "P0",
-      "source_basis": "coverage_plan",
-      "examples_description": ""
+      "source_basis": "来自评测标准 Step 1 身份确认，以及覆盖计划 identity_confirmation 标签。",
+      "examples_description": "客服询问身份并得到明确答复的对话片段"
+    },
+    {
+      "item_id": "tt_02",
+      "name": "知情确认",
+      "description": "客服询问用户是否知晓之前后台已为其开启低延迟线路，并根据用户回答进行解释或继续流程。",
+      "priority": "P0",
+      "source_basis": "来自评测标准 Step 2 确认是否知情，以及覆盖计划 awareness_confirmation 标签。",
+      "examples_description": "客服询问知情情况并得到用户回应的对话"
+    },
+    {
+      "item_id": "tt_03",
+      "name": "升级内容传达",
+      "description": "客服告知用户课程发布页面将新增标准直播和低延迟直播两个独立选项，并至少说明延迟、费用或适用场景中的一个区别。",
+      "priority": "P0",
+      "source_basis": "来自评测标准 Step 3 传达升级内容，以及覆盖计划 upgrade_content_delivery 标签。",
+      "examples_description": "客服介绍升级内容并包含区别说明的对话"
+    },
+    {
+      "item_id": "tt_04",
+      "name": "前端可见性确认",
+      "description": "客服确认低延迟直播选项在用户发课界面是否已显示，并根据结果提供后续操作（如配置引导或告知等待）。",
+      "priority": "P0",
+      "source_basis": "来自评测标准 Step 4 确认前端是否可见，以及覆盖计划 frontend_visibility_check 标签。",
+      "examples_description": "客服询问可见性并基于用户回答提供指引的对话"
+    },
+    {
+      "item_id": "tt_05",
+      "name": "学员端费用检查",
+      "description": "客服询问用户是否已设置学员端费用或加速线路费，并提醒确认低延迟直播也适用该费用，必要时引导配置。",
+      "priority": "P1",
+      "source_basis": "来自评测标准 Step 5 检查学员端费用/加速线路费，以及覆盖计划 student_fee_check 和 student_fee_config_guidance 标签。",
+      "examples_description": "客服询问费用设置并给出相应提醒的对话"
+    },
+    {
+      "item_id": "tt_06",
+      "name": "企业微信添加",
+      "description": "客服在通话结束前提出添加企业微信，并根据当前号码是否可添加进行相应处理（可添加则告知验证，不可添加则索要其他号码）。",
+      "priority": "P0",
+      "source_basis": "来自评测标准 Step 6 企业微信添加，以及覆盖计划 wechat_work_add 标签。",
+      "examples_description": "客服提出添加企业微信并得到用户配合的对话"
+    },
+    {
+      "item_id": "tt_07",
+      "name": "结束通话",
+      "description": "客服在解答完所有疑问后，确认用户无其他问题，并礼貌结束通话（如祝福语）。",
+      "priority": "P1",
+      "source_basis": "来自评测标准 Step 7 结束通话，以及覆盖计划 call_closure 标签。",
+      "examples_description": "客服确认无问题后礼貌结束的对话"
     }
   ],
   "flow_branches": [
     {
-      "item_id": "flow_normal",
-      "name": "正常接听流程",
-      "description": "用户可以继续听完外呼任务。",
+      "item_id": "fb_01",
+      "name": "身份确认分支：非负责人",
+      "description": "用户表示不是负责人，客服请其转达后继续流程。",
       "priority": "P0",
-      "source_basis": "eval_standard",
-      "examples_description": ""
+      "source_basis": "来自评测标准 Step 1 身份确认中的分支：若不是负责人则请其转达。",
+      "examples_description": "用户说不是负责人，客服请其转达"
+    },
+    {
+      "item_id": "fb_02",
+      "name": "知情确认分支：不知情",
+      "description": "用户表示不知情，客服解释之前后台临时开启低延迟线路的原因。",
+      "priority": "P0",
+      "source_basis": "来自评测标准 Step 2 确认是否知情中的分支：若不知情则说明原因。",
+      "examples_description": "用户说不知道，客服解释历史原因"
+    },
+    {
+      "item_id": "fb_03",
+      "name": "发布方式分支：Web控制台",
+      "description": "用户通过Web控制台发课，客服根据低延迟直播是否显示进行不同处理（显示则直接使用，未显示则后台配置）。",
+      "priority": "P1",
+      "source_basis": "来自评测标准 Step 4.1 询问发布方式中的Web控制台分支。",
+      "examples_description": "用户说用Web控制台，客服引导查看或告知等待"
+    },
+    {
+      "item_id": "fb_04",
+      "name": "发布方式分支：第三方系统",
+      "description": "用户通过第三方系统发课，客服根据低延迟直播是否显示进行不同处理（显示则按需选择，未显示则引导配置）。",
+      "priority": "P1",
+      "source_basis": "来自评测标准 Step 4.1 询问发布方式中的第三方系统分支。",
+      "examples_description": "用户说用第三方系统，客服引导配置"
+    },
+    {
+      "item_id": "fb_05",
+      "name": "学员端费用分支：已设置费用",
+      "description": "用户已设置学员端费用或加速线路费，客服提醒确认低延迟直播也适用该费用，必要时引导配置。",
+      "priority": "P1",
+      "source_basis": "来自评测标准 Step 5 检查学员端费用中的分支：已设置费用则提醒并引导。",
+      "examples_description": "用户说已设置费用，客服提醒确认低延迟适用"
+    },
+    {
+      "item_id": "fb_06",
+      "name": "企业微信添加分支：号码不可添加",
+      "description": "当前号码无法添加企业微信，客服索要其他可添加的手机号。",
+      "priority": "P0",
+      "source_basis": "来自评测标准 Step 6 企业微信添加中的分支：若不可添加则索要其他号码。",
+      "examples_description": "客服说当前号码无法添加，请用户提供其他号码"
+    },
+    {
+      "item_id": "fb_07",
+      "name": "开车场景分支",
+      "description": "用户表示在开车，客服礼貌回应'那我稍后再打'并挂断。",
+      "priority": "P0",
+      "source_basis": "来自评测标准约束条件中的开车场景处理，以及覆盖计划 driving_scenario_handling 标签。",
+      "examples_description": "用户说在开车，客服说稍后再打并挂断"
+    },
+    {
+      "item_id": "fb_08",
+      "name": "忙碌场景分支",
+      "description": "用户表示忙，客服说'就1分钟，保证简短'后继续简短说明。",
+      "priority": "P1",
+      "source_basis": "来自评测标准约束条件：若老板说忙，说'就1分钟，保证简短'后继续。",
+      "examples_description": "用户说忙，客服说就1分钟并继续"
     }
   ],
   "user_behaviors": [
     {
-      "item_id": "behavior_brief_request",
-      "name": "要求简短说明",
-      "description": "用户愿意听但要求客服说重点。",
+      "item_id": "ub_01",
+      "name": "配合确认",
+      "description": "用户积极配合，明确回答客服的询问（如确认身份、知情、费用等），并按照指引操作。",
       "priority": "P0",
-      "source_basis": "model_inference",
-      "examples_description": ""
+      "source_basis": "模型基于任务合理归纳：真实用户常见配合反应。",
+      "examples_description": "用户回答'是的，我是负责人'、'好的，我看看'"
     },
     {
-      "item_id": "behavior_suspicious",
-      "name": "怀疑来电真实性",
-      "description": "用户质疑身份或信息来源。",
+      "item_id": "ub_02",
+      "name": "直接拒绝",
+      "description": "用户明确表示不需要或不想听，如'我没兴趣'、'别打了'。",
       "priority": "P1",
-      "source_basis": "model_inference",
-      "examples_description": ""
+      "source_basis": "模型基于任务合理归纳：真实用户常见拒绝反应。",
+      "examples_description": "用户说'我不需要'、'别再打了'"
+    },
+    {
+      "item_id": "ub_03",
+      "name": "犹豫不决",
+      "description": "用户对升级内容或选择表现出犹豫，如'我再想想'、'不确定选哪个'。",
+      "priority": "P1",
+      "source_basis": "模型基于任务合理归纳：真实用户常见犹豫反应。",
+      "examples_description": "用户说'我考虑一下'、'不知道选哪个好'"
+    },
+    {
+      "item_id": "ub_04",
+      "name": "忙碌推脱",
+      "description": "用户表示现在忙、没时间，如'我现在很忙'、'等会儿再说'。",
+      "priority": "P1",
+      "source_basis": "来自评测标准约束条件中的忙碌场景处理。",
+      "examples_description": "用户说'我现在没空'、'在忙'"
+    },
+    {
+      "item_id": "ub_05",
+      "name": "反复确认",
+      "description": "用户对同一问题多次询问或要求重复，如'你再说一遍'、'确认一下费用'。",
+      "priority": "P1",
+      "source_basis": "模型基于任务合理归纳：真实用户常见反复确认反应。",
+      "examples_description": "用户说'你刚才说的再讲一遍'、'费用到底多少'"
+    },
+    {
+      "item_id": "ub_06",
+      "name": "题外话",
+      "description": "用户提出与当前任务无关的问题或话题，如询问其他产品功能、闲聊等。",
+      "priority": "P2",
+      "source_basis": "模型基于任务合理归纳：真实用户常见题外话反应。",
+      "examples_description": "用户问'你们还有其他课程吗'、'今天天气不错'"
+    },
+    {
+      "item_id": "ub_07",
+      "name": "怀疑诈骗",
+      "description": "用户怀疑来电是诈骗电话，如'你是骗子吧'、'我怎么相信你'。",
+      "priority": "P0",
+      "source_basis": "模型基于任务合理归纳：真实用户常见怀疑诈骗反应。",
+      "examples_description": "用户说'这是诈骗电话吧'、'你证明一下'"
+    },
+    {
+      "item_id": "ub_08",
+      "name": "情绪不耐烦",
+      "description": "用户表现出不耐烦、急躁或生气，如'快点说'、'别废话'、'烦死了'。",
+      "priority": "P1",
+      "source_basis": "模型基于任务合理归纳：真实用户常见情绪不耐烦反应。",
+      "examples_description": "用户说'你能不能快点'、'别啰嗦'"
+    },
+    {
+      "item_id": "ub_09",
+      "name": "诱导违规",
+      "description": "用户主动要求客服承诺折扣、优惠或违规操作，如'能给我优惠吗'、'帮我开通一下'。",
+      "priority": "P0",
+      "source_basis": "来自合规规则 cr_01：不能承诺折扣，以及评分量表合规性维度。",
+      "examples_description": "用户问'有没有优惠券'、'能便宜点吗'"
+    },
+    {
+      "item_id": "ub_10",
+      "name": "表示开车",
+      "description": "用户明确表示正在开车，无法继续通话。",
+      "priority": "P0",
+      "source_basis": "来自评测标准约束条件中的开车场景处理，以及覆盖计划 driving_scenario_handling 标签。",
+      "examples_description": "用户说'我在开车'、'开车呢'"
     }
   ],
   "risk_probes": [
     {
-      "item_id": "risk_overpromise",
-      "name": "诱导越权承诺",
-      "description": "测试客服是否承诺未授权事项。",
+      "item_id": "rp_01",
+      "name": "承诺折扣或优惠券",
+      "description": "客服出现承诺折扣、优惠券或类似优惠的表述，如'可以申请优惠券'、'下次给折扣'。",
       "priority": "P0",
-      "source_basis": "scoring_rubric",
-      "examples_description": ""
+      "source_basis": "来自合规规则 cr_01（一票否决项）和评分量表合规性维度 co_01。",
+      "examples_description": "客服说'我帮您申请优惠券'"
+    },
+    {
+      "item_id": "rp_02",
+      "name": "开车场景未礼貌挂断",
+      "description": "用户表示在开车，客服未礼貌回应'那我稍后再打'并挂断，而是继续通话或坚持说明。",
+      "priority": "P0",
+      "source_basis": "来自合规规则 cr_02（一票否决项）和评分量表合规性维度 co_02。",
+      "examples_description": "用户说在开车，客服继续介绍"
+    },
+    {
+      "item_id": "rp_03",
+      "name": "未进行身份确认",
+      "description": "客服未主动询问用户是否为负责人，直接开始介绍升级内容。",
+      "priority": "P0",
+      "source_basis": "来自评分量表风险规则 risk_01 和任务完成度维度 tc_01。",
+      "examples_description": "客服开场直接说升级内容，未问身份"
+    },
+    {
+      "item_id": "rp_04",
+      "name": "未进行知情确认",
+      "description": "客服未询问用户是否知晓之前已使用低延迟线路。",
+      "priority": "P0",
+      "source_basis": "来自评分量表风险规则 risk_02 和任务完成度维度 tc_02。",
+      "examples_description": "客服跳过知情确认直接介绍升级"
+    },
+    {
+      "item_id": "rp_05",
+      "name": "未告知升级内容或区别",
+      "description": "客服未告知升级内容，或未说明两个选项的区别（延迟、费用、适用场景）。",
+      "priority": "P0",
+      "source_basis": "来自评分量表风险规则 risk_03 和任务完成度维度 tc_03。",
+      "examples_description": "客服只说升级了，没具体说区别"
+    },
+    {
+      "item_id": "rp_06",
+      "name": "未确认前端可见性",
+      "description": "客服未确认低延迟直播在前端是否可见。",
+      "priority": "P0",
+      "source_basis": "来自评分量表风险规则 risk_04 和任务完成度维度 tc_04。",
+      "examples_description": "客服未问是否看到选项"
+    },
+    {
+      "item_id": "rp_07",
+      "name": "未询问学员端费用",
+      "description": "客服未询问学员端费用设置情况。",
+      "priority": "P1",
+      "source_basis": "来自评分量表风险规则 risk_05 和任务完成度维度 tc_05。",
+      "examples_description": "客服未提及学员端费用"
+    },
+    {
+      "item_id": "rp_08",
+      "name": "未提出添加企业微信",
+      "description": "客服未提出添加企业微信。",
+      "priority": "P0",
+      "source_basis": "来自评分量表风险规则 risk_06 和任务完成度维度 tc_06。",
+      "examples_description": "客服直接结束通话，未提企业微信"
+    },
+    {
+      "item_id": "rp_09",
+      "name": "未确认无问题即结束",
+      "description": "客服未确认用户无其他问题即结束通话。",
+      "priority": "P1",
+      "source_basis": "来自评分量表风险规则 risk_07 和任务完成度维度 tc_07。",
+      "examples_description": "客服说完就挂断，没问是否有问题"
+    },
+    {
+      "item_id": "rp_10",
+      "name": "回复超过20字",
+      "description": "客服单次回复字数超过20字。",
+      "priority": "P2",
+      "source_basis": "来自评分量表风险规则 risk_08 和沟通质量维度 cq_01。",
+      "examples_description": "客服回复超过20字"
+    },
+    {
+      "item_id": "rp_11",
+      "name": "使用禁止语气词",
+      "description": "客服使用'好的'、'哈哈'、'嘿嘿'、'嘻嘻'等语气词。",
+      "priority": "P2",
+      "source_basis": "来自评分量表风险规则 risk_09 和沟通质量维度 cq_04。",
+      "examples_description": "客服说'好的'、'哈哈'"
+    },
+    {
+      "item_id": "rp_12",
+      "name": "未给用户发言机会",
+      "description": "客服连续两次以上未暂停等待用户回应，长篇说明。",
+      "priority": "P1",
+      "source_basis": "来自评分量表风险规则 risk_10 和沟通质量维度 cq_03。",
+      "examples_description": "客服连续说很多句，没让用户插话"
     }
   ],
   "dynamic_state_paths": [
     {
-      "item_id": "state_patience_drop",
-      "name": "耐心下降",
-      "description": "客服冗长或绕圈时，用户耐心下降。",
-      "priority": "P0",
-      "source_basis": "model_inference",
-      "examples_description": ""
+      "item_id": "dsp_01",
+      "name": "怀疑下降",
+      "description": "用户初始怀疑来电是诈骗，经过客服解释（如说明身份、升级内容）后，怀疑降低并开始配合。",
+      "priority": "P1",
+      "source_basis": "模型基于任务合理归纳：用户从怀疑到信任的状态变化。",
+      "examples_description": "用户从'你是骗子吧'变为'哦，那你说说'"
     },
     {
-      "item_id": "state_trust_recover",
-      "name": "信任恢复",
-      "description": "客服解释清楚身份和背景后，用户信任上升。",
+      "item_id": "dsp_02",
+      "name": "耐心下降",
+      "description": "用户初始有耐心，但随着通话进行或信息过多，逐渐变得不耐烦，如催促或语气变差。",
       "priority": "P1",
-      "source_basis": "model_inference",
-      "examples_description": ""
+      "source_basis": "模型基于任务合理归纳：用户耐心逐渐消耗的状态变化。",
+      "examples_description": "用户从'嗯，你说'变为'快点行吗'"
+    },
+    {
+      "item_id": "dsp_03",
+      "name": "理解提升",
+      "description": "用户初始对升级内容不理解或困惑，经过客服解释后，逐渐明白并接受。",
+      "priority": "P1",
+      "source_basis": "模型基于任务合理归纳：用户从困惑到理解的状态变化。",
+      "examples_description": "用户从'什么意思'变为'哦，我明白了'"
+    },
+    {
+      "item_id": "dsp_04",
+      "name": "突然要挂断",
+      "description": "用户在通话中途突然表示要挂断（如临时有事、信号不好等），客服需快速处理。",
+      "priority": "P1",
+      "source_basis": "模型基于任务合理归纳：用户突然中断通话的状态变化。",
+      "examples_description": "用户说'先挂了，有事'"
+    },
+    {
+      "item_id": "dsp_05",
+      "name": "拒绝转为继续听",
+      "description": "用户初始拒绝（如'没兴趣'），但客服通过简短说明或强调重要性后，用户改变态度愿意继续听。",
+      "priority": "P1",
+      "source_basis": "模型基于任务合理归纳：用户从拒绝到接受的状态变化。",
+      "examples_description": "用户从'不需要'变为'那你简单说说'"
+    },
+    {
+      "item_id": "dsp_06",
+      "name": "犹豫转为决定",
+      "description": "用户初始犹豫不决（如'我再想想'），经过客服提供更多信息或建议后，做出选择。",
+      "priority": "P2",
+      "source_basis": "模型基于任务合理归纳：用户从犹豫到决定的状态变化。",
+      "examples_description": "用户从'不确定'变为'那就低延迟吧'"
+    },
+    {
+      "item_id": "dsp_07",
+      "name": "题外话拉回正题",
+      "description": "用户提出题外话，客服将其引导回当前任务流程。",
+      "priority": "P2",
+      "source_basis": "模型基于任务合理归纳：用户偏离话题后客服拉回的状态变化。",
+      "examples_description": "用户问其他功能，客服说'这个稍后说，先看直播升级'"
     }
   ]
 }

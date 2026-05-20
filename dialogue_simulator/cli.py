@@ -3,6 +3,7 @@ from __future__ import annotations
 import argparse
 from datetime import datetime
 from pathlib import Path
+from typing import Any, Callable
 
 from dialogue_simulator.eval_standard_loader import (
     extract_markdown_from_csv,
@@ -304,7 +305,13 @@ def run_command(args: argparse.Namespace) -> None:
                 business_config=business_config,
             )
             evaluation_count = len(evaluations)
-            export_evaluation_reports(evaluations, output_dir, conversations=results)
+            export_evaluation_reports(
+                evaluations,
+                output_dir,
+                conversations=results,
+                coverage_plan=assets.coverage_plan,
+                scoring_rubric=assets.scoring_rubric,
+            )
         export_llm_call_records(
             get_call_records([agent_llm, user_llm, judge_llm, state_llm, evaluator_llm]),
             output_dir,
@@ -347,7 +354,13 @@ def evaluate_command(args: argparse.Namespace) -> None:
             results=results,
             business_config=business_config,
         )
-        export_evaluation_reports(evaluations, run_dir, conversations=results)
+        export_evaluation_reports(
+            evaluations,
+            run_dir,
+            conversations=results,
+            coverage_plan=assets.coverage_plan,
+            scoring_rubric=assets.scoring_rubric,
+        )
         export_llm_call_records(get_call_records([evaluator_llm]), run_dir)
         span.set_output({"cases_evaluated": len(evaluations), "run_dir": str(run_dir)})
     print(f"已评估 {len(evaluations)} 个 case。")
@@ -362,6 +375,8 @@ def evaluate_results(
     business_config: BusinessConfig,
     experiment_id: str = "",
     asset_version_id: str = "",
+    progress_callback: Callable[[dict[str, Any]], None] | None = None,
+    cancel_check: Callable[[], None] | None = None,
 ):
     eval_standard_path = assets.scene_asset.source_eval_standard_path
     eval_standard_text = (
@@ -372,6 +387,18 @@ def evaluate_results(
     graph = build_evaluation_graph(evaluator_llm=evaluator_llm)
     evaluations = []
     for index, result in enumerate(results, start=1):
+        if cancel_check:
+            cancel_check()
+        if progress_callback:
+            progress_callback(
+                {
+                    "phase": "scoring",
+                    "status": "case_start",
+                    "case_id": result.case_id,
+                    "case_index": index,
+                    "case_count": len(results),
+                }
+            )
         print(f"正在评估 case {index}/{len(results)}：{result.case_id}", flush=True)
         with trace_span(
             "case.evaluate",
@@ -413,7 +440,19 @@ def evaluate_results(
                     "veto_triggered": case_evaluation.veto_triggered,
                 }
             )
+        if cancel_check:
+            cancel_check()
         evaluations.append(evaluated["case_evaluation"])
+        if progress_callback:
+            progress_callback(
+                {
+                    "phase": "scoring",
+                    "status": "case_complete",
+                    "case_id": result.case_id,
+                    "case_index": index,
+                    "case_count": len(results),
+                }
+            )
     return evaluations
 
 

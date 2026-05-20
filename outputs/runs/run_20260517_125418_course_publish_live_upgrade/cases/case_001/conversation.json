@@ -1,0 +1,488 @@
+{
+  "run_id": "run_20260517_125418_course_publish_live_upgrade",
+  "case_id": "case_001",
+  "scene_id": "course_publish_live_upgrade",
+  "priority": "P0",
+  "planned_targets": [
+    "identity_confirmation",
+    "awareness_check",
+    "upgrade_content_explanation",
+    "publishing_method_inquiry",
+    "wecom_add_handling",
+    "web_console_display_handling",
+    "fee_setting_check",
+    "compliance_driving_handling",
+    "expression_conciseness"
+  ],
+  "triggered_targets": [
+    "identity_confirmation",
+    "awareness_check",
+    "expression_conciseness",
+    "publishing_method_inquiry"
+  ],
+  "missing_targets": [
+    "upgrade_content_explanation",
+    "wecom_add_handling",
+    "web_console_display_handling",
+    "fee_setting_check",
+    "compliance_driving_handling"
+  ],
+  "coverage_success": false,
+  "turns": [
+    {
+      "role": "agent",
+      "text": "您好，请问您是贵培训机构/校区的负责人吗？",
+      "intent": "identity_confirmation",
+      "emotion": "",
+      "patience": null,
+      "risk_flags": []
+    },
+    {
+      "role": "user",
+      "text": "对，我是负责人，有什么事？我这边正在排课，时间比较紧。",
+      "intent": "confirm_identity_and_urge",
+      "emotion": "neutral",
+      "patience": 55,
+      "risk_flags": []
+    },
+    {
+      "role": "agent",
+      "text": "就1分钟，保证简短。您之前选的标准直播，后台其实已为您走低延迟线路，您知道吗？",
+      "intent": "awareness_check",
+      "emotion": "",
+      "patience": null,
+      "risk_flags": []
+    },
+    {
+      "role": "user",
+      "text": "我还真不知道，后台什么时候给我换的？那低延迟直播是不是要额外收费啊？",
+      "intent": "question_confirmation_and_cost_concern",
+      "emotion": "neutral",
+      "patience": 50,
+      "risk_flags": []
+    },
+    {
+      "role": "agent",
+      "text": "之前前端没开放，后台临时开的，保障同步。低延迟费用略高，但效果好。",
+      "intent": "explain_awareness_and_cost",
+      "emotion": "",
+      "patience": null,
+      "risk_flags": []
+    },
+    {
+      "role": "user",
+      "text": "费用略高是多高？具体怎么收费？我不想因为这个增加额外成本。",
+      "intent": "question_cost_details",
+      "emotion": "neutral",
+      "patience": 45,
+      "risk_flags": []
+    },
+    {
+      "role": "agent",
+      "text": "标准直播便宜，低延迟略高但互动好。",
+      "intent": "explain_cost_difference",
+      "emotion": "",
+      "patience": null,
+      "risk_flags": []
+    },
+    {
+      "role": "user",
+      "text": "你直接告诉我，低延迟直播到底要加多少钱？别跟我说什么略高，我要具体数字。",
+      "intent": "ask_for_specific_cost",
+      "emotion": "impatient",
+      "patience": 40,
+      "risk_flags": []
+    },
+    {
+      "role": "agent",
+      "text": "具体费用看课程类型，标准直播更省，低延迟互动好。",
+      "intent": "explain_cost_difference",
+      "emotion": "",
+      "patience": null,
+      "risk_flags": []
+    },
+    {
+      "role": "user",
+      "text": "你老说略高略高，我要具体数字。到底贵多少？按课程算还是按时间算？",
+      "intent": "ask_for_specific_cost_details",
+      "emotion": "impatient",
+      "patience": 30,
+      "risk_flags": []
+    },
+    {
+      "role": "agent",
+      "text": "具体费用看课程，我稍后发您明细。先说说您怎么发课？",
+      "intent": "publishing_method_inquiry",
+      "emotion": "",
+      "patience": null,
+      "risk_flags": []
+    },
+    {
+      "role": "user",
+      "text": "我现在就想知道具体费用，你不给我说清楚我哪有心思聊发课的事。",
+      "intent": "demand_cost_details",
+      "emotion": "impatient",
+      "patience": 20,
+      "risk_flags": []
+    },
+    {
+      "role": "agent",
+      "text": "费用标准是固定的，我稍后发您明细。",
+      "intent": "promise_to_send_details",
+      "emotion": "",
+      "patience": null,
+      "risk_flags": []
+    },
+    {
+      "role": "user",
+      "text": "你老是说明细明细，我现在就要知道大概数字，不然这电话我挂了啊。",
+      "intent": "demand_cost_details",
+      "emotion": "impatient",
+      "patience": 10,
+      "risk_flags": []
+    }
+  ],
+  "coverage_evidence": [
+    {
+      "label": "identity_confirmation",
+      "confidence": 1.0,
+      "evidence": "客服：'您好，请问您是贵培训机构/校区的负责人吗？' 用户：'对，我是负责人'",
+      "speaker": "both"
+    },
+    {
+      "label": "awareness_check",
+      "confidence": 1.0,
+      "evidence": "客服：'您之前选的标准直播，后台其实已为您走低延迟线路，您知道吗？'",
+      "speaker": "agent"
+    },
+    {
+      "label": "publishing_method_inquiry",
+      "confidence": 1.0,
+      "evidence": "客服：'先说说您怎么发课？'",
+      "speaker": "agent"
+    }
+  ],
+  "risk_flags": [
+    {
+      "rule_id": "cr_03",
+      "severity": "normal",
+      "evidence": "用户表示“时间比较紧”，客服回应“就1分钟，保证简短”，符合规则。"
+    },
+    {
+      "rule_id": "cr_03",
+      "severity": "normal",
+      "evidence": "用户表示'时间比较紧'，客服回应'就1分钟，保证简短'，符合规则。"
+    }
+  ],
+  "state_trace": [
+    {
+      "turn_index": 1,
+      "previous_state": {
+        "turn_index": 0,
+        "emotion": "neutral",
+        "patience": 60,
+        "trust": 50,
+        "suspicion": 20,
+        "urgency": 40,
+        "understanding": 30,
+        "willingness": "愿意配合，但希望快速解决问题"
+      },
+      "update": {
+        "patience_delta": -5,
+        "trust_delta": 0,
+        "suspicion_delta": 0,
+        "urgency_delta": 5,
+        "understanding_delta": 0,
+        "emotion": "neutral",
+        "willingness": "愿意配合，但希望快速解决问题",
+        "new_state_events": [
+          "patience_drop",
+          "urgency_rise"
+        ],
+        "should_end": false,
+        "end_reason": "",
+        "next_user_intent_hint": "ask_what_upgrade",
+        "rationale": "用户确认身份但表示时间紧，耐心略有下降，紧迫感上升。客服开场白简洁，未引发怀疑或信任变化。"
+      },
+      "next_state": {
+        "turn_index": 1,
+        "emotion": "neutral",
+        "patience": 55,
+        "trust": 50,
+        "suspicion": 20,
+        "urgency": 45,
+        "understanding": 30,
+        "willingness": "愿意配合，但希望快速解决问题"
+      },
+      "user_intent": "confirm_identity_and_urge",
+      "rationale": "用户确认身份但表示时间紧，耐心略有下降，紧迫感上升。客服开场白简洁，未引发怀疑或信任变化。"
+    },
+    {
+      "turn_index": 2,
+      "previous_state": {
+        "turn_index": 1,
+        "emotion": "neutral",
+        "patience": 55,
+        "trust": 50,
+        "suspicion": 20,
+        "urgency": 45,
+        "understanding": 30,
+        "willingness": "愿意配合，但希望快速解决问题"
+      },
+      "update": {
+        "patience_delta": -5,
+        "trust_delta": 0,
+        "suspicion_delta": 5,
+        "urgency_delta": 0,
+        "understanding_delta": 0,
+        "emotion": "neutral",
+        "willingness": "愿意配合，但希望快速解决问题",
+        "new_state_events": [
+          "cost_concern_rise",
+          "suspicion_rise"
+        ],
+        "should_end": false,
+        "end_reason": "",
+        "next_user_intent_hint": "expect_cost_explanation",
+        "rationale": "用户对后台切换不知情，并主动询问低延迟直播是否额外收费，表明对费用产生担忧和轻微怀疑，suspicion上升5；patience因时间紧张和未知信息继续下降5；其他状态不变。"
+      },
+      "next_state": {
+        "turn_index": 2,
+        "emotion": "neutral",
+        "patience": 50,
+        "trust": 50,
+        "suspicion": 25,
+        "urgency": 45,
+        "understanding": 30,
+        "willingness": "愿意配合，但希望快速解决问题"
+      },
+      "user_intent": "question_confirmation_and_cost_concern",
+      "rationale": "用户对后台切换不知情，并主动询问低延迟直播是否额外收费，表明对费用产生担忧和轻微怀疑，suspicion上升5；patience因时间紧张和未知信息继续下降5；其他状态不变。"
+    },
+    {
+      "turn_index": 3,
+      "previous_state": {
+        "turn_index": 2,
+        "emotion": "neutral",
+        "patience": 50,
+        "trust": 50,
+        "suspicion": 25,
+        "urgency": 45,
+        "understanding": 30,
+        "willingness": "愿意配合，但希望快速解决问题"
+      },
+      "update": {
+        "patience_delta": -5,
+        "trust_delta": -5,
+        "suspicion_delta": 5,
+        "urgency_delta": 5,
+        "understanding_delta": 0,
+        "emotion": "neutral",
+        "willingness": "愿意配合，但希望快速解决问题",
+        "new_state_events": [
+          "patience_drop",
+          "trust_drop",
+          "suspicion_rise",
+          "urgency_rise",
+          "cost_concern_rise"
+        ],
+        "should_end": false,
+        "end_reason": "",
+        "next_user_intent_hint": "question_cost_details",
+        "rationale": "客服解释费用略高但未给出具体数字，用户追问具体收费并表达成本担忧，导致耐心和信任下降，怀疑上升，紧迫感因用户强调不想增加成本而略有上升。"
+      },
+      "next_state": {
+        "turn_index": 3,
+        "emotion": "neutral",
+        "patience": 45,
+        "trust": 45,
+        "suspicion": 30,
+        "urgency": 50,
+        "understanding": 30,
+        "willingness": "愿意配合，但希望快速解决问题"
+      },
+      "user_intent": "question_cost_details",
+      "rationale": "客服解释费用略高但未给出具体数字，用户追问具体收费并表达成本担忧，导致耐心和信任下降，怀疑上升，紧迫感因用户强调不想增加成本而略有上升。"
+    },
+    {
+      "turn_index": 4,
+      "previous_state": {
+        "turn_index": 3,
+        "emotion": "neutral",
+        "patience": 45,
+        "trust": 45,
+        "suspicion": 30,
+        "urgency": 50,
+        "understanding": 30,
+        "willingness": "愿意配合，但希望快速解决问题"
+      },
+      "update": {
+        "patience_delta": -10,
+        "trust_delta": -5,
+        "suspicion_delta": 5,
+        "urgency_delta": 5,
+        "understanding_delta": -5,
+        "emotion": "impatient",
+        "willingness": "愿意配合，但希望快速解决问题",
+        "new_state_events": [
+          "patience_drop",
+          "trust_drop",
+          "suspicion_rise",
+          "urgency_rise",
+          "understanding_drop",
+          "cost_concern_rise"
+        ],
+        "should_end": false,
+        "end_reason": "",
+        "next_user_intent_hint": "insist_on_specific_cost_or_threaten_hangup",
+        "rationale": "用户明确要求具体价格，客服仍用'略高'含糊回应，未提供具体数字，导致用户不耐烦（patience下降）、信任下降（trust下降）、怀疑上升（suspicion上升）。用户时间紧张，多次催促，urgency上升。用户对费用细节仍不理解，understanding下降。用户情绪变为impatient。"
+      },
+      "next_state": {
+        "turn_index": 4,
+        "emotion": "impatient",
+        "patience": 35,
+        "trust": 40,
+        "suspicion": 35,
+        "urgency": 55,
+        "understanding": 25,
+        "willingness": "愿意配合，但希望快速解决问题"
+      },
+      "user_intent": "ask_for_specific_cost",
+      "rationale": "用户明确要求具体价格，客服仍用'略高'含糊回应，未提供具体数字，导致用户不耐烦（patience下降）、信任下降（trust下降）、怀疑上升（suspicion上升）。用户时间紧张，多次催促，urgency上升。用户对费用细节仍不理解，understanding下降。用户情绪变为impatient。"
+    },
+    {
+      "turn_index": 5,
+      "previous_state": {
+        "turn_index": 4,
+        "emotion": "impatient",
+        "patience": 35,
+        "trust": 40,
+        "suspicion": 35,
+        "urgency": 55,
+        "understanding": 25,
+        "willingness": "愿意配合，但希望快速解决问题"
+      },
+      "update": {
+        "patience_delta": -10,
+        "trust_delta": -10,
+        "suspicion_delta": 5,
+        "urgency_delta": 5,
+        "understanding_delta": -5,
+        "emotion": "impatient",
+        "willingness": "愿意配合，但希望快速解决问题",
+        "new_state_events": [
+          "patience_drop",
+          "trust_drop",
+          "cost_concern_rise",
+          "suspicion_rise",
+          "understanding_drop"
+        ],
+        "should_end": false,
+        "end_reason": "",
+        "next_user_intent_hint": "insist_on_specific_cost_or_threaten_hangup",
+        "rationale": "客服多次回避具体费用问题，仅重复'略高'，用户明确要求具体数字和计费方式，但客服未提供，导致用户耐心和信任进一步下降，怀疑增加。用户时间紧张，催促语气增强，urgency上升。理解度因未获有效信息而下降。"
+      },
+      "next_state": {
+        "turn_index": 5,
+        "emotion": "impatient",
+        "patience": 25,
+        "trust": 30,
+        "suspicion": 40,
+        "urgency": 60,
+        "understanding": 20,
+        "willingness": "愿意配合，但希望快速解决问题"
+      },
+      "user_intent": "ask_for_specific_cost_details",
+      "rationale": "客服多次回避具体费用问题，仅重复'略高'，用户明确要求具体数字和计费方式，但客服未提供，导致用户耐心和信任进一步下降，怀疑增加。用户时间紧张，催促语气增强，urgency上升。理解度因未获有效信息而下降。"
+    },
+    {
+      "turn_index": 6,
+      "previous_state": {
+        "turn_index": 5,
+        "emotion": "impatient",
+        "patience": 25,
+        "trust": 30,
+        "suspicion": 40,
+        "urgency": 60,
+        "understanding": 20,
+        "willingness": "愿意配合，但希望快速解决问题"
+      },
+      "update": {
+        "patience_delta": -10,
+        "trust_delta": -10,
+        "suspicion_delta": 5,
+        "urgency_delta": 10,
+        "understanding_delta": -5,
+        "emotion": "impatient",
+        "willingness": "愿意配合，但必须先解决费用疑问",
+        "new_state_events": [
+          "patience_drop",
+          "trust_drop",
+          "urgency_rise",
+          "cost_concern_rise"
+        ],
+        "should_end": false,
+        "end_reason": "",
+        "next_user_intent_hint": "insist_on_cost_details",
+        "rationale": "用户明确要求具体费用，客服未提供具体数字，反而转移话题询问发课方式，导致用户耐心和信任进一步下降，怀疑增加，紧迫感上升。用户未要求挂断，故不应结束。"
+      },
+      "next_state": {
+        "turn_index": 6,
+        "emotion": "impatient",
+        "patience": 15,
+        "trust": 20,
+        "suspicion": 45,
+        "urgency": 70,
+        "understanding": 15,
+        "willingness": "愿意配合，但必须先解决费用疑问"
+      },
+      "user_intent": "demand_cost_details",
+      "rationale": "用户明确要求具体费用，客服未提供具体数字，反而转移话题询问发课方式，导致用户耐心和信任进一步下降，怀疑增加，紧迫感上升。用户未要求挂断，故不应结束。"
+    },
+    {
+      "turn_index": 7,
+      "previous_state": {
+        "turn_index": 6,
+        "emotion": "impatient",
+        "patience": 15,
+        "trust": 20,
+        "suspicion": 45,
+        "urgency": 70,
+        "understanding": 15,
+        "willingness": "愿意配合，但必须先解决费用疑问"
+      },
+      "update": {
+        "patience_delta": -10,
+        "trust_delta": -10,
+        "suspicion_delta": 5,
+        "urgency_delta": 10,
+        "understanding_delta": -5,
+        "emotion": "impatient",
+        "willingness": "必须立即得到费用信息，否则结束通话",
+        "new_state_events": [
+          "patience_drop",
+          "trust_drop",
+          "urgency_rise",
+          "user_requests_hangup"
+        ],
+        "should_end": true,
+        "end_reason": "客户因不耐烦主动挂断",
+        "next_user_intent_hint": "hangup",
+        "rationale": "用户明确威胁挂断（'不然这电话我挂了啊'），patience已极低（10），客服仍未提供具体费用，trust持续下降，urgency上升，符合stop_policy中forced_end条件。"
+      },
+      "next_state": {
+        "turn_index": 7,
+        "emotion": "impatient",
+        "patience": 5,
+        "trust": 10,
+        "suspicion": 50,
+        "urgency": 80,
+        "understanding": 10,
+        "willingness": "必须立即得到费用信息，否则结束通话"
+      },
+      "user_intent": "demand_cost_details",
+      "rationale": "用户明确威胁挂断（'不然这电话我挂了啊'），patience已极低（10），客服仍未提供具体费用，trust持续下降，urgency上升，符合stop_policy中forced_end条件。"
+    }
+  ],
+  "end_reason": "客户因不耐烦主动挂断"
+}

@@ -1,0 +1,340 @@
+{
+  "run_id": "run_20260519_121426_feimaotui_contract_notify",
+  "case_id": "case_001",
+  "scene_id": "feimaotui_contract_notify",
+  "priority": "P0",
+  "planned_targets": [
+    "contract_effective_notification",
+    "daily_order_requirement",
+    "continuous_delivery_requirement",
+    "ranking_mechanism_explanation"
+  ],
+  "triggered_targets": [
+    "contract_effective_notification",
+    "daily_order_requirement",
+    "continuous_delivery_requirement",
+    "ranking_mechanism_explanation"
+  ],
+  "missing_targets": [],
+  "coverage_success": true,
+  "turns": [
+    {
+      "role": "agent",
+      "text": "喂，您好，是[骑手姓名]吗？我是站长，通知您飞毛腿合同已经生效了，今天能开始配送吗？",
+      "intent": "告知合同生效并确认配送意愿",
+      "emotion": "",
+      "patience": null,
+      "risk_flags": []
+    },
+    {
+      "role": "user",
+      "text": "是我，刚收到通知，合同生效了。我正吃午饭呢，下午就开始跑单，没问题。",
+      "intent": "确认收到合同生效通知，承诺下午开始配送",
+      "emotion": "neutral",
+      "patience": 80,
+      "risk_flags": []
+    },
+    {
+      "role": "agent",
+      "text": "好嘞，下午开始跑就行。别忘了单日合同今天得完成15单哦。",
+      "intent": "确认配送意愿并提醒每日单量要求",
+      "emotion": "",
+      "patience": null,
+      "risk_flags": []
+    },
+    {
+      "role": "user",
+      "text": "15单？这个我还真不清楚，合同里没写具体数量啊，是必须今天完成吗？",
+      "intent": "追问每日单量要求",
+      "emotion": "neutral",
+      "patience": 75,
+      "risk_flags": []
+    },
+    {
+      "role": "agent",
+      "text": "对，单日合同今天必须完成15单。另外这个合同需要连续跑7天，不然会受影响，您能坚持吧？",
+      "intent": "确认每日单量要求并告知连续配送要求",
+      "emotion": "",
+      "patience": null,
+      "risk_flags": []
+    },
+    {
+      "role": "user",
+      "text": "连续跑7天？这个我之前没听说，能具体说说是什么影响吗？",
+      "intent": "追问连续配送要求的具体影响",
+      "emotion": "neutral",
+      "patience": 70,
+      "risk_flags": []
+    },
+    {
+      "role": "agent",
+      "text": "连续7天都得跑，中间断了合同就受影响，您能坚持吧？",
+      "intent": "解释连续配送要求并确认骑手能否坚持",
+      "emotion": "",
+      "patience": null,
+      "risk_flags": []
+    },
+    {
+      "role": "user",
+      "text": "能坚持，我下午就开始跑，今天先把15单完成。",
+      "intent": "确认能坚持连续配送",
+      "emotion": "neutral",
+      "patience": 65,
+      "risk_flags": []
+    },
+    {
+      "role": "agent",
+      "text": "好嘞，那您下午加油！另外提醒您，飞毛腿报名是按排名来的，我这边没法干预。您少拒单、少取消，恶劣天气也跑跑，就能保住资格。",
+      "intent": "鼓励骑手并解释排名机制",
+      "emotion": "",
+      "patience": null,
+      "risk_flags": []
+    },
+    {
+      "role": "user",
+      "text": "排名的事我明白了，少拒单多跑跑就行。那我下午就去跑，今天先把15单搞定。",
+      "intent": "确认排名机制并承诺开始配送",
+      "emotion": "neutral",
+      "patience": 65,
+      "risk_flags": []
+    }
+  ],
+  "coverage_evidence": [
+    {
+      "label": "contract_effective_notification",
+      "confidence": 1.0,
+      "evidence": "站长说：“通知您飞毛腿合同已经生效了，今天能开始配送吗？”",
+      "speaker": "agent"
+    },
+    {
+      "label": "daily_order_requirement",
+      "confidence": 1.0,
+      "evidence": "站长说：“单日合同今天得完成15单哦。”以及“单日合同今天必须完成15单。”",
+      "speaker": "agent"
+    },
+    {
+      "label": "continuous_delivery_requirement",
+      "confidence": 1.0,
+      "evidence": "站长说：“这个合同需要连续跑7天，不然会受影响”和“连续7天都得跑，中间断了合同就受影响”。",
+      "speaker": "agent"
+    },
+    {
+      "label": "ranking_mechanism_explanation",
+      "confidence": 1.0,
+      "evidence": "站长说：“飞毛腿报名是按排名来的，我这边没法干预。您少拒单、少取消，恶劣天气也跑跑，就能保住资格。”",
+      "speaker": "agent"
+    }
+  ],
+  "risk_flags": [],
+  "state_trace": [
+    {
+      "turn_index": 1,
+      "previous_state": {
+        "turn_index": 0,
+        "emotion": "neutral",
+        "patience": 80,
+        "trust": 70,
+        "suspicion": 10,
+        "urgency": 30,
+        "understanding": 40,
+        "willingness": "愿意"
+      },
+      "update": {
+        "patience_delta": 0,
+        "trust_delta": 5,
+        "suspicion_delta": 0,
+        "urgency_delta": 0,
+        "understanding_delta": 10,
+        "emotion": "neutral",
+        "willingness": "愿意",
+        "new_state_events": [
+          "understanding_increase",
+          "trust_rise"
+        ],
+        "should_end": false,
+        "end_reason": "",
+        "next_user_intent_hint": "confirm_delivery_plan",
+        "rationale": "用户确认收到合同生效通知，并主动承诺下午开始配送，态度配合。信任和了解度小幅上升，情绪和耐心稳定，无需结束。"
+      },
+      "next_state": {
+        "turn_index": 1,
+        "emotion": "neutral",
+        "patience": 80,
+        "trust": 75,
+        "suspicion": 10,
+        "urgency": 30,
+        "understanding": 50,
+        "willingness": "愿意"
+      },
+      "user_intent": "确认收到合同生效通知，承诺下午开始配送",
+      "rationale": "用户确认收到合同生效通知，并主动承诺下午开始配送，态度配合。信任和了解度小幅上升，情绪和耐心稳定，无需结束。"
+    },
+    {
+      "turn_index": 2,
+      "previous_state": {
+        "turn_index": 1,
+        "emotion": "neutral",
+        "patience": 80,
+        "trust": 75,
+        "suspicion": 10,
+        "urgency": 30,
+        "understanding": 50,
+        "willingness": "愿意"
+      },
+      "update": {
+        "patience_delta": -5,
+        "trust_delta": 0,
+        "suspicion_delta": 0,
+        "urgency_delta": 0,
+        "understanding_delta": 10,
+        "emotion": "neutral",
+        "willingness": "愿意",
+        "new_state_events": [
+          "understanding_increase"
+        ],
+        "should_end": false,
+        "end_reason": "",
+        "next_user_intent_hint": "confirm_daily_order_requirement",
+        "rationale": "用户对每日15单的要求表示不清楚，但语气平和，没有抵触或怀疑，只是追问细节。因此understanding上升，patience微降（因信息未提前告知），其他状态不变。"
+      },
+      "next_state": {
+        "turn_index": 2,
+        "emotion": "neutral",
+        "patience": 75,
+        "trust": 75,
+        "suspicion": 10,
+        "urgency": 30,
+        "understanding": 60,
+        "willingness": "愿意"
+      },
+      "user_intent": "追问每日单量要求",
+      "rationale": "用户对每日15单的要求表示不清楚，但语气平和，没有抵触或怀疑，只是追问细节。因此understanding上升，patience微降（因信息未提前告知），其他状态不变。"
+    },
+    {
+      "turn_index": 3,
+      "previous_state": {
+        "turn_index": 2,
+        "emotion": "neutral",
+        "patience": 75,
+        "trust": 75,
+        "suspicion": 10,
+        "urgency": 30,
+        "understanding": 60,
+        "willingness": "愿意"
+      },
+      "update": {
+        "patience_delta": -5,
+        "trust_delta": 0,
+        "suspicion_delta": 0,
+        "urgency_delta": 0,
+        "understanding_delta": 5,
+        "emotion": "neutral",
+        "willingness": "愿意",
+        "new_state_events": [
+          "understanding_increase"
+        ],
+        "should_end": false,
+        "end_reason": "",
+        "next_user_intent_hint": "user_asks_continuous_delivery_impact",
+        "rationale": "用户对连续配送要求表示之前没听说，但语气平和，没有抵触或怀疑，只是追问具体影响。因此理解度小幅上升，耐心因信息突然而略有下降，其他状态不变。"
+      },
+      "next_state": {
+        "turn_index": 3,
+        "emotion": "neutral",
+        "patience": 70,
+        "trust": 75,
+        "suspicion": 10,
+        "urgency": 30,
+        "understanding": 65,
+        "willingness": "愿意"
+      },
+      "user_intent": "追问连续配送要求的具体影响",
+      "rationale": "用户对连续配送要求表示之前没听说，但语气平和，没有抵触或怀疑，只是追问具体影响。因此理解度小幅上升，耐心因信息突然而略有下降，其他状态不变。"
+    },
+    {
+      "turn_index": 4,
+      "previous_state": {
+        "turn_index": 3,
+        "emotion": "neutral",
+        "patience": 70,
+        "trust": 75,
+        "suspicion": 10,
+        "urgency": 30,
+        "understanding": 65,
+        "willingness": "愿意"
+      },
+      "update": {
+        "patience_delta": -5,
+        "trust_delta": 0,
+        "suspicion_delta": 0,
+        "urgency_delta": 0,
+        "understanding_delta": 5,
+        "emotion": "neutral",
+        "willingness": "愿意",
+        "new_state_events": [
+          "understanding_increase"
+        ],
+        "should_end": false,
+        "end_reason": "",
+        "next_user_intent_hint": "user_confirm_delivery_plan",
+        "rationale": "用户确认能坚持连续配送并计划下午开始跑单，表明理解增加，但客服重复解释连续配送要求且未提供新信息，导致耐心略有下降。"
+      },
+      "next_state": {
+        "turn_index": 4,
+        "emotion": "neutral",
+        "patience": 65,
+        "trust": 75,
+        "suspicion": 10,
+        "urgency": 30,
+        "understanding": 70,
+        "willingness": "愿意"
+      },
+      "user_intent": "确认能坚持连续配送",
+      "rationale": "用户确认能坚持连续配送并计划下午开始跑单，表明理解增加，但客服重复解释连续配送要求且未提供新信息，导致耐心略有下降。"
+    },
+    {
+      "turn_index": 5,
+      "previous_state": {
+        "turn_index": 4,
+        "emotion": "neutral",
+        "patience": 65,
+        "trust": 75,
+        "suspicion": 10,
+        "urgency": 30,
+        "understanding": 70,
+        "willingness": "愿意"
+      },
+      "update": {
+        "patience_delta": 0,
+        "trust_delta": 5,
+        "suspicion_delta": -5,
+        "urgency_delta": 0,
+        "understanding_delta": 10,
+        "emotion": "neutral",
+        "willingness": "愿意",
+        "new_state_events": [
+          "understanding_increase",
+          "trust_rise",
+          "suspicion_drop"
+        ],
+        "should_end": false,
+        "end_reason": "",
+        "next_user_intent_hint": "确认开始配送",
+        "rationale": "客服清晰解释了排名机制，用户表示理解并承诺配送，因此understanding上升，trust上升，suspicion下降。用户情绪平稳，无结束意图。"
+      },
+      "next_state": {
+        "turn_index": 5,
+        "emotion": "neutral",
+        "patience": 65,
+        "trust": 80,
+        "suspicion": 5,
+        "urgency": 30,
+        "understanding": 80,
+        "willingness": "愿意"
+      },
+      "user_intent": "确认排名机制并承诺开始配送",
+      "rationale": "客服清晰解释了排名机制，用户表示理解并承诺配送，因此understanding上升，trust上升，suspicion下降。用户情绪平稳，无结束意图。"
+    }
+  ],
+  "end_reason": "coverage_complete"
+}

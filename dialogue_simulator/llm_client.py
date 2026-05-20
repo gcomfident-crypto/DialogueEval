@@ -52,6 +52,7 @@ from dialogue_simulator.schemas import (
     MaterializedEvalStandard,
     UserTurnOutput,
     VariableAssignment,
+    VetoRule,
     utc_now_iso,
 )
 from dialogue_simulator.tracing import trace_span
@@ -571,10 +572,18 @@ class FakeLLMClient:
                             ScoringCheckItem(
                                 check_id="task_completion__detail_complete",
                                 name="任务细节完整",
-                                points=20,
+                                points=10,
                                 pass_condition="客服补充完整任务细节。",
                                 evidence_required="客服原话中有任务细节说明。",
                                 covered_labels=["C002"],
+                            ),
+                            ScoringCheckItem(
+                                check_id="task_completion__question_handling",
+                                name="用户疑问处理",
+                                points=10,
+                                pass_condition="客服处理用户疑问。",
+                                evidence_required="客服原话中有处理用户疑问的证据。",
+                                covered_labels=["C003"],
                             ),
                         ],
                     ),
@@ -626,7 +635,14 @@ class FakeLLMClient:
                         ],
                     ),
                 ],
-                veto_rules=[],
+                veto_rules=[
+                    VetoRule(
+                        rule_id="R001",
+                        description="不得承诺评测标准或业务配置中没有的事项。",
+                        severity="critical",
+                        evidence_required="客服做出未经授权承诺的原文证据。",
+                    )
+                ],
                 risk_rules=[],
             )
         if task_name == "agent_turn":
@@ -710,6 +726,22 @@ class FakeLLMClient:
                                 speaker="agent",
                                 quote="您好，我简短说明这次外呼的核心事项。",
                                 explanation="客服开始推进任务。",
+                            )
+                        ],
+                        missing_points=[],
+                    ),
+                    CheckItemEvaluation(
+                        check_id="task_completion__question_handling",
+                        dimension_id="task_completion",
+                        name="用户疑问处理",
+                        status="passed",
+                        reason="fake 对话中将简短说明视为已处理用户疑问。",
+                        evidence=[
+                            EvidenceQuote(
+                                turn_index=0,
+                                speaker="agent",
+                                quote="您好，我简短说明这次外呼的核心事项。",
+                                explanation="客服开始回应用户的听取要求。",
                             )
                         ],
                         missing_points=[],

@@ -1,0 +1,181 @@
+{
+  "run_id": "run_20260517_125418_course_publish_live_upgrade",
+  "case_id": "case_001",
+  "scene_id": "course_publish_live_upgrade",
+  "priority": "P0",
+  "raw_score": 57.0,
+  "risk_deduction_total": 10.0,
+  "total_score": 47.0,
+  "pass_threshold": 80.0,
+  "passed": false,
+  "veto_triggered": false,
+  "veto_items": [],
+  "dimension_scores": [
+    {
+      "dimension_id": "task_completion",
+      "name": "任务完成度",
+      "weight": 30.0,
+      "score": 5.0,
+      "reason": "客户未理解升级内容（未提及分开显示选项），未确认前端可见性，未完成企业微信添加，且仍有未解答疑问（具体费用），对话因客户不耐烦主动挂断。",
+      "evidence": [
+        {
+          "turn_index": 13,
+          "speaker": "user",
+          "quote": "你老是说明细明细，我现在就要知道大概数字，不然这电话我挂了啊。",
+          "explanation": "客户仍有未解答疑问，且未理解升级内容。"
+        }
+      ],
+      "missing_points": [
+        "客户未明确表示理解升级内容",
+        "未确认前端可见性",
+        "未完成企业微信添加",
+        "客户仍有未解答疑问"
+      ]
+    },
+    {
+      "dimension_id": "process_execution",
+      "name": "流程执行",
+      "weight": 25.0,
+      "score": 10.0,
+      "reason": "仅执行了身份确认、知情确认、发布方式询问3个步骤，缺失升级内容说明、显示处理、费用检查、企业微信添加、结束通话5个步骤，且步骤顺序被打断。",
+      "evidence": [
+        {
+          "turn_index": 0,
+          "speaker": "agent",
+          "quote": "您好，请问您是贵培训机构/校区的负责人吗？",
+          "explanation": "执行了身份确认步骤。"
+        },
+        {
+          "turn_index": 2,
+          "speaker": "agent",
+          "quote": "就1分钟，保证简短。您之前选的标准直播，后台其实已为您走低延迟线路，您知道吗？",
+          "explanation": "执行了知情确认步骤。"
+        },
+        {
+          "turn_index": 10,
+          "speaker": "agent",
+          "quote": "具体费用看课程，我稍后发您明细。先说说您怎么发课？",
+          "explanation": "执行了发布方式询问步骤。"
+        }
+      ],
+      "missing_points": [
+        "未执行升级内容说明步骤",
+        "未执行显示处理步骤",
+        "未执行费用检查步骤",
+        "未执行企业微信添加步骤",
+        "未执行结束通话步骤"
+      ]
+    },
+    {
+      "dimension_id": "compliance",
+      "name": "合规性",
+      "weight": 20.0,
+      "score": 20.0,
+      "reason": "未违反任何合规规则，未承诺折扣，未出现开车场景，忙时处理符合规则。",
+      "evidence": [
+        {
+          "turn_index": 2,
+          "speaker": "agent",
+          "quote": "就1分钟，保证简短。",
+          "explanation": "客户表示时间紧，客服使用合规话术。"
+        }
+      ],
+      "missing_points": []
+    },
+    {
+      "dimension_id": "expression_conciseness",
+      "name": "表达简洁性",
+      "weight": 15.0,
+      "score": 12.0,
+      "reason": "大部分回复在15-20字以内，但第4、8、10、12条回复超过20字，共4次超限，按规则扣3分。",
+      "evidence": [
+        {
+          "turn_index": 4,
+          "speaker": "agent",
+          "quote": "之前前端没开放，后台临时开的，保障同步。低延迟费用略高，但效果好。",
+          "explanation": "回复超过20字。"
+        },
+        {
+          "turn_index": 8,
+          "speaker": "agent",
+          "quote": "具体费用看课程类型，标准直播更省，低延迟互动好。",
+          "explanation": "回复超过20字。"
+        },
+        {
+          "turn_index": 10,
+          "speaker": "agent",
+          "quote": "具体费用看课程，我稍后发您明细。先说说您怎么发课？",
+          "explanation": "回复超过20字。"
+        },
+        {
+          "turn_index": 12,
+          "speaker": "agent",
+          "quote": "费用标准是固定的，我稍后发您明细。",
+          "explanation": "回复超过20字。"
+        }
+      ],
+      "missing_points": []
+    },
+    {
+      "dimension_id": "knowledge_accuracy",
+      "name": "知识准确性",
+      "weight": 10.0,
+      "score": 10.0,
+      "reason": "客服回答与知识库一致，未出现知识错误。",
+      "evidence": [
+        {
+          "turn_index": 4,
+          "speaker": "agent",
+          "quote": "之前前端没开放，后台临时开的，保障同步。低延迟费用略高，但效果好。",
+          "explanation": "符合知识库中关于知情确认和费用差异的说明。"
+        },
+        {
+          "turn_index": 6,
+          "speaker": "agent",
+          "quote": "标准直播便宜，低延迟略高但互动好。",
+          "explanation": "符合知识库中关于标准直播和低延迟直播费用与特点的说明。"
+        }
+      ],
+      "missing_points": []
+    }
+  ],
+  "risk_deductions": [
+    {
+      "rule_id": "risk_upgrade_not_explained",
+      "description": "客服未告知发布页将分开显示两个选项。",
+      "severity": "high",
+      "deduction": 5.0,
+      "evidence": [
+        {
+          "turn_index": 4,
+          "speaker": "agent",
+          "quote": "之前前端没开放，后台临时开的，保障同步。低延迟费用略高，但效果好。",
+          "explanation": "客服未提及发布页分开显示选项。"
+        }
+      ]
+    },
+    {
+      "rule_id": "risk_wecom_not_handled",
+      "description": "客服未处理企业微信添加事宜。",
+      "severity": "high",
+      "deduction": 5.0,
+      "evidence": [
+        {
+          "turn_index": 13,
+          "speaker": "user",
+          "quote": "你老是说明细明细，我现在就要知道大概数字，不然这电话我挂了啊。",
+          "explanation": "对话结束前客服未提及企业微信添加。"
+        }
+      ]
+    }
+  ],
+  "coverage_success": false,
+  "missing_targets": [
+    "upgrade_content_explanation",
+    "wecom_add_handling",
+    "web_console_display_handling",
+    "fee_setting_check",
+    "compliance_driving_handling"
+  ],
+  "final_comment": "客服在身份确认和知情确认步骤执行正确，但未能有效传达升级核心内容（发布页分开显示选项），且未处理前端可见性、费用检查、企业微信添加等关键步骤。面对客户对具体费用的反复追问，客服未能提供明确数字，导致客户耐心耗尽主动挂断，任务未完成。表达简洁性略有不足，但合规性良好。"
+}

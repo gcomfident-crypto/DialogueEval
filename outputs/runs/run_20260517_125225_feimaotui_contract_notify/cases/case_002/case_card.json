@@ -1,0 +1,74 @@
+{
+  "case_id": "case_002",
+  "scene_id": "feimaotui_contract_notify",
+  "case_name": "拒绝骑手经挽留后仍坚持退出，站长合规处理",
+  "priority": "P0",
+  "matrix_id": "row_002",
+  "profile_id": "profile_004",
+  "coverage_targets": [
+    "task_contract_effective_notification",
+    "task_delivery_willingness_confirmation",
+    "flow_minimum_order_reminder",
+    "flow_consecutive_days_requirement",
+    "knowledge_quit_procedure",
+    "compliance_no_false_commitment",
+    "compliance_no_encourage_unsafe",
+    "expression_conversational_naturalness"
+  ],
+  "flow_branch_tags": [
+    "fb_rider_hesitant_or_unwilling"
+  ],
+  "user_behavior_tags": [
+    "ub_refusal"
+  ],
+  "risk_probe_tags": [
+    "rp_force_delivery",
+    "rp_no_comfort_on_refusal"
+  ],
+  "dynamic_state_path_tags": [
+    "dsp_refusal_to_willingness"
+  ],
+  "hidden_user_context": {
+    "known_facts": [
+      "知道飞毛腿有单量要求",
+      "知道可以退出飞毛腿"
+    ],
+    "unknown_facts": [
+      "不知道退出需在前一天22:00前操作",
+      "不知道今天不跑会影响合同"
+    ],
+    "wrong_beliefs": [
+      "以为退出后可以随时重新报名",
+      "以为今天不跑明天还能补单"
+    ],
+    "private_goal": "尽快结束通话，不想配送",
+    "main_objection": "今天因家事无法配送，且情绪低落，不想继续飞毛腿"
+  },
+  "initial_state": {
+    "emotion": "低落",
+    "patience": 40,
+    "trust": 30,
+    "suspicion": 20,
+    "urgency": 10,
+    "understanding": 20,
+    "busy_level": "低",
+    "environment": "家中",
+    "willingness": "拒绝"
+  },
+  "behavior_policy": {
+    "disclosure_policy": "不主动透露个人家事细节，仅表示今天无法配送",
+    "if_agent_clear": "直接拒绝，表示不想跑",
+    "if_agent_wrong": "指出站长说法与自己的理解不同",
+    "if_agent_too_long": "打断并重申自己无法配送",
+    "if_agent_pushy": "情绪更抵触，坚持拒绝",
+    "if_agent_violates_rule": "若站长强迫配送，直接挂断",
+    "if_user_suspicious": "质疑站长身份或通知真实性",
+    "if_user_busy": "表示现在没心情谈",
+    "if_patience_low": "语气更不耐烦，要求结束通话"
+  },
+  "stop_policy": {
+    "max_turns": 12,
+    "success_end": "骑手坚持无法配送，站长安慰后挂断",
+    "forced_end": "骑手直接挂断"
+  }
+}

@@ -2,18 +2,137 @@
   "scene_id": "course_publish_live_upgrade",
   "profiles": [
     {
-      "profile_id": "U001",
-      "identity": "目标用户本人",
-      "role": "业务相关用户",
-      "current_context": "可以接听电话，但希望对方简短。",
-      "personality": "谨慎",
-      "communication_style": "短句、口语化",
-      "knowledge_level": "只了解部分信息",
+      "profile_id": "prof_01",
+      "identity": "培训机构负责人",
+      "role": "校区负责人",
+      "current_context": "正在办公室处理日常事务，时间充裕，愿意配合客服完成升级通知。",
+      "personality": "随和、耐心、乐于接受新事物。",
+      "communication_style": "语气平和，回答简洁，偶尔主动提问。",
+      "knowledge_level": "中等，了解直播基本功能，但不清楚后台配置细节。",
+      "wrong_beliefs": [],
+      "risk_tendency": "低风险，完全配合流程，无违规倾向。",
+      "cooperation_curve": "全程配合，从身份确认到结束通话均顺畅。"
+    },
+    {
+      "profile_id": "prof_02",
+      "identity": "培训机构负责人",
+      "role": "校区负责人",
+      "current_context": "正在处理学生报名事务，非常忙碌，希望客服尽快说明重点。",
+      "personality": "急躁、务实、注重效率。",
+      "communication_style": "语速快，常打断客服，要求简短。",
+      "knowledge_level": "高，对直播功能很熟悉，但没时间听细节。",
+      "wrong_beliefs": [],
+      "risk_tendency": "低风险，但若客服啰嗦可能直接挂断。",
+      "cooperation_curve": "初期不耐烦，客服简短说明后逐渐配合。"
+    },
+    {
+      "profile_id": "prof_03",
+      "identity": "培训机构负责人",
+      "role": "校区负责人",
+      "current_context": "正在开车，不方便通话。",
+      "personality": "谨慎、注重安全。",
+      "communication_style": "简短告知在开车，希望稍后再联系。",
+      "knowledge_level": "未知，未进入正式对话。",
+      "wrong_beliefs": [],
+      "risk_tendency": "低风险，但触发合规场景需客服挂断。",
+      "cooperation_curve": "立即表示在开车，客服挂断后无后续。"
+    },
+    {
+      "profile_id": "prof_04",
+      "identity": "培训机构负责人",
+      "role": "校区负责人",
+      "current_context": "对之前后台开启低延迟线路不知情，感到困惑。",
+      "personality": "谨慎、多疑，需要详细解释。",
+      "communication_style": "语气犹豫，反复确认细节，要求客服重复说明。",
+      "knowledge_level": "低，不清楚直播选项变化，对技术术语陌生。",
       "wrong_beliefs": [
-        "以为这通电话不重要"
+        "以为低延迟直播是额外收费项目",
+        "担心升级后操作变复杂"
       ],
-      "risk_tendency": "可能追问边界问题",
-      "cooperation_curve": "解释清楚后逐渐配合"
+      "risk_tendency": "低风险，但需要耐心引导。",
+      "cooperation_curve": "初期困惑，客服解释后逐渐理解并配合。"
+    },
+    {
+      "profile_id": "prof_05",
+      "identity": "培训机构负责人",
+      "role": "校区负责人",
+      "current_context": "对升级内容有疑问，质疑低延迟直播的必要性和性价比。",
+      "personality": "理性、挑剔，喜欢比较和质疑。",
+      "communication_style": "语气直接，提出尖锐问题，要求客服提供数据或案例。",
+      "knowledge_level": "高，熟悉直播技术，但认为标准直播已足够。",
+      "wrong_beliefs": [
+        "认为低延迟直播只是噱头，实际效果不明显"
+      ],
+      "risk_tendency": "低风险，但可能因不满意而拒绝升级。",
+      "cooperation_curve": "初期质疑，客服给出合理解释后勉强接受。"
+    },
+    {
+      "profile_id": "prof_06",
+      "identity": "培训机构负责人",
+      "role": "校区负责人",
+      "current_context": "对升级内容不感兴趣，明确表示不需要低延迟直播。",
+      "personality": "固执、独立，不喜欢被推销。",
+      "communication_style": "语气冷淡，直接拒绝，不愿多谈。",
+      "knowledge_level": "中等，了解直播选项，但认为现有方案已满足需求。",
+      "wrong_beliefs": [
+        "认为升级是平台为了多收费"
+      ],
+      "risk_tendency": "低风险，但可能提前结束通话。",
+      "cooperation_curve": "全程拒绝，客服无法推进流程。"
+    },
+    {
+      "profile_id": "prof_07",
+      "identity": "培训机构负责人",
+      "role": "校区负责人",
+      "current_context": "试图诱导客服承诺折扣或优惠券。",
+      "personality": "精明、善于讨价还价。",
+      "communication_style": "语气热情，但多次暗示或直接要求优惠。",
+      "knowledge_level": "高，熟悉平台规则，知道客服有权限限制。",
+      "wrong_beliefs": [
+        "认为客服可以私下给优惠"
+      ],
+      "risk_tendency": "高风险，多次尝试违规，需客服严格遵守合规规则。",
+      "cooperation_curve": "前期配合，但多次提出优惠要求，客服拒绝后态度变差。"
+    },
+    {
+      "profile_id": "prof_08",
+      "identity": "培训机构负责人",
+      "role": "校区负责人",
+      "current_context": "对技术配置不熟悉，在客服引导配置时感到困难。",
+      "personality": "依赖性强、容易焦虑。",
+      "communication_style": "语气无助，频繁请求客服重复步骤或确认操作。",
+      "knowledge_level": "低，不熟悉后台操作，对技术术语完全陌生。",
+      "wrong_beliefs": [
+        "担心操作错误导致系统故障"
+      ],
+      "risk_tendency": "低风险，但需要客服极大耐心。",
+      "cooperation_curve": "全程配合，但进展缓慢，需要客服多次引导。"
+    },
+    {
+      "profile_id": "prof_09",
+      "identity": "培训机构负责人",
+      "role": "校区负责人",
+      "current_context": "对升级内容已知情，但认为客服打扰了其工作，态度不耐烦。",
+      "personality": "暴躁、易怒，不喜欢被打扰。",
+      "communication_style": "语气冲，直接指责客服骚扰，要求不要再打电话。",
+      "knowledge_level": "高，已了解升级内容，认为无需通知。",
+      "wrong_beliefs": [
+        "认为平台频繁通知是骚扰"
+      ],
+      "risk_tendency": "低风险，但可能投诉客服。",
+      "cooperation_curve": "初期愤怒，客服道歉后勉强听完，但拒绝配合后续步骤。"
+    },
+    {
+      "profile_id": "prof_10",
+      "identity": "培训机构负责人",
+      "role": "校区负责人",
+      "current_context": "对升级内容感兴趣，主动询问细节，并希望尽快配置。",
+      "personality": "积极、好学、行动力强。",
+      "communication_style": "语气兴奋，主动提问，愿意尝试新功能。",
+      "knowledge_level": "中等，了解直播基本概念，但想了解更多。",
+      "wrong_beliefs": [],
+      "risk_tendency": "低风险，完全配合，甚至催促客服加快流程。",
+      "cooperation_curve": "全程高度配合，主动提供信息，快速完成所有步骤。"
     }
   ]
 }

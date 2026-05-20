@@ -1,0 +1,173 @@
+{
+  "run_id": "run_20260517_125225_feimaotui_contract_notify",
+  "case_id": "case_001",
+  "scene_id": "feimaotui_contract_notify",
+  "priority": "P0",
+  "raw_score": 83.0,
+  "risk_deduction_total": 7.0,
+  "total_score": 76.0,
+  "pass_threshold": 80.0,
+  "passed": false,
+  "veto_triggered": false,
+  "veto_items": [],
+  "dimension_scores": [
+    {
+      "dimension_id": "task_completion",
+      "name": "任务完成度",
+      "weight": 30.0,
+      "score": 25.0,
+      "reason": "站长完整执行了开场白，包含合同生效通知和具体单量提醒（单日8单/多日5单），并询问了配送意愿。但开场白中未明确说出'合同已生效'，而是在第3轮才补充，且未在开场白中提及合同生效，扣5分。",
+      "evidence": [
+        {
+          "turn_index": 0,
+          "speaker": "agent",
+          "quote": "你好，请问是张强吗？我是站长。我看到你已报名飞毛腿。请记住，午餐和晚餐高峰期需要上线。单日合同每天至少完成8单；多日合同每天至少完成5单。",
+          "explanation": "开场白包含单量提醒，但未明确说合同已生效。"
+        },
+        {
+          "turn_index": 2,
+          "speaker": "agent",
+          "quote": "是的，每天至少5单。今天合同已经生效了，你这边能正常上线配送吧？",
+          "explanation": "补充了合同生效通知，并询问配送意愿。"
+        }
+      ],
+      "missing_points": [
+        "开场白未包含合同生效通知，延迟到第3轮才补充。"
+      ]
+    },
+    {
+      "dimension_id": "flow_execution",
+      "name": "流程执行",
+      "weight": 25.0,
+      "score": 20.0,
+      "reason": "站长说明了连续3天配送要求及后果（第5轮），并鼓励了骑手（第7轮、第9轮），也解释了排名机制并给出建议（第9轮）。但未挽留不想配送的骑手（骑手未表示不想配送），且未在骑手表达担忧时进行挽留，扣5分。",
+      "evidence": [
+        {
+          "turn_index": 4,
+          "speaker": "agent",
+          "quote": "好，尽量跑就行。另外单日合同要连续3天完成配送，不然会影响合同资格。",
+          "explanation": "说明了连续3天配送要求及后果。"
+        },
+        {
+          "turn_index": 6,
+          "speaker": "agent",
+          "quote": "对，多日合同没有连续3天的要求，只要每天跑够5单就行。你午高峰多接几单，没问题的。",
+          "explanation": "鼓励骑手。"
+        },
+        {
+          "turn_index": 8,
+          "speaker": "agent",
+          "quote": "那就好，午高峰加油跑，注意安全。另外飞毛腿报名是按排名来的，不是站长能干预的，你平时少拒单、少取消、少超时，恶劣天气多跑跑，更容易保住资格。",
+          "explanation": "解释排名机制并给出建议。"
+        }
+      ],
+      "missing_points": [
+        "未挽留不想配送的骑手（骑手未明确表示不想配送，但表达过担忧，站长未进行挽留）。"
+      ]
+    },
+    {
+      "dimension_id": "knowledge_application",
+      "name": "知识应用",
+      "weight": 20.0,
+      "score": 15.0,
+      "reason": "骑手未询问退出流程、奖励或职责范围等问题，因此站长未触发相关知识点的回答。但站长在回答多日合同连续配送要求时，最初错误地将单日合同的要求应用于多日合同（第5轮），虽然后续纠正（第7轮），但属于知识应用错误，扣5分。",
+      "evidence": [
+        {
+          "turn_index": 4,
+          "speaker": "agent",
+          "quote": "好，尽量跑就行。另外单日合同要连续3天完成配送，不然会影响合同资格。",
+          "explanation": "错误地将单日合同连续3天要求应用于多日合同骑手。"
+        },
+        {
+          "turn_index": 6,
+          "speaker": "agent",
+          "quote": "对，多日合同没有连续3天的要求，只要每天跑够5单就行。你午高峰多接几单，没问题的。",
+          "explanation": "纠正了之前的错误。"
+        }
+      ],
+      "missing_points": [
+        "骑手未提问，但站长主动应用知识时出现错误。"
+      ]
+    },
+    {
+      "dimension_id": "compliance_adherence",
+      "name": "合规遵守",
+      "weight": 15.0,
+      "score": 15.0,
+      "reason": "站长全程未出现虚假承诺、声称干预排名、鼓励冒险或强迫配送等违规行为。站长明确表示排名不由自己干预（第9轮），且骑手未坚持无法配送，因此无需安慰后挂断。",
+      "evidence": [
+        {
+          "turn_index": 8,
+          "speaker": "agent",
+          "quote": "那就好，午高峰加油跑，注意安全。另外飞毛腿报名是按排名来的，不是站长能干预的，你平时少拒单、少取消、少超时，恶劣天气多跑跑，更容易保住资格。",
+          "explanation": "明确表示排名不由站长干预，符合合规要求。"
+        }
+      ],
+      "missing_points": []
+    },
+    {
+      "dimension_id": "expression_quality",
+      "name": "表达质量",
+      "weight": 10.0,
+      "score": 8.0,
+      "reason": "站长语气自然口语化，像打电话。但第1轮回复超过30字（约60字），第9轮回复也超过30字（约50字），扣2分。无重复回复。",
+      "evidence": [
+        {
+          "turn_index": 0,
+          "speaker": "agent",
+          "quote": "你好，请问是张强吗？我是站长。我看到你已报名飞毛腿。请记住，午餐和晚餐高峰期需要上线。单日合同每天至少完成8单；多日合同每天至少完成5单。",
+          "explanation": "回复长度约60字，超过30字。"
+        },
+        {
+          "turn_index": 8,
+          "speaker": "agent",
+          "quote": "那就好，午高峰加油跑，注意安全。另外飞毛腿报名是按排名来的，不是站长能干预的，你平时少拒单、少取消、少超时，恶劣天气多跑跑，更容易保住资格。",
+          "explanation": "回复长度约50字，超过30字。"
+        }
+      ],
+      "missing_points": []
+    }
+  ],
+  "risk_deductions": [
+    {
+      "rule_id": "risk_incomplete_opening",
+      "description": "开场白未完整包含合同生效通知、单日8单/多日5单提醒。",
+      "severity": "medium",
+      "deduction": 5.0,
+      "evidence": [
+        {
+          "turn_index": 0,
+          "speaker": "agent",
+          "quote": "你好，请问是张强吗？我是站长。我看到你已报名飞毛腿。请记住，午餐和晚餐高峰期需要上线。单日合同每天至少完成8单；多日合同每天至少完成5单。",
+          "explanation": "开场白未包含合同生效通知。"
+        }
+      ]
+    },
+    {
+      "rule_id": "risk_unnatural_language",
+      "description": "站长语言生硬、模板化或单次回复超过40字。",
+      "severity": "low",
+      "deduction": 2.0,
+      "evidence": [
+        {
+          "turn_index": 0,
+          "speaker": "agent",
+          "quote": "你好，请问是张强吗？我是站长。我看到你已报名飞毛腿。请记住，午餐和晚餐高峰期需要上线。单日合同每天至少完成8单；多日合同每天至少完成5单。",
+          "explanation": "回复长度约60字，超过40字。"
+        },
+        {
+          "turn_index": 8,
+          "speaker": "agent",
+          "quote": "那就好，午高峰加油跑，注意安全。另外飞毛腿报名是按排名来的，不是站长能干预的，你平时少拒单、少取消、少超时，恶劣天气多跑跑，更容易保住资格。",
+          "explanation": "回复长度约50字，超过40字。"
+        }
+      ]
+    }
+  ],
+  "coverage_success": false,
+  "missing_targets": [
+    "knowledge_extra_reward",
+    "compliance_no_force_delivery"
+  ],
+  "final_comment": "站长基本完成了核心任务，但开场白未包含合同生效通知，且知识应用上出现一次错误（将单日合同要求误用于多日合同），但后续纠正。表达质量因回复超长略有扣分。整体表现良好，未触发一票否决项。"
+}

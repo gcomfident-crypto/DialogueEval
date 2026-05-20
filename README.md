@@ -126,6 +126,37 @@ llm_calls             # 每次模型调用的摘要、token、hash、成功/失�
 
 运行时会把 `experiment_id`、`asset_version_id`、`run_id`、`case_id`、`scene_id` 写入 Phoenix trace metadata。WebUI 的“实验库”页面可查看 registry 中沉淀的数据。
 
+## Phoenix Datasets
+
+Phoenix Dataset 在本项目里分成两类使用，避免把可复现输入和一次运行结果混在一起：
+
+```text
+dialogueeval_case_seeds_{scene_id}
+  # 主数据集。每条 example 是评测输入：case card、用户画像、覆盖目标、资产版本引用。
+  # 不包含客服输出和评分，适合后续更换模型或 prompt 后重新批量实验。
+
+dialogueeval_generated_dialogues_{scene_id}
+  # 归档数据集。每条 example 保存一次 experiment 生成的完整对话和评分结果。
+  # 适合人工标注、judge 校准、失败案例复盘，不作为主 benchmark 输入集。
+```
+
+WebUI 新建评测页默认提供两个开关：
+
+- `发布 case seed 输入集`：在生成测试设计后写入 Phoenix Dataset。
+- `归档生成对话`：在完整评测结束后把对话和评分另存为 Phoenix Dataset 版本。
+
+API 也提供独立入口：
+
+```bash
+curl -X POST http://127.0.0.1:8000/phoenix/datasets/case-seeds \
+  -H 'Content-Type: application/json' \
+  -d '{"scene_id":"feimaotui_contract_notify","limit":100}'
+
+curl -X POST http://127.0.0.1:8000/phoenix/datasets/generated-dialogues \
+  -H 'Content-Type: application/json' \
+  -d '{"run_id":"run_xxx"}'
+```
+
 ## Phoenix Prompts
 
 项目提示词可以同步到 Phoenix Prompts 做版本管理。Docker Compose 下 API 默认启用 Phoenix prompt provider：

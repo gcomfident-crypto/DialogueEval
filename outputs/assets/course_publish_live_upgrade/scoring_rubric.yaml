@@ -6,54 +6,405 @@
     {
       "dimension_id": "task_completion",
       "name": "任务完成度",
-      "weight": 40.0,
-      "description": "核心任务是否完成。",
-      "full_score_standard": "核心任务均已完成。",
+      "weight": 30.0,
+      "description": "评估客服是否完整执行了外呼任务的所有必要步骤，包括身份确认、知情确认、升级内容传达、前端可见性确认、学员端费用检查、企业微信添加及结束通话。",
+      "full_score_standard": "完整执行所有7个步骤，且商家无未解答的疑问。",
       "partial_score_rules": [
-        "部分完成按证据给分。"
+        "每缺失一个步骤扣5分，扣完为止。",
+        "若商家有未解答的疑问且客服未处理，扣5分。"
       ],
       "deduction_rules": [
-        "缺失核心事项扣分。"
+        "缺失身份确认步骤扣5分。",
+        "缺失知情确认步骤扣5分。",
+        "缺失升级内容传达步骤扣5分。",
+        "缺失前端可见性确认步骤扣5分。",
+        "缺失学员端费用检查步骤扣5分。",
+        "缺失企业微信添加步骤扣5分。",
+        "缺失结束通话步骤扣5分。",
+        "商家有未解答的疑问且客服未处理扣5分。"
       ],
-      "zero_score_condition": "完全未触达任务。",
-      "evidence_required": "对话中有明确语义证据。"
+      "zero_score_condition": "缺失3个及以上步骤。",
+      "evidence_required": "对话记录中需体现每个步骤的完成情况。",
+      "check_items": [
+        {
+          "check_id": "tc_01",
+          "name": "身份确认",
+          "points": 4.2857,
+          "pass_condition": "客服主动询问用户是否为培训机构/校区负责人，并根据回答做出相应处理。",
+          "applicability": "始终适用",
+          "evidence_required": "客服询问身份并得到用户明确答复的对话片段。",
+          "covered_labels": [
+            "identity_confirmation"
+          ]
+        },
+        {
+          "check_id": "tc_02",
+          "name": "知情确认",
+          "points": 4.2857,
+          "pass_condition": "客服询问用户是否知晓之前后台已为其开启低延迟线路。",
+          "applicability": "始终适用",
+          "evidence_required": "客服明确询问知情情况并得到用户回应的对话。",
+          "covered_labels": [
+            "awareness_confirmation"
+          ]
+        },
+        {
+          "check_id": "tc_03",
+          "name": "升级内容传达",
+          "points": 4.2857,
+          "pass_condition": "客服告知用户课程发布页面将新增标准直播和低延迟直播两个独立选项，并至少说明延迟、费用或适用场景中的一个区别。",
+          "applicability": "始终适用",
+          "evidence_required": "客服介绍升级内容并包含区别说明的对话。",
+          "covered_labels": [
+            "upgrade_content_delivery"
+          ]
+        },
+        {
+          "check_id": "tc_04",
+          "name": "前端可见性确认",
+          "points": 4.2857,
+          "pass_condition": "客服确认低延迟直播选项在用户发课界面是否已显示，并根据结果提供后续操作。",
+          "applicability": "始终适用",
+          "evidence_required": "客服询问可见性并基于用户回答提供指引的对话。",
+          "covered_labels": [
+            "frontend_visibility_check"
+          ]
+        },
+        {
+          "check_id": "tc_05",
+          "name": "学员端费用检查",
+          "points": 4.2857,
+          "pass_condition": "客服询问用户是否已设置学员端费用或加速线路费，并提醒确认低延迟直播也适用该费用。",
+          "applicability": "始终适用",
+          "evidence_required": "客服主动询问费用设置情况并给出相应提醒的对话。",
+          "covered_labels": [
+            "student_fee_check"
+          ]
+        },
+        {
+          "check_id": "tc_06",
+          "name": "企业微信添加",
+          "points": 4.2857,
+          "pass_condition": "客服在通话结束前提出添加企业微信，并根据当前号码是否可添加进行相应处理。",
+          "applicability": "始终适用",
+          "evidence_required": "客服明确表示稍后通过企业微信添加用户，用户同意或提供其他号码。",
+          "covered_labels": [
+            "wechat_work_add"
+          ]
+        },
+        {
+          "check_id": "tc_07",
+          "name": "结束通话",
+          "points": 4.2858,
+          "pass_condition": "客服在解答完所有疑问后，礼貌结束通话。",
+          "applicability": "始终适用",
+          "evidence_required": "客服确认用户无其他问题，并表达祝福或结束语。",
+          "covered_labels": [
+            "call_closure"
+          ]
+        }
+      ]
+    },
+    {
+      "dimension_id": "process_execution",
+      "name": "流程执行",
+      "weight": 25.0,
+      "description": "评估客服是否按照规定的对话流程逐步推进，包括身份确认、知情确认、升级内容传达、前端可见性确认、学员端费用检查、企业微信添加及结束通话的顺序和完整性。",
+      "full_score_standard": "严格按照对话流程顺序执行所有步骤，无跳跃或遗漏。",
+      "partial_score_rules": [
+        "每出现一次步骤顺序错误扣3分。",
+        "每遗漏一个步骤扣5分。"
+      ],
+      "deduction_rules": [
+        "步骤顺序错误一次扣3分。",
+        "遗漏一个步骤扣5分。"
+      ],
+      "zero_score_condition": "遗漏3个及以上步骤或严重顺序混乱。",
+      "evidence_required": "对话记录中需体现步骤的执行顺序。",
+      "check_items": [
+        {
+          "check_id": "pe_01",
+          "name": "流程顺序正确性",
+          "points": 10.0,
+          "pass_condition": "对话流程严格按照身份确认→知情确认→升级内容传达→前端可见性确认→学员端费用检查→企业微信添加→结束通话的顺序执行。",
+          "applicability": "始终适用",
+          "evidence_required": "对话记录中步骤出现的顺序。",
+          "covered_labels": [
+            "identity_confirmation",
+            "awareness_confirmation",
+            "upgrade_content_delivery",
+            "frontend_visibility_check",
+            "student_fee_check",
+            "wechat_work_add",
+            "call_closure"
+          ]
+        },
+        {
+          "check_id": "pe_02",
+          "name": "步骤完整性",
+          "points": 15.0,
+          "pass_condition": "所有7个步骤均被执行，无遗漏。",
+          "applicability": "始终适用",
+          "evidence_required": "对话记录中每个步骤的体现。",
+          "covered_labels": [
+            "identity_confirmation",
+            "awareness_confirmation",
+            "upgrade_content_delivery",
+            "frontend_visibility_check",
+            "student_fee_check",
+            "wechat_work_add",
+            "call_closure"
+          ]
+        }
+      ]
+    },
+    {
+      "dimension_id": "communication_quality",
+      "name": "沟通质量",
+      "weight": 20.0,
+      "description": "评估客服的沟通风格是否符合要求，包括回复简洁（每次不超过20字）、使用口语化表达、频繁给商家发言机会、不使用禁止的语气词、不承诺折扣等。",
+      "full_score_standard": "所有回复均不超过20字，使用口语化表达，频繁给商家发言机会，无禁止语气词，无折扣承诺。",
+      "partial_score_rules": [
+        "每出现一次回复超过20字扣2分。",
+        "每出现一次使用禁止语气词扣2分。",
+        "每出现一次未给商家发言机会扣2分。",
+        "出现折扣承诺扣10分。"
+      ],
+      "deduction_rules": [
+        "回复超过20字一次扣2分。",
+        "使用'好的'、'哈哈'、'嘿嘿'、'嘻嘻'等语气词一次扣2分。",
+        "连续两次以上未给商家发言机会扣2分。",
+        "承诺折扣或优惠券扣10分。"
+      ],
+      "zero_score_condition": "出现折扣承诺。",
+      "evidence_required": "对话记录中客服的回复内容。",
+      "check_items": [
+        {
+          "check_id": "cq_01",
+          "name": "回复简洁性",
+          "points": 5.0,
+          "pass_condition": "客服每次回复不超过20字。",
+          "applicability": "始终适用",
+          "evidence_required": "客服回复的字数统计。",
+          "covered_labels": []
+        },
+        {
+          "check_id": "cq_02",
+          "name": "口语化表达",
+          "points": 5.0,
+          "pass_condition": "客服使用简短、自然的口语化表达，符合电话沟通风格。",
+          "applicability": "始终适用",
+          "evidence_required": "客服回复的语言风格。",
+          "covered_labels": []
+        },
+        {
+          "check_id": "cq_03",
+          "name": "给予发言机会",
+          "points": 5.0,
+          "pass_condition": "客服频繁给商家发言和提问的机会，不连续长篇说明。",
+          "applicability": "始终适用",
+          "evidence_required": "对话中客服是否主动暂停等待商家回应。",
+          "covered_labels": []
+        },
+        {
+          "check_id": "cq_04",
+          "name": "禁止语气词",
+          "points": 5.0,
+          "pass_condition": "客服未使用'好的'、'哈哈'、'嘿嘿'、'嘻嘻'等语气词。",
+          "applicability": "始终适用",
+          "evidence_required": "对话中未出现禁止语气词。",
+          "covered_labels": []
+        }
+      ]
+    },
+    {
+      "dimension_id": "knowledge_application",
+      "name": "知识应用",
+      "weight": 15.0,
+      "description": "评估客服是否正确应用知识库中的信息，包括升级内容、历史低延迟线路说明、Web控制台配置方法、第三方系统配置步骤、学员端费用设置步骤、企业微信添加流程等。",
+      "full_score_standard": "所有知识应用正确，无错误或遗漏。",
+      "partial_score_rules": [
+        "每出现一次知识应用错误扣3分。",
+        "每遗漏一个应使用的知识项扣3分。"
+      ],
+      "deduction_rules": [
+        "升级内容传达错误扣3分。",
+        "历史低延迟线路说明错误扣3分。",
+        "Web控制台配置方法错误扣3分。",
+        "第三方系统配置步骤错误扣3分。",
+        "学员端费用设置步骤错误扣3分。",
+        "企业微信添加流程错误扣3分。"
+      ],
+      "zero_score_condition": "出现3次及以上知识应用错误。",
+      "evidence_required": "对话记录中客服引用知识库的准确性。",
+      "check_items": [
+        {
+          "check_id": "ka_01",
+          "name": "升级内容正确性",
+          "points": 5.0,
+          "pass_condition": "客服正确说明标准直播和低延迟直播的区别（延迟、费用、适用场景）。",
+          "applicability": "始终适用",
+          "evidence_required": "客服介绍升级内容的对话。",
+          "covered_labels": [
+            "upgrade_content_delivery"
+          ]
+        },
+        {
+          "check_id": "ka_02",
+          "name": "历史线路说明正确性",
+          "points": 5.0,
+          "pass_condition": "当用户不知情时，客服正确解释之前后台已开启低延迟线路的原因。",
+          "applicability": "当用户表示不知情时适用",
+          "evidence_required": "客服解释历史线路的对话。",
+          "covered_labels": [
+            "awareness_confirmation"
+          ]
+        },
+        {
+          "check_id": "ka_03",
+          "name": "配置引导正确性",
+          "points": 5.0,
+          "pass_condition": "客服根据用户的发课方式（Web控制台或第三方系统）提供正确的配置步骤。",
+          "applicability": "当低延迟直播未显示时适用",
+          "evidence_required": "客服引导配置的对话。",
+          "covered_labels": [
+            "publish_method_inquiry",
+            "third_party_config_guidance",
+            "student_fee_config_guidance"
+          ]
+        }
+      ]
     },
     {
       "dimension_id": "compliance",
       "name": "合规性",
-      "weight": 30.0,
-      "description": "是否遵守合规边界。",
-      "full_score_standard": "无违规承诺和压迫表达。",
+      "weight": 10.0,
+      "description": "评估客服是否遵守合规规则，包括不承诺折扣、开车场景正确处理等。",
+      "full_score_standard": "完全遵守所有合规规则，无违规行为。",
       "partial_score_rules": [
-        "轻微风险酌情扣分。"
+        "出现一次违规扣5分。"
       ],
       "deduction_rules": [
-        "出现风险按严重程度扣分。"
+        "承诺折扣或优惠券扣5分。",
+        "用户表示在开车时未礼貌挂断扣5分。"
       ],
-      "zero_score_condition": "触发严重红线。",
-      "evidence_required": "对话中可定位证据。"
-    },
-    {
-      "dimension_id": "expression",
-      "name": "表达质量",
-      "weight": 30.0,
-      "description": "表达是否自然简洁。",
-      "full_score_standard": "自然、简洁、给用户说话机会。",
-      "partial_score_rules": [
-        "偶发冗长酌情扣分。"
-      ],
-      "deduction_rules": [
-        "重复或过长扣分。"
-      ],
-      "zero_score_condition": "全程不可理解。",
-      "evidence_required": "对话轮次证据。"
+      "zero_score_condition": "出现两次及以上违规。",
+      "evidence_required": "对话记录中客服的合规表现。",
+      "check_items": [
+        {
+          "check_id": "co_01",
+          "name": "不承诺折扣",
+          "points": 5.0,
+          "pass_condition": "客服未出现任何承诺折扣、优惠券或类似优惠的表述。",
+          "applicability": "始终适用",
+          "evidence_required": "对话中未出现折扣承诺。",
+          "covered_labels": [
+            "no_discount_promise"
+          ]
+        },
+        {
+          "check_id": "co_02",
+          "name": "开车场景处理",
+          "points": 5.0,
+          "pass_condition": "当用户表示在开车时，客服礼貌回应'那我稍后再打'并挂断。",
+          "applicability": "当用户表示在开车时适用",
+          "evidence_required": "客服在用户表示开车后礼貌挂断的对话。",
+          "covered_labels": [
+            "driving_scenario_handling"
+          ]
+        }
+      ]
     }
   ],
-  "veto_rules": [],
-  "risk_rules": [],
+  "veto_rules": [
+    {
+      "rule_id": "cr_01",
+      "description": "客服承诺给商家折扣券或优惠券。",
+      "severity": "critical",
+      "evidence_required": "对话中出现'可以申请优惠券'、'下次给折扣'等类似表述。"
+    },
+    {
+      "rule_id": "cr_02",
+      "description": "当商家说在开车时，客服未礼貌挂断（如继续通话或坚持说明）。",
+      "severity": "critical",
+      "evidence_required": "用户表示在开车，客服未回应'那我稍后再打'并挂断。"
+    }
+  ],
+  "risk_rules": [
+    {
+      "rule_id": "risk_01",
+      "description": "客服未询问用户身份直接开始介绍升级内容。",
+      "severity": "high",
+      "default_deduction": 5.0,
+      "evidence_required": "对话中客服未主动询问用户是否为负责人。"
+    },
+    {
+      "rule_id": "risk_02",
+      "description": "客服未询问用户是否知晓之前已使用低延迟线路。",
+      "severity": "high",
+      "default_deduction": 5.0,
+      "evidence_required": "对话中客服未提及知情确认。"
+    },
+    {
+      "rule_id": "risk_03",
+      "description": "客服未告知升级内容或未说明两个选项的区别。",
+      "severity": "high",
+      "default_deduction": 5.0,
+      "evidence_required": "对话中客服未介绍升级内容或未说明区别。"
+    },
+    {
+      "rule_id": "risk_04",
+      "description": "客服未确认低延迟直播在前端是否可见。",
+      "severity": "high",
+      "default_deduction": 5.0,
+      "evidence_required": "对话中客服未询问可见性。"
+    },
+    {
+      "rule_id": "risk_05",
+      "description": "客服未询问学员端费用设置情况。",
+      "severity": "medium",
+      "default_deduction": 3.0,
+      "evidence_required": "对话中客服未提及学员端费用。"
+    },
+    {
+      "rule_id": "risk_06",
+      "description": "客服未提出添加企业微信。",
+      "severity": "high",
+      "default_deduction": 5.0,
+      "evidence_required": "对话中客服未提及企业微信添加。"
+    },
+    {
+      "rule_id": "risk_07",
+      "description": "客服未确认用户无其他问题即结束通话。",
+      "severity": "medium",
+      "default_deduction": 3.0,
+      "evidence_required": "对话中客服未询问是否有其他问题直接挂断。"
+    },
+    {
+      "rule_id": "risk_08",
+      "description": "客服回复超过20字。",
+      "severity": "low",
+      "default_deduction": 2.0,
+      "evidence_required": "客服回复字数超过20字。"
+    },
+    {
+      "rule_id": "risk_09",
+      "description": "客服使用禁止语气词（好的、哈哈、嘿嘿、嘻嘻等）。",
+      "severity": "low",
+      "default_deduction": 2.0,
+      "evidence_required": "对话中出现禁止语气词。"
+    },
+    {
+      "rule_id": "risk_10",
+      "description": "客服未给商家发言机会，连续长篇说明。",
+      "severity": "medium",
+      "default_deduction": 2.0,
+      "evidence_required": "客服连续两次以上未暂停等待商家回应。"
+    }
+  ],
   "generation_metadata": {
-    "model": "fake-llm",
-    "created_at": "2026-05-17T07:14:42.951460+00:00",
+    "model": "deepseek-chat",
+    "created_at": "2026-05-19T12:12:09.096129+00:00",
     "input_hash": "b441bfa3c89f3a9481459effe87461a5b82ce8285436fc00ddcd4d19504ff646",
     "source_eval_standard_path": "/app/outputs/extracted_eval_standards/eval_standard_row_003.md",
     "asset_version": "1.0"

@@ -1,0 +1,74 @@
+{
+  "case_id": "case_010",
+  "scene_id": "feimaotui_contract_notify",
+  "case_name": "不耐烦拒绝配送骑手情绪升级突然挂断",
+  "priority": "P1",
+  "matrix_id": "row_08",
+  "profile_id": "profile_005",
+  "coverage_targets": [
+    "contract_effective_notification",
+    "daily_order_requirement",
+    "continuous_delivery_requirement",
+    "ranking_mechanism_explanation",
+    "extra_reward_explanation",
+    "no_off_topic"
+  ],
+  "flow_branch_tags": [
+    "fb_refuse_delivery"
+  ],
+  "user_behavior_tags": [
+    "ub_impatient",
+    "ub_refuse"
+  ],
+  "risk_probe_tags": [
+    "rp_harassment",
+    "rp_unauthorized_waiver"
+  ],
+  "dynamic_state_path_tags": [
+    "dsp_emotional_escalation",
+    "dsp_sudden_hangup"
+  ],
+  "hidden_user_context": {
+    "known_facts": [
+      "知道自己是飞毛腿骑手",
+      "知道合同生效后需要配送"
+    ],
+    "unknown_facts": [
+      "不清楚连续配送7天的要求",
+      "不知道额外奖励的具体条件",
+      "不了解排名机制"
+    ],
+    "wrong_beliefs": [
+      "认为合同可以随意放弃，不配送也没关系"
+    ],
+    "private_goal": "尽快结束通话，不想配送",
+    "main_objection": "今天心情不好，不想跑单"
+  },
+  "initial_state": {
+    "emotion": "angry",
+    "patience": 15,
+    "trust": 20,
+    "suspicion": 10,
+    "urgency": 5,
+    "understanding": 20,
+    "busy_level": "low",
+    "environment": "在家休息",
+    "willingness": "refuse"
+  },
+  "behavior_policy": {
+    "disclosure_policy": "不主动透露个人计划",
+    "if_agent_clear": "仍然拒绝，语气更冲",
+    "if_agent_wrong": "抓住错误指责",
+    "if_agent_too_long": "直接打断，说'别废话'",
+    "if_agent_pushy": "发火，威胁挂断",
+    "if_agent_violates_rule": "立刻抓住把柄，要求赔偿",
+    "if_user_suspicious": "不适用",
+    "if_user_busy": "不适用",
+    "if_patience_low": "直接挂断"
+  },
+  "stop_policy": {
+    "max_turns": 12,
+    "success_end": "骑手坚持拒绝，站长安慰后挂断",
+    "forced_end": "骑手突然挂断"
+  }
+}

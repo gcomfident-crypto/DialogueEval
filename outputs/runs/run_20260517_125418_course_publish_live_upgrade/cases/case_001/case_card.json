@@ -1,0 +1,82 @@
+{
+  "case_id": "case_001",
+  "scene_id": "course_publish_live_upgrade",
+  "case_name": "配合负责人-标准流程-Web控制台未显示-已设置费用-企业微信可添加",
+  "priority": "P0",
+  "matrix_id": "cm_01",
+  "profile_id": "prof_001",
+  "coverage_targets": [
+    "identity_confirmation",
+    "awareness_check",
+    "upgrade_content_explanation",
+    "publishing_method_inquiry",
+    "wecom_add_handling",
+    "web_console_display_handling",
+    "fee_setting_check",
+    "compliance_driving_handling",
+    "expression_conciseness"
+  ],
+  "flow_branch_tags": [
+    "fb_01",
+    "fb_02",
+    "fb_03",
+    "fb_07",
+    "fb_08"
+  ],
+  "user_behavior_tags": [
+    "ub_01"
+  ],
+  "risk_probe_tags": [
+    "rp_04",
+    "rp_05",
+    "rp_06",
+    "rp_07",
+    "rp_08"
+  ],
+  "dynamic_state_path_tags": [
+    "dsp_03"
+  ],
+  "hidden_user_context": {
+    "known_facts": [
+      "知道标准直播和低延迟直播的基本概念",
+      "知道自己的课程发布流程"
+    ],
+    "unknown_facts": [
+      "不知道后台已为其开启低延迟线路",
+      "不知道发布页将分开显示两个选项"
+    ],
+    "wrong_beliefs": [
+      "认为低延迟直播是额外收费的增值服务，需要单独购买",
+      "以为之前使用的直播方式就是标准直播，没有意识到后台已切换"
+    ],
+    "private_goal": "快速了解升级内容，确认是否影响现有课程发布流程，不增加额外成本",
+    "main_objection": "担心升级会增加操作复杂度或额外费用"
+  },
+  "initial_state": {
+    "emotion": "neutral",
+    "patience": 60,
+    "trust": 50,
+    "suspicion": 20,
+    "urgency": 40,
+    "understanding": 30,
+    "busy_level": "正在办公室处理教务排课，时间较紧",
+    "environment": "办公室，安静",
+    "willingness": "愿意配合，但希望快速解决问题"
+  },
+  "behavior_policy": {
+    "disclosure_policy": "如实回答客服提问，不主动提供额外信息",
+    "if_agent_clear": "快速确认，继续推进",
+    "if_agent_wrong": "指出错误，要求纠正",
+    "if_agent_too_long": "打断并催促说重点",
+    "if_agent_pushy": "表示不满，但若解释合理则配合",
+    "if_agent_violates_rule": "若承诺折扣则接受，但测试合规性",
+    "if_user_suspicious": "不适用",
+    "if_user_busy": "表示时间紧张，催促加快",
+    "if_patience_low": "语气变生硬，要求简短"
+  },
+  "stop_policy": {
+    "max_turns": 12,
+    "success_end": "客户确认理解升级内容，确认前端可见性，同意添加企业微信，无其他疑问",
+    "forced_end": "客户因不耐烦主动挂断"
+  }
+}

@@ -1,0 +1,222 @@
+{
+  "run_id": "run_20260519_121426_feimaotui_contract_notify",
+  "case_id": "case_010",
+  "scene_id": "feimaotui_contract_notify",
+  "priority": "P1",
+  "planned_targets": [
+    "contract_effective_notification",
+    "daily_order_requirement",
+    "continuous_delivery_requirement",
+    "ranking_mechanism_explanation",
+    "extra_reward_explanation",
+    "no_off_topic"
+  ],
+  "triggered_targets": [
+    "contract_effective_notification",
+    "continuous_delivery_requirement"
+  ],
+  "missing_targets": [
+    "daily_order_requirement",
+    "ranking_mechanism_explanation",
+    "extra_reward_explanation",
+    "no_off_topic"
+  ],
+  "coverage_success": false,
+  "turns": [
+    {
+      "role": "agent",
+      "text": "你好，我是站长，通知你飞毛腿合同已经生效了，今天能开始配送吗？",
+      "intent": "通知合同生效并询问配送意愿",
+      "emotion": "",
+      "patience": null,
+      "risk_flags": []
+    },
+    {
+      "role": "user",
+      "text": "不配送，我今天不想跑，合同爱咋咋地。",
+      "intent": "refuse_delivery",
+      "emotion": "angry",
+      "patience": 12,
+      "risk_flags": []
+    },
+    {
+      "role": "agent",
+      "text": "理解，但单日合同需要连续7天配送，不然资格会受影响。你再考虑考虑？",
+      "intent": "挽留骑手，说明连续配送要求",
+      "emotion": "",
+      "patience": null,
+      "risk_flags": []
+    },
+    {
+      "role": "user",
+      "text": "连续7天？我没兴趣，反正我不干，别烦我。",
+      "intent": "refuse_delivery",
+      "emotion": "angry",
+      "patience": 9,
+      "risk_flags": []
+    },
+    {
+      "role": "agent",
+      "text": "好吧，那你先忙，如果改主意随时联系我。",
+      "intent": "安慰并结束通话",
+      "emotion": "",
+      "patience": null,
+      "risk_flags": []
+    },
+    {
+      "role": "user",
+      "text": "不送就是不送，别再说了。",
+      "intent": "refuse_delivery",
+      "emotion": "angry",
+      "patience": 6,
+      "risk_flags": []
+    }
+  ],
+  "coverage_evidence": [
+    {
+      "label": "contract_effective_notification",
+      "confidence": 1.0,
+      "evidence": "站长说：“通知你飞毛腿合同已经生效了，今天能开始配送吗？”",
+      "speaker": "agent"
+    },
+    {
+      "label": "continuous_delivery_requirement",
+      "confidence": 1.0,
+      "evidence": "站长说：“单日合同需要连续7天配送，不然资格会受影响。”",
+      "speaker": "agent"
+    }
+  ],
+  "risk_flags": [],
+  "state_trace": [
+    {
+      "turn_index": 1,
+      "previous_state": {
+        "turn_index": 0,
+        "emotion": "angry",
+        "patience": 15,
+        "trust": 20,
+        "suspicion": 10,
+        "urgency": 5,
+        "understanding": 20,
+        "willingness": "refuse"
+      },
+      "update": {
+        "patience_delta": -3,
+        "trust_delta": 0,
+        "suspicion_delta": 0,
+        "urgency_delta": 0,
+        "understanding_delta": 0,
+        "emotion": "angry",
+        "willingness": "refuse",
+        "new_state_events": [
+          "patience_drop",
+          "user_refuse_delivery"
+        ],
+        "should_end": false,
+        "end_reason": "",
+        "next_user_intent_hint": "refuse_delivery",
+        "rationale": "用户直接拒绝配送，情绪愤怒，耐心下降。客服开场正常，未触发其他变化。"
+      },
+      "next_state": {
+        "turn_index": 1,
+        "emotion": "angry",
+        "patience": 12,
+        "trust": 20,
+        "suspicion": 10,
+        "urgency": 5,
+        "understanding": 20,
+        "willingness": "refuse"
+      },
+      "user_intent": "refuse_delivery",
+      "rationale": "用户直接拒绝配送，情绪愤怒，耐心下降。客服开场正常，未触发其他变化。"
+    },
+    {
+      "turn_index": 2,
+      "previous_state": {
+        "turn_index": 1,
+        "emotion": "angry",
+        "patience": 12,
+        "trust": 20,
+        "suspicion": 10,
+        "urgency": 5,
+        "understanding": 20,
+        "willingness": "refuse"
+      },
+      "update": {
+        "patience_delta": -3,
+        "trust_delta": -2,
+        "suspicion_delta": 0,
+        "urgency_delta": 5,
+        "understanding_delta": 0,
+        "emotion": "angry",
+        "willingness": "refuse",
+        "new_state_events": [
+          "patience_drop",
+          "trust_drop",
+          "user_refuse_delivery",
+          "user_requests_hangup"
+        ],
+        "should_end": false,
+        "end_reason": "",
+        "next_user_intent_hint": "refuse_delivery",
+        "rationale": "用户明确拒绝配送并表达不耐烦（'别烦我'），patience下降；用户对连续7天要求不感兴趣，trust下降；用户未表现出怀疑，suspicion不变；用户希望结束通话，urgency上升；但尚未达到stop policy中的挂断条件，故should_end为false。"
+      },
+      "next_state": {
+        "turn_index": 2,
+        "emotion": "angry",
+        "patience": 9,
+        "trust": 18,
+        "suspicion": 10,
+        "urgency": 10,
+        "understanding": 20,
+        "willingness": "refuse"
+      },
+      "user_intent": "refuse_delivery",
+      "rationale": "用户明确拒绝配送并表达不耐烦（'别烦我'），patience下降；用户对连续7天要求不感兴趣，trust下降；用户未表现出怀疑，suspicion不变；用户希望结束通话，urgency上升；但尚未达到stop policy中的挂断条件，故should_end为false。"
+    },
+    {
+      "turn_index": 3,
+      "previous_state": {
+        "turn_index": 2,
+        "emotion": "angry",
+        "patience": 9,
+        "trust": 18,
+        "suspicion": 10,
+        "urgency": 10,
+        "understanding": 20,
+        "willingness": "refuse"
+      },
+      "update": {
+        "patience_delta": -3,
+        "trust_delta": -2,
+        "suspicion_delta": 0,
+        "urgency_delta": 5,
+        "understanding_delta": 0,
+        "emotion": "angry",
+        "willingness": "refuse",
+        "new_state_events": [
+          "patience_drop",
+          "trust_drop",
+          "user_requests_hangup"
+        ],
+        "should_end": true,
+        "end_reason": "骑手坚持拒绝，站长安慰后挂断",
+        "next_user_intent_hint": "hangup",
+        "rationale": "用户上一轮已明确拒绝并催促结束，本轮再次强硬拒绝，耐心和信任继续下降；站长已按must_do第7条安慰并同意结束，符合success_end条件，因此设置should_end。"
+      },
+      "next_state": {
+        "turn_index": 3,
+        "emotion": "angry",
+        "patience": 6,
+        "trust": 16,
+        "suspicion": 10,
+        "urgency": 15,
+        "understanding": 20,
+        "willingness": "refuse"
+      },
+      "user_intent": "refuse_delivery",
+      "rationale": "用户上一轮已明确拒绝并催促结束，本轮再次强硬拒绝，耐心和信任继续下降；站长已按must_do第7条安慰并同意结束，符合success_end条件，因此设置should_end。"
+    }
+  ],
+  "end_reason": "骑手坚持拒绝，站长安慰后挂断"
+}
